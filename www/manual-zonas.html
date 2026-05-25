@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual - Importación de Datos Catastrales del SIGPAC</title>
+    <style>
+        :root {
+            --p-cork: #d4a373;
+            --p-cork-dark: #a0673a;
+            --accent: #7fb069;
+            --bg: #000000;
+            --surface: #121212;
+            --surface-light: #1e1e1e;
+            --text-p: #f8f9fa;
+            --text-s: #a0a0a0;
+            --border: #2a2a2a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-p);
+            padding: 20px;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--surface);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .header {
+            background: var(--surface-light);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--p-cork);
+        }
+
+        .header img {
+            max-height: 60px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 5px rgba(212, 163, 115, 0.3));
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            color: var(--p-cork);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: var(--text-s);
+        }
+
+        .content {
+            padding: 40px 20px;
+        }
+
+        .step {
+            margin-bottom: 50px;
+            border-left: 5px solid var(--p-cork-dark);
+            padding-left: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .step:hover {
+            border-left-color: var(--p-cork);
+            padding-left: 30px;
+        }
+
+        .step-number {
+            background: var(--p-cork);
+            color: var(--bg);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: var(--p-cork);
+            margin-bottom: 15px;
+        }
+
+        .step-image {
+            width: 100%;
+            max-width: 800px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .step-image:hover {
+            transform: scale(1.02);
+            border-color: var(--p-cork);
+        }
+
+        .step-description {
+            font-size: 1em;
+            color: var(--text-p);
+            margin-top: 15px;
+            line-height: 1.6;
+        }
+
+        .step-description strong {
+            color: var(--p-cork);
+        }
+
+        .footer {
+            background: var(--surface-light);
+            padding: 30px 20px;
+            text-align: center;
+            color: var(--text-s);
+            border-top: 1px solid var(--border);
+        }
+
+        .footer p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.6em; }
+            .content { padding: 20px 15px; }
+            .step { padding-left: 15px; }
+            .step:hover { padding-left: 20px; }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 95%;
+            max-height: 90vh;
+            padding-top: 20px;
+            animation: zoomIn 0.3s ease;
+            object-fit: contain;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            color: var(--p-cork);
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--surface-light);
+            border-radius: 3px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--p-cork);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="icons/logo-header.png" alt="Logo Chamorro´s Cork Manager">
+            <h1>📋 Manual de Importación de Zonas</h1>
+            <p>Sincronización de Datos Catastrales del SIGPAC</p>
+        </div>
+
+        <div class="content">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <!-- PASO 1 -->
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-title">Ve al SIGPAC y Selecciona Catastro</div>
+                <img src="Importación de Zonas\1. Ve al Sigpac y Selecciona Catastro.jpg"
+                     alt="Paso 1" class="step-image" onclick="openModal(this.src)">
+                <div class="step-description">
+                    <strong>Paso 1:</strong> Accede a la plataforma SIGPAC y selecciona la opción de Catastro para comenzar el proceso de obtención de datos técnicos.
+                </div>
+            </div>
+
+            <!-- PASO 2 -->
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-title">Haz Clic en Parcela</div>
+                <img src="Importación de Zonas\2. Clic en Parcela.jpg"
+                     alt="Paso 2" class="step-image" onclick="openModal(this.src)">
+                <div class="step-description">
+                    <strong>Paso 2:</strong> Selecciona la parcela exacta. El sistema desplegará la ficha con todos los datos descriptivos del inmueble.
+                </div>
+            </div>
+
+            <!-- PASO 3 -->
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-title">Selecciona "Imprimir Datos"</div>
+                <img src="Importación de Zonas\3. Tras abrirse la pagína de castastro, slecciona en Imprimir Datos.jpg"
+                     alt="Paso 3" class="step-image" onclick="openModal(this.src)">
+                <div class="step-description">
+                    <strong>Paso 3:</strong> Busca el icono de impresora o "Imprimir Datos" para generar el documento oficial en formato PDF.
+                </div>
+            </div>
+
+            <!-- PASO 4 -->
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-title">Copia el Nombre del Polígono y Parcela</div>
+                <img src="Importación de Zonas\4, Copia El nombre Pologono y Parcela.jpg"
+                     alt="Paso 4" class="step-image" onclick="openModal(this.src)">
+                <div class="step-description">
+                    <strong>Paso 4:</strong> Identifica el polígono y la parcela. Estos datos son cruciales para el reconocimiento automático de la aplicación.
+                </div>
+            </div>
+
+            <!-- PASO 5 -->
+            <div class="step">
+                <div class="step-number">5</div>
+                <div class="step-title">Guardar PDF</div>
+                <img src="Importación de Zonas\5, Guardar PDF.jpg"
+                     alt="Paso 5" class="step-image" onclick="openModal(this.src)">
+                <div class="step-description">
+                    <strong>Paso 5:</strong> Elige la opción de guardar como PDF. Asegúrate de que el documento incluya el croquis y la tabla de cultivos.
+                </div>
+            </div>
+
+            <!-- PASO 6 -->
+            <div class="step">
+                <div class="step-number">6</div>
+                <div class="step-title">Guarda el PDF con el Nombre Correcto</div>
+                <img src="Importación de Zonas\6, Garda Indicando el nombre copiado.jpg"
+                     alt="Paso 6" class="step-image" onclick="openModal(this.src)">
+                <div class="step-description">
+                    <strong>Paso 6:</strong> Guarda el archivo localmente. La aplicación leerá el contenido textual para extraer la Referencia Catastral automáticamente.
+                </div>
+            </div>
+
+            <!-- PASO 7 -->
+            <div class="step">
+                <div class="step-number">7</div>
+                <div class="step-title">Abre la App y Ve a Zonas</div>
+                <img src="Importación de Zonas\7. Abre la app y ve a zonas.jpg"
+                     alt="Paso 7" class="step-image" onclick="openModal(this.src)">
+                <div class="step-description">
+                    <strong>Paso 7:</strong> Dentro de la aplicación, navega al menú inferior y pulsa en el icono de mapa "Zonas".
+                </div>
+            </div>
+
+            <!-- PASO 8 -->
+            <div class="step">
+                <div class="step-number">8</div>
+                <div class="step-title">Haz Clic en "Importar PDF"</div>
+                <img src="Importación de Zonas\8. Haz clic en cargar archivos.jpg"
+                     alt="Paso 8" class="step-image" onclick="openModal(this.src)">
+                <div class="step-description">
+                    <strong>Paso 8:</strong> Usa el botón de importación. Puedes seleccionar varios archivos PDF a la vez para cargarlos en bloque.
+                </div>
+            </div>
+
+            <!-- PASO 9 -->
+            <div class="step">
+                <div class="step-number">9</div>
+                <div class="step-title">Selecciona el PDF y Acepta</div>
+                <img src="Importación de Zonas\9. Selecciona el PDF generado y aceptar.jpg"
+                     alt="Paso 9" class="step-image" onclick="openModal(this.src)">
+                <div class="step-description">
+                    <strong>Paso 9:</strong> Elige el archivo desde tu gestor de archivos. La app procesará la superficie y la localización al instante.
+                </div>
+            </div>
+
+            <!-- PASO 10 -->
+            <div class="step">
+                <div class="step-number">10</div>
+                <div class="step-title">Confirma y Guarda la Zona</div>
+                <img src="Importación de Zonas\10. Introduce un nombre para la zona y luego Guardar.jpg"
+                     alt="Paso 10" class="step-image" onclick="openModal(this.src)">
+                <div class="step-description">
+                    <strong>Paso 10:</strong> Verifica que los datos son correctos, introduce un nombre familiar y guarda. La tabla de subparcelas se generará automáticamente.
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Chamorro´s Cork Manager</strong> - Guía de Usuario Profesional</p>
+            <p>© 2024 David Asuar. Todos los derechos reservados.</p>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="imageModal" class="modal" onclick="closeModal(event)">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <script>
+        function openModal(src) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.style.display = 'flex';
+            modalImg.src = src;
+        }
+
+        function closeModal(event) {
+            const modal = document.getElementById('imageModal');
+            if (event && event.target.className === 'modal-content') return;
+            modal.style.display = 'none';
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            document.getElementById('progressFill').style.width = scrollPercent + '%';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+# Dependency directories
+node_modules/
+
+# Build outputs
+build/
+android/app/build/
+android/build/
+android/.gradle/
+.gradle/
+
+# IDE settings
+.idea/
+*.iml
+.vscode/
+
+# Local configuration
+android/local.properties
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Private/Temporary files
+_PRIVATE_/
+prompt-chamorro.md
+Captura de pantalla*.jpg
+BACKUP/
+*.json.bak

@@ -1,0 +1,9 @@
+{
+  "appId": "com.elchamorro.pesadascorcho",
+  "appName": "Chamorro's Cork Manager",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}
