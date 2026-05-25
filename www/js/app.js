@@ -1009,7 +1009,7 @@ const App = {
             <div class="card text-center" style="border-top: 2px solid var(--p-cork);">
                 <img src="icons/logo-header.png" style="width:120px; margin-bottom:15px; filter: drop-shadow(0 0 5px rgba(212, 163, 115, 0.3));">
                 <h3>Acerca de</h3>
-                <p style="font-size:0.9rem;"><strong>Chamorro´s Cork Manager</strong> v5.9.1</p>
+                <p style="font-size:0.9rem;"><strong>Chamorro´s Cork Manager</strong> v5.9.3</p>
                 <p class="text-muted" style="font-size:0.8rem; margin-top:10px;">
                     Desarrollado para la gestión profesional de sacas de corcho.<br>
                     © 2024 David Asuar. Todos los derechos reservados.<br>
