@@ -1,0 +1,20 @@
+{
+    "name": "chamorros-cork-manager",
+    "version": "5.9.3",
+    "private": true,
+    "description": "PWA para la gestión de pesadas de corcho.",
+    "scripts": {
+        "cap:add": "npx cap add android",
+        "cap:sync": "npx cap sync android",
+        "cap:open": "npx cap open android"
+    },
+    "devDependencies": {
+        "@capacitor/android": "^5.0.0",
+        "@capacitor/cli": "^8.3.4",
+        "@capacitor/core": "^5.0.0"
+    },
+    "dependencies": {
+        "@capacitor/filesystem": "^5.2.2",
+        "@capacitor/share": "^5.0.8"
+    }
+}

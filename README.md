@@ -1,4 +1,4 @@
-<h1 align="center">Chamorro's Cork Manager</h1>
+<h1 align="center">Chamorro's Cork Manager v5.9.3</h1>
 
 <p align="center">
   <img src="MANUAL/README/Logo%20cabecera.png" width="400" alt="Logo Cabecera">
