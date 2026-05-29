@@ -43,7 +43,8 @@ Sistema de pesadas con trazabilidad completa. Permite el seguimiento exhaustivo 
 Soporte completo para múltiples explotaciones. La aplicación permite crear, editar y gestionar varias fincas independientes con sus propios parámetros técnicos, precios y calendarios de siega. Incluye importación/exportación de datos por finca y sincronización automática de referencias catastrales desde carpetas locales.
 
 <p align="center">
-  <img src="MANUAL/README/Pantalla%20Gestión%20de%20Zonas.jpg" width="250" alt="Gestor de Fincas">
+  <img src="MANUAL/README/Pantalla%20Gestión%20de%20Zonas.jpg" width="250" alt="Gestión de Zonas">
+  <img src="MANUAL/README/Gestión%20Multi-Finca%20Integrada.jpg" width="250" alt="Gestor de Fincas">
 </p>
 
 #### Inteligencia de Negocio e Informes
