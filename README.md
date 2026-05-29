@@ -101,6 +101,13 @@ Personalización corporativa de la explotación (Titularidad, Identificación Fi
 
 ### Licencia y Propiedad
 
-Este software es de uso exclusivo familiar y privado. Todos los derechos reservados © 2024 David Asuar.
+Este software es de uso exclusivo familiar y privado. Todos los derechos reservados por @ Sdog Farm Software Factory.
 
 *Innovación y digitalización para el sector corchero.*
+
+---
+
+### Contacto y Soporte
+
+Para asistencia técnica o consultas sobre la plataforma, contacte con nuestro equipo de soporte:
+📧 [soporte.sdogfarm@gmail.com](mailto:soporte.sdogfarm@gmail.com)
