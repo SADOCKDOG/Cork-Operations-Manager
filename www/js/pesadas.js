@@ -13,7 +13,7 @@ const Pesadas = {
     async save(data) {
         const fincaId = await Fincas.getActiveId();
         if (!fincaId) throw new Error("No hay una finca activa seleccionada.");
-
+        
         const finca = await Fincas.get(fincaId);
         const listPesadas = await this.list();
         const esEdicion = data.id !== undefined && data.id !== null;

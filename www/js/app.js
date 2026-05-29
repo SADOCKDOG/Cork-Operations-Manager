@@ -1,5 +1,5 @@
 /**
- * App.js - Router y Orquestador (Version 5.9 - Ajustes Completos y Ficha de Zona SIGPAC)
+ * App.js - Router y Orquestador (Version 5.9.3 - Multi-finca, Ediciones, Sincronización)
  */
 
 const App = {
@@ -17,7 +17,7 @@ const App = {
 
     async init() {
         try {
-            console.log("App: Iniciando v5.9...");
+            console.log("App: Iniciando v5.9.3...");
             window.addEventListener('hashchange', () => App.route());
             window.addEventListener('fincaChanged', () => {
                 App.updateHeader().then(() => App.route());
@@ -949,15 +949,27 @@ const App = {
         const activeFinca = await Fincas.getActive();
         if (!activeFinca) return App.renderFincasManager();
 
+        // Asegurarse de que el objeto comprador y sus propiedades existan
+        const comprador = activeFinca.comprador || {};
+
         main.innerHTML = `
             <div class="card">
                 <h3>Ajustes de ${activeFinca.nombre}</h3>
-                <div class="form-group"><label>Propietario</label><input type="text" id="adj-prop" value="${activeFinca.propietario || ''}"></div>
-                <div class="form-group"><label>Dirección</label><input type="text" id="adj-dir" value="${activeFinca.direccion || ''}"></div>
-                <div class="grid-2">
-                    <div class="form-group"><label>CIF/NIF</label><input type="text" id="adj-cif" value="${activeFinca.cif || ''}"></div>
-                    <div class="form-group"><label>Teléfono</label><input type="tel" id="adj-tel" value="${activeFinca.telefono || ''}"></div>
+                
+                <div class="card">
+                    <h4>Datos Comprador</h4>
+                    <div class="form-group"><label>Nombre de la Empresa</label><input type="text" id="adj-empresa" value="${comprador.nombreEmpresa || ''}"></div>
+                    <div class="grid-2">
+                        <div class="form-group"><label>CIF/NIF</label><input type="text" id="adj-cif" value="${comprador.cifNif || ''}"></div>
+                        <div class="form-group"><label>Representante</label><input type="text" id="adj-representante" value="${comprador.representante || ''}"></div>
+                    </div>
+                    <div class="form-group"><label>Dirección</label><input type="text" id="adj-direccion" value="${comprador.direccion || ''}"></div>
+                    <div class="grid-2">
+                        <div class="form-group"><label>Nº de Teléfono</label><input type="tel" id="adj-telefono" value="${comprador.telefono || ''}"></div>
+                        <div class="form-group"><label>Correo Electrónico</label><input type="email" id="adj-email" value="${comprador.email || ''}"></div>
+                    </div>
                 </div>
+
                 <div class="form-group">
                     <label>Unidad de Medida</label>
                     <select id="adj-uni" onchange="App._onUnitChange(this.value)">
@@ -1056,10 +1068,14 @@ const App = {
         const finca = await Fincas.getActive();
         if (!finca) return;
 
-        finca.propietario = document.getElementById('adj-prop').value.trim();
-        finca.direccion = document.getElementById('adj-dir').value.trim();
-        finca.cif = document.getElementById('adj-cif').value.trim();
-        finca.telefono = document.getElementById('adj-tel').value.trim();
+        finca.comprador = {
+            nombreEmpresa: document.getElementById('adj-empresa').value.trim(),
+            cifNif: document.getElementById('adj-cif').value.trim(),
+            representante: document.getElementById('adj-representante').value.trim(),
+            direccion: document.getElementById('adj-direccion').value.trim(),
+            telefono: document.getElementById('adj-telefono').value.trim(),
+            email: document.getElementById('adj-email').value.trim()
+        };
 
         const unit = document.getElementById('adj-uni').value;
         finca.unidadMedida = unit;
@@ -1100,6 +1116,19 @@ const App = {
         temp.innerHTML = contenidoHtml;
         temp.querySelectorAll('button, select').forEach(el => el.remove());
 
+        const comprador = finca.comprador || {};
+        const compradorHtml = `
+            <div style="text-align: left; margin-top: 15px; padding-top: 10px; border-top: 1px solid #ccc;">
+                <h3 style="color: #a0673a; margin-bottom: 10px;">Datos del Comprador</h3>
+                <p style="margin: 2px;"><strong>Empresa:</strong> ${comprador.nombreEmpresa || ''}</p>
+                <p style="margin: 2px;"><strong>CIF/NIF:</strong> ${comprador.cifNif || ''}</p>
+                <p style="margin: 2px;"><strong>Representante:</strong> ${comprador.representante || ''}</p>
+                <p style="margin: 2px;"><strong>Dirección:</strong> ${comprador.direccion || ''}</p>
+                <p style="margin: 2px;"><strong>Teléfono:</strong> ${comprador.telefono || ''}</p>
+                <p style="margin: 2px;"><strong>Email:</strong> ${comprador.email || ''}</p>
+            </div>
+        `;
+
         const plantilla = `
             <div class="pdf-export-container" style="font-family: Arial, sans-serif; padding: 10mm; background: #fff; color: #000;">
                 <div style="text-align: center; margin-bottom: 20px;">
@@ -1109,6 +1138,7 @@ const App = {
                     <h2 style="margin-top: 15px; border-top: 2pt solid #a0673a; padding-top: 10px;">${titulo}</h2>
                     <p style="font-size: 8pt; color: #666;">Impreso: ${ahora}</p>
                 </div>
+                ${(tipo === 'economico' || tipo === 'calidad') ? compradorHtml : ''}
                 <div class="pdf-content" style="color:#000; font-weight: bold;">
                     ${temp.innerHTML}
                 </div>

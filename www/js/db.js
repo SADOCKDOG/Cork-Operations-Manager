@@ -35,7 +35,7 @@ async function initDB() {
                 if (!db.objectStoreNames.contains('fincas')) {
                     db.createObjectStore('fincas', { keyPath: 'id', autoIncrement: true });
                 }
-
+                
                 // Añadir índice fincaId a zonas y pesadas
                 const zoneStore = transaction.objectStore('zonas');
                 if (!zoneStore.indexNames.contains('fincaId')) {
@@ -59,7 +59,7 @@ async function initDB() {
             }
         },
     });
-
+    
     await migrateToMultiFinca(database);
     await maybeLoadInitialData(database);
     return database;
@@ -142,7 +142,7 @@ async function migrateToMultiFinca(database) {
     }
 
     console.log("[Migration] Migrando datos de versión anterior a arquitectura multi-finca...");
-
+    
     const precios = await database.get('precios', 'precios') || { calidades: { primera: { precioQuintal: 80 }, bornizo: { precioQuintal: 45 }, refugo: { precioQuintal: 25 } } };
 
     // 1. Crear finca por defecto basada en configuración antigua

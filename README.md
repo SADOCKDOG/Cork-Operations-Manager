@@ -33,10 +33,17 @@ Administración detallada de parcelas mediante la integración de datos oficiale
 </p>
 
 #### Registro de Operaciones
-Sistema de pesadas con trazabilidad completa. Permite el seguimiento exhaustivo de cada saca, incluyendo edición histórica, control por zona de explotación y auditoría de calidad.
+Sistema de pesadas con trazabilidad completa. Permite el seguimiento exhaustivo de cada saca, incluyendo **edición histórica**, **eliminación de registros**, control por zona de explotación y auditoría de calidad.
 
 <p align="center">
   <img src="MANUAL/README/Pantalla%20De%20Lista%20de%20pesadas.jpg" width="250" alt="Lista de Pesadas">
+</p>
+
+#### Gestión Multi-Finca Integrada
+Soporte completo para múltiples explotaciones. La aplicación permite crear, editar y gestionar varias fincas independientes con sus propios parámetros técnicos, precios y calendarios de siega. Incluye importación/exportación de datos por finca y sincronización automática de referencias catastrales desde carpetas locales.
+
+<p align="center">
+  <img src="MANUAL/README/Pantalla%20Gestión%20de%20Zonas.jpg" width="250" alt="Gestor de Fincas">
 </p>
 
 #### Inteligencia de Negocio e Informes
@@ -51,8 +58,12 @@ Generación automatizada de documentación profesional exportable a formato PDF:
   <img src="MANUAL/README/Pantalla%20Informes%20por%20Calidad.jpg" width="250" alt="Informe Calidad">
 </p>
 
+#### Edición y Mantenimiento de Datos
+**Zonas SIGPAC:** Edición completa de referencias catastrales, superficies, cultivos y fechas de descorche con captura automática de croquis gráficos.
+**Pesadas:** Modificación posterior de registros históricos con trazabilidad de cambios. Actualización automática de quintales y cálculos derivados.
+
 #### Seguridad y Configuración Avanzada
-Personalización corporativa de la explotación (Titularidad, Identificación Fiscal, Tarifas). Incluye sistemas robustos de respaldo de datos (Backup) y protocolos de importación/exportación multi-finca.
+Personalización corporativa de la explotación (Titularidad, Identificación Fiscal, Tarifas). Incluye sistemas robustos de respaldo de datos (Backup) y protocolos de importación/exportación multi-finca. **Sincronización automática** de nuevas zonas desde carpetas de importación.
 
 <p align="center">
   <img src="MANUAL/README/Ajustes%20Datos%20de%20la%20saca.jpg" width="250" alt="Ajustes">
@@ -64,10 +75,26 @@ Personalización corporativa de la explotación (Titularidad, Identificación Fi
 ### Especificaciones Técnicas
 
 *   **Arquitectura:** Capacitor para despliegue multiplataforma nativo.
-*   **Motor de Datos:** IndexedDB para persistencia de alta velocidad sin conexión.
+*   **Motor de Datos:** IndexedDB v6 para persistencia de alta velocidad sin conexión.
 *   **Interfaz de Usuario:** Deep Dark UI optimizada para paneles OLED.
 *   **Procesamiento:** Lógica de negocio en JavaScript (ES6+).
 *   **Exportación:** Motor html2pdf.js para documentos técnicos de alta fidelidad.
+*   **Operación Offline:** Service Worker integrado con sincronización automática de cambios.
+*   **Versión:** 5.9.3 (Multi-finca, ediciones completas, sincronización automática)
+
+---
+
+### Notas de Versión (v5.9.3)
+
+**Características principales:**
+- ✅ Gestión multi-finca avanzada
+- ✅ Edición completa de pesadas y zonas
+- ✅ Sincronización automática de datos
+- ✅ PWA con funcionamiento offline total
+- ✅ Importación inteligente de PDFs SIGPAC
+- ✅ Informes económicos con mermas configurables
+
+**Compatibilidad:** Restaura automáticamente datos de versiones v3.x, v4.x y v5.x
 
 ---
 
