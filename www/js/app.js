@@ -1058,13 +1058,13 @@ const App = {
                 <p style="font-size:0.9rem;"><strong>Chamorro´s Cork Manager</strong> v5.9.3</p>
                 <p class="text-muted" style="font-size:0.8rem; margin-top:10px;">
                     Desarrollado para la gestión profesional de sacas de corcho.<br>
-                    © 2024 David Asuar. Todos los derechos reservados.<br>
+                    © 2024 Sdog Farm Software Factory. Todos los derechos reservados.<br>
                     Licencia: Uso Exclusivo Familiar.
                 </p>
                 <hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
                 <p style="font-size:0.8rem;">
                     <strong>Contacto y Soporte:</strong><br>
-                    📧 david.asuar@gmail.com
+                    📧 soporte.sdogfarm@gmail.com
                 </p>
             </div>
         `;
@@ -1176,7 +1176,7 @@ const App = {
                 <div class="pdf-content" style="color:#000; font-weight: bold;">
                     ${temp.innerHTML}
                 </div>
-                <div style="margin-top: 20px; border-top: 1pt solid #eee; text-align: center; font-size: 7pt; color: #999;">Chamorro´s Cork Manager - David Asuar</div>
+                <div style="margin-top: 20px; border-top: 1pt solid #eee; text-align: center; font-size: 7pt; color: #999;">Chamorro´s Cork Manager - Sdog Farm Software Factory</div>
             </div>
             <style>
                 .pdf-export-container * { background-color: #fff !important; color: #000 !important; border-color: #ccc !important; }
