@@ -14,6 +14,7 @@ const Export = {
 
             const exportData = {
                 version: '5.1.0',
+                type: fincasToExport.length > 1 ? 'multi' : 'single',
                 exportedAt: new Date().toISOString(),
                 fincas: []
             };
@@ -57,58 +58,21 @@ const Export = {
     async parseBackupFile(file) {
         try {
             const content = await file.text();
-            const importData = JSON.parse(content);
-            let fincaInfo = null;
-
-            // Caso 1: Backup antiguo (v3.x o v4.x)
-            if (importData.data && !importData.fincas) {
-                const d = importData.data;
-                fincaInfo = {
-                    nombre: d.config?.nombreFinca || "",
-                    propietario: d.config?.propietario || "",
-                    direccion: d.config?.direccion || "",
-                    cif: d.config?.cif || "",
-                    telefono: d.config?.telefono || "",
-                    factorQuintal: d.config?.factorQuintal || 46,
-                    porcentajeOreo: d.config?.porcentajeOreo || 0,
-                    unidadMedida: d.config?.unidadMedida || 'quintal_castellano',
-                    precios: d.precios?.calidades || {
-                        primera: { precioQuintal: 80 },
-                        bornizo: { precioQuintal: 45 },
-                        refugo: { precioQuintal: 25 }
-                    },
-                    ultimaSaca: d.config?.ultimaSaca || 0,
-                    zonas: d.zonas || [],
-                    pesadas: d.pesadas || []
-                };
-            }
-            // Caso 2: Backup nuevo (v5.0+) - Tomamos la primera finca del backup para simplificar el wizard
-            else if (importData.fincas && importData.fincas.length > 0) {
-                const item = importData.fincas[0];
-                fincaInfo = {
-                    ...item.info,
-                    zonas: item.zonas || [],
-                    pesadas: item.pesadas || []
-                };
-                delete fincaInfo.id;
-            }
-
-            return fincaInfo;
+            return JSON.parse(content);
         } catch (error) {
             console.error(error);
-            throw new Error("El archivo no es un backup válido");
+            throw new Error("El archivo no es un backup válido o está dañado.");
         }
     },
 
-    async saveImportedFinca(data) {
+    async saveImportedFincaData(fincaData) {
         try {
-            const zones = data.zonas;
-            const weighings = data.pesadas;
+            const zones = fincaData.zonas;
+            const weighings = fincaData.pesadas;
 
             // Limpiar datos de soporte para el objeto Finca
-            const fincaToSave = { ...data };
-            delete fincaToSave.zonas;
-            delete fincaToSave.pesadas;
+            const fincaToSave = { ...fincaData.info };
+            delete fincaToSave.id; // Nos aseguramos de que se cree un ID nuevo
 
             const fincaId = await Fincas.save(fincaToSave);
 
@@ -132,8 +96,8 @@ const Export = {
 
             return fincaId;
         } catch (error) {
-            console.error(error);
-            throw new Error("Error al guardar los datos importados");
+            console.error("Error al guardar los datos importados para la finca:", fincaData.info.nombre, error);
+            throw new Error(`Error al guardar la finca ${fincaData.info.nombre}`);
         }
     },
 

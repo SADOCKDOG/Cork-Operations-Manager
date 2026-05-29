@@ -788,36 +788,65 @@ const App = {
 
     async _handleImportFile(file) {
         try {
-            const fincaInfo = await Export.parseBackupFile(file);
-            await App.renderImportWizard(fincaInfo);
+            App.toast('Procesando archivo...');
+            const importData = await Export.parseBackupFile(file);
+
+            if (!importData || !importData.fincas || importData.fincas.length === 0) {
+                throw new Error("El archivo de backup no contiene fincas válidas.");
+            }
+
+            const allFincas = await Fincas.list();
+            const fincasToImport = importData.fincas;
+            const existingFincas = [];
+
+            for (const fincaToImport of fincasToImport) {
+                const existing = allFincas.find(f => f.nombre === fincaToImport.info.nombre);
+                if (existing) {
+                    existingFincas.push({ ...fincaToImport, existingId: existing.id });
+                }
+            }
+
+            let importConfirmed = true;
+            if (existingFincas.length > 0) {
+                const fincaNames = existingFincas.map(f => f.info.nombre).join(', ');
+                const message = `La(s) finca(s) "${fincaNames}" ya existe(n). ¿Desea sobreescribirla(s)? Esta acción es irreversible.`;
+                importConfirmed = confirm(message);
+            }
+
+            if (!importConfirmed) {
+                App.toast("Importación cancelada por el usuario.");
+                return;
+            }
+
+            // Eliminar fincas existentes si se confirma la sobreescritura
+            for (const fincaToDelete of existingFincas) {
+                await Fincas.delete(fincaToDelete.existingId);
+            }
+
+            // Importar todas las fincas del backup
+            let newActiveFincaId = null;
+            for (const fincaData of fincasToImport) {
+                const newId = await Export.saveImportedFincaData(fincaData);
+                if (!newActiveFincaId) {
+                    newActiveFincaId = newId;
+                }
+            }
+
+            App.toast(`✅ ${fincasToImport.length} finca(s) importada(s) con éxito.`);
+            
+            // Si es la primera importación o se sobreescribió la activa, se establece una nueva y se recarga
+            const currentActiveId = await Fincas.getActiveId();
+            if (!currentActiveId && newActiveFincaId) {
+                await Fincas.setActiveId(newActiveFincaId);
+            }
+            
+            // Recargar la app para reflejar los cambios
+            setTimeout(() => window.location.reload(), 1000);
+
         } catch (e) {
             App.toastError(e.message);
+            console.error(e);
         }
-    },
-
-    async renderImportWizard(data) {
-        const main = document.getElementById('app-content');
-        main.innerHTML = `
-            <div class="card">
-                <h3>Finalizar Importación</h3>
-                <div class="form-group"><label>Nombre Finca *</label><input type="text" id="imp-nom" value="${data.nombre || ''}"></div>
-                <div class="form-group"><label>Propietario *</label><input type="text" id="imp-prop" value="${data.propietario || ''}"></div>
-                <button class="btn btn-primary mt-1" id="btn-confirm-import">Confirmar e Importar</button>
-            </div>
-        `;
-
-        document.getElementById('btn-confirm-import').onclick = async () => {
-            const nom = document.getElementById('imp-nom').value.trim();
-            if (!nom) return App.toastError("El nombre es obligatorio");
-            data.nombre = nom;
-            data.propietario = document.getElementById('imp-prop').value.trim();
-            try {
-                const newId = await Export.saveImportedFinca(data);
-                App.toast("✅ Importación completada");
-                await Fincas.setActiveId(newId);
-                setTimeout(() => location.reload(), 1000);
-            } catch (e) { App.toastError(e.message); }
-        };
     },
 
     async _deleteFinca(id, nombre) {
@@ -880,7 +909,7 @@ const App = {
 
                     <div class="form-actions mt-1">
                         <button type="submit" class="btn btn-primary">💾 Guardar Finca</button>
-                        <button type="button" class="btn btn-outline" onclick="location.hash='/fincas'">Cancelar</button>
+                        <button type="button" class="btn btn-outline" onclick="App.renderFincasManager()">Cancelar</button>
                     </div>
                 </form>
             </div>
@@ -908,40 +937,45 @@ const App = {
     },
 
     async _saveFinca(id) {
-        const nombre = document.getElementById('f-nom').value.trim();
-        const propietario = document.getElementById('f-prop').value.trim();
+        try {
+            const nombre = document.getElementById('f-nom').value.trim();
+            const propietario = document.getElementById('f-prop').value.trim();
 
-        if (!nombre || !propietario) {
-            return App.toastError("Nombre y Propietario son obligatorios");
-        }
-
-        const unit = document.getElementById('f-uni').value;
-        let factor = 46;
-        if (unit === 'quintal_castellano') factor = 46;
-        else if (unit === 'quintal_metrico') factor = 100;
-        else if (unit === 'arroba') factor = 11.5;
-        else factor = parseFloat(document.getElementById('f-fac').value) || 46;
-
-        const finca = {
-            id: id ? Number(id) : undefined,
-            nombre: nombre,
-            propietario: propietario,
-            direccion: document.getElementById('f-dir').value.trim(),
-            cif: document.getElementById('f-cif').value.trim(),
-            telefono: document.getElementById('f-tel').value.trim(),
-            unidadMedida: unit,
-            factorQuintal: factor,
-            porcentajeOreo: parseFloat(document.getElementById('f-oreo').value) || 0,
-            precios: {
-                primera: { precioQuintal: parseFloat(document.getElementById('f-p1').value) || 0 },
-                bornizo: { precioQuintal: parseFloat(document.getElementById('f-pb').value) || 0 },
-                refugo: { precioQuintal: parseFloat(document.getElementById('f-pr').value) || 0 }
+            if (!nombre || !propietario) {
+                return App.toastError("Nombre y Propietario son obligatorios");
             }
-        };
 
-        await Fincas.save(finca);
-        App.toast("✅ Finca guardada");
-        await App.renderFincasManager();
+            const unit = document.getElementById('f-uni').value;
+            let factor = 46;
+            if (unit === 'quintal_castellano') factor = 46;
+            else if (unit === 'quintal_metrico') factor = 100;
+            else if (unit === 'arroba') factor = 11.5;
+            else factor = parseFloat(document.getElementById('f-fac').value) || 46;
+
+            const finca = {
+                id: id ? Number(id) : undefined,
+                nombre: nombre,
+                propietario: propietario,
+                direccion: document.getElementById('f-dir').value.trim(),
+                cif: document.getElementById('f-cif').value.trim(),
+                telefono: document.getElementById('f-tel').value.trim(),
+                unidadMedida: unit,
+                factorQuintal: factor,
+                porcentajeOreo: parseFloat(document.getElementById('f-oreo').value) || 0,
+                precios: {
+                    primera: { precioQuintal: parseFloat(document.getElementById('f-p1').value) || 0 },
+                    bornizo: { precioQuintal: parseFloat(document.getElementById('f-pb').value) || 0 },
+                    refugo: { precioQuintal: parseFloat(document.getElementById('f-pr').value) || 0 }
+                }
+            };
+
+            await Fincas.save(finca);
+            App.toast("✅ Finca guardada");
+            await App.renderFincasManager();
+        } catch (error) {
+            console.error("Error guardando finca:", error);
+            App.toastError("Error al guardar: " + error.message);
+        }
     },
 
     async renderAjustes() {

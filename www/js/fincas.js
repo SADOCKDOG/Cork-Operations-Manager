@@ -24,19 +24,26 @@ const Fincas = {
     },
 
     async save(data) {
-        const esEdicion = data.id !== undefined && data.id !== null;
+        // Un ID debe ser un valor no vacío. Una cadena vacía de un formulario no es un ID válido.
+        const esEdicion = data.id !== undefined && data.id !== null && data.id !== '';
+
         if (esEdicion) {
+            // Asegurarse de que el ID sea un número antes de hacer el put, como espera el object store.
+            data.id = Number(data.id);
             await db.put('fincas', data);
             return data.id;
         } else {
-            const id = await db.add('fincas', {
+            // Eliminar explícitamente el ID para asegurar que IndexedDB use autoIncrement.
+            delete data.id;
+            const newId = await db.add('fincas', {
                 ...data,
                 creadoEn: new Date().toISOString()
             });
+
             if (!(await this.getActiveId())) {
-                await this.setActiveId(id);
+                await this.setActiveId(newId);
             }
-            return id;
+            return newId;
         }
     },
 
