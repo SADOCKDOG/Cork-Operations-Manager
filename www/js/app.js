@@ -558,16 +558,70 @@ const App = {
     async renderReportesView() {
         const main = document.getElementById('app-content');
         main.innerHTML = `
-            <h1>📊 Informes</h1>
+            <h1>📊 Informes & Gráficos</h1>
             <div class="reportes-menu" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
                 <button class="btn-secondary" onclick="App.renderReporteGlobal()">🌍 Global</button>
                 <button class="btn-secondary" onclick="App.renderReporteEconomico()">💶 Económico</button>
                 <button class="btn-secondary" onclick="App.renderMenuZonasReport()">🌲 Por Zona</button>
                 <button class="btn-secondary" onclick="App.renderMenuCalidadesReport()">⭐ Por Calidad</button>
+                <button class="btn-secondary" onclick="App.renderGraficos()">📈 Gráficos</button>
             </div>
             <div id="cont-rep"></div>
         `;
         await App.renderReporteGlobal();
+    },
+
+    async renderGraficos() {
+        const cont = document.getElementById('cont-rep');
+        cont.innerHTML = `
+            <h3>Visualización de Datos</h3>
+            <div class="card">
+                <h4>Tendencia de Producción (Últimos 30 días)</h4>
+                <div style="position:relative; height:300px;">
+                    <canvas id="chart-trend"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <h4>Distribución por Calidad</h4>
+                <div style="position:relative; height:300px;">
+                    <canvas id="chart-quality"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <h4>Producción por Zona</h4>
+                <div style="position:relative; height:300px;">
+                    <canvas id="chart-zones"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <h4>Valor Económico por Calidad</h4>
+                <div style="position:relative; height:300px;">
+                    <canvas id="chart-economic"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <h4>Impacto de Merma (Bruto vs Neto)</h4>
+                <div style="position:relative; height:300px;">
+                    <canvas id="chart-merma"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <h4>Evolución de Sacas (Últimas 20)</h4>
+                <div style="position:relative; height:300px;">
+                    <canvas id="chart-sacas"></canvas>
+                </div>
+            </div>
+        `;
+
+        // Renderizar gráficos
+        setTimeout(async () => {
+            await Charts.renderTrendChart('chart-trend');
+            await Charts.renderQualityChart('chart-quality');
+            await Charts.renderZonesChart('chart-zones');
+            await Charts.renderEconomicChart('chart-economic');
+            await Charts.renderMermaChart('chart-merma');
+            await Charts.renderSacasChart('chart-sacas');
+        }, 100);
     },
 
     async renderReporteGlobal() {
@@ -575,7 +629,10 @@ const App = {
         let h = `
             <div class="reporte-container">
                 <h3>Global de Campaña</h3>
-                <button class="btn btn-outline mb-1" onclick="App.exportarPDF('global')">📄 PDF Global</button>
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <button class="btn btn-outline mb-1" onclick="App.exportarPDF('global')">📄 PDF</button>
+                    <button class="btn btn-outline mb-1" onclick="Export.exportGlobalToExcel()">📊 Excel</button>
+                </div>
                 <div class="card" style="background:var(--surface-light);">
                     <h4>Resumen por Calidad (Quintales)</h4>
                     <table class="reporte-table">
@@ -618,7 +675,10 @@ const App = {
             <div class="reporte-container">
                 <h3>Informe Económico Global</h3>
                 <p class="text-muted"><small>Merma por Oreo aplicada: ${r.oreo}%</small></p>
-                <button class="btn btn-outline mb-1" onclick="App.exportarPDF('economico')">📄 PDF Económico</button>
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <button class="btn btn-outline mb-1" onclick="App.exportarPDF('economico')">📄 PDF</button>
+                    <button class="btn btn-outline mb-1" onclick="Export.exportEconomicoToExcel()">📊 Excel</button>
+                </div>
                 <table class="reporte-table">
                     <thead><tr><th>Calidad</th><th>Q. Bruto</th><th>Merma</th><th>Q. Neto</th><th>Total</th></tr></thead>
                     <tbody>
@@ -1034,6 +1094,20 @@ const App = {
             </div>
 
             <div class="card">
+                <h3>💹 Precios de Mercado</h3>
+                <p class="text-muted small">Precios actuales del corcho según mercado (con caché local).</p>
+                <button class="btn btn-secondary mb-1" onclick="App._refreshMarketPrices()">🔄 Actualizar Precios</button>
+                <div id="market-prices-display"></div>
+            </div>
+
+            <div class="card">
+                <h3>☁️ Sincronización Cloud</h3>
+                <p class="text-muted small">Sincroniza tus datos con un servidor remoto (requiere backend configurado).</p>
+                <div id="cloud-sync-status"></div>
+                <button class="btn btn-secondary mb-1" onclick="App._refreshCloudStatus()">🔄 Actualizar Estado</button>
+            </div>
+
+            <div class="card">
                 <h3>Mantenimiento de Zonas</h3>
                 <p class="text-muted small">Escanea la carpeta local /ZONAS para importar o actualizar parcelas automáticamente.</p>
                 <button class="btn btn-secondary" onclick="App._syncZonasFromFolder()">🔄 Sincronizar Zonas (Carpeta ZONAS)</button>
@@ -1068,6 +1142,9 @@ const App = {
                 </p>
             </div>
         `;
+        
+        // Cargar precios de mercado de forma asincrónica
+        setTimeout(() => App._displayMarketPrices(), 500);
     },
 
     async _syncZonasFromFolder() {
@@ -1129,6 +1206,170 @@ const App = {
 
         await Fincas.save(finca);
         App.toast("✅ Ajustes guardados correctamente");
+    },
+
+    async _refreshMarketPrices() {
+        try {
+            App.toast("Actualizando precios de mercado...");
+            const precios = await Precios.forceUpdate();
+            await App._displayMarketPrices(precios);
+            App.toast("✅ Precios actualizados");
+        } catch (error) {
+            App.toastError("Error actualizando precios: " + error.message);
+            const precios = await Precios.getPrices();
+            await App._displayMarketPrices(precios);
+        }
+    },
+
+    async _displayMarketPrices(precios = null) {
+        const container = document.getElementById('market-prices-display');
+        if (!container) return;
+
+        if (!precios) {
+            precios = await Precios.getPrices();
+        }
+
+        const analisis = await Precios.getTrendAnalysis();
+
+        const icon = (tendencia) => {
+            if (tendencia === 'alcista') return '📈';
+            if (tendencia === 'bajista') return '📉';
+            return '➡️';
+        };
+
+        const color = (tendencia) => {
+            if (tendencia === 'alcista') return '#7fb069';
+            if (tendencia === 'bajista') return '#ff4d4d';
+            return '#d4a373';
+        };
+
+        let html = '<div class="grid-2" style="gap:10px;">';
+        
+        ['primera', 'bornizo', 'refugo'].forEach(cal => {
+            const keyMap = { primera: 'corcho_primera', bornizo: 'corcho_bornizo', refugo: 'corcho_refugo' };
+            const key = keyMap[cal];
+            const precio = precios[key];
+            const an = analisis ? analisis[cal] : null;
+
+            html += `
+                <div class="card" style="background: var(--surface-light); border-left: 4px solid ${color(precio.tendencia)};">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${cal === 'primera' ? '⭐ 1ª Calidad' : cal === 'bornizo' ? '🟡 Bornizo' : '🔴 Refugo'}</strong>
+                            <p style="margin: 5px 0; font-size: 1.4rem; font-weight: 900; color: var(--p-cork);">
+                                ${precio.precioBase}€<small>/Q</small>
+                            </p>
+                            <small class="text-muted">Var: ${precio.variacion > 0 ? '+' : ''}${precio.variacion}% ${icon(precio.tendencia)}</small>
+                        </div>
+                        <div style="text-align: right; font-size: 2rem;">
+                            ${icon(precio.tendencia)}
+                        </div>
+                    </div>
+                    ${an && an.prediccion ? `
+                        <hr style="margin: 8px 0; opacity: 0.3;">
+                        <small class="text-muted">Predicción: ${an.prediccion.valor}€ (${an.prediccion.confianza}% conf.)</small>
+                    ` : ''}
+                </div>
+            `;
+        });
+
+        html += '</div>';
+        html += `<small class="text-muted" style="display: block; margin-top: 10px;">
+                    ℹ️ Última actualización: ${precios.corcho_primera.ultimaActualizacion ? new Date(precios.corcho_primera.ultimaActualizacion).toLocaleString('es-ES') : 'desconocida'}
+                </small>`;
+
+        container.innerHTML = html;
+    },
+
+    async _refreshCloudStatus() {
+        const container = document.getElementById('cloud-sync-status');
+        if (!container) return;
+
+        const status = CloudSync.getStatus();
+        let html = '';
+
+        if (!status.connected) {
+            html = `
+                <div class="card" style="background: var(--surface-light); border-left: 4px solid #ff4d4d;">
+                    <p style="margin: 0; color: #ff4d4d;"><strong>❌ No configurado</strong></p>
+                    <small class="text-muted">Configura tus credenciales de cloud para sincronizar.</small>
+                    <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+                        <input type="text" id="cloud-backend-url" placeholder="URL del servidor" value="${status.backendUrl}" style="padding:8px; border: 1px solid var(--border); border-radius: 4px;">
+                        <input type="text" id="cloud-user-id" placeholder="ID de Usuario" style="padding:8px; border: 1px solid var(--border); border-radius: 4px;">
+                        <input type="password" id="cloud-api-key" placeholder="API Key" style="padding:8px; border: 1px solid var(--border); border-radius: 4px;">
+                        <button class="btn btn-primary" onclick="App._setupCloudSync()">🔗 Conectar a Cloud</button>
+                    </div>
+                </div>
+            `;
+        } else {
+            html = `
+                <div class="card" style="background: var(--surface-light); border-left: 4px solid #7fb069;">
+                    <p style="margin: 0; color: #7fb069;"><strong>✅ Conectado</strong></p>
+                    <small class="text-muted">
+                        Usuario: ${status.userId}<br>
+                        Servidor: ${status.backendUrl}<br>
+                        Última sync: ${status.lastSync ? new Date(status.lastSync).toLocaleString('es-ES') : 'Nunca'}
+                    </small>
+                    <div style="margin-top: 10px; display: flex; gap: 8px;">
+                        <button class="btn btn-secondary" onclick="App._syncCloudNow()">🔄 Sincronizar Ahora</button>
+                        <button class="btn btn-secondary" onclick="App._pullFromCloud()">📥 Descargar</button>
+                        <button class="btn btn-outline" style="color: #ff4d4d;" onclick="App._disconnectCloud()">❌ Desconectar</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        container.innerHTML = html;
+    },
+
+    async _setupCloudSync() {
+        const url = document.getElementById('cloud-backend-url')?.value;
+        const userId = document.getElementById('cloud-user-id')?.value;
+        const apiKey = document.getElementById('cloud-api-key')?.value;
+
+        if (!url || !userId || !apiKey) {
+            App.toastError("Por favor completa todos los campos");
+            return;
+        }
+
+        try {
+            App.toast("Conectando a cloud...");
+            await CloudSync.enableCloudSync(url, userId, apiKey);
+            App.toast("✅ Conectado a cloud correctamente");
+            await App._refreshCloudStatus();
+        } catch (error) {
+            App.toastError("Error: " + error.message);
+        }
+    },
+
+    async _syncCloudNow() {
+        try {
+            App.toast("Sincronizando...");
+            const result = await CloudSync.syncNow();
+            App.toast(`✅ Sincronizado: ${result.fincas} fincas, ${result.zonas} zonas, ${result.pesadas} pesadas`);
+            await App._refreshCloudStatus();
+        } catch (error) {
+            App.toastError("Error en sincronización: " + error.message);
+        }
+    },
+
+    async _pullFromCloud() {
+        try {
+            App.toast("Descargando datos...");
+            const result = await CloudSync.pullFromCloud();
+            App.toast(`✅ Descargado: ${result.fincas} fincas, ${result.zonas} zonas, ${result.pesadas} pesadas`);
+            await App._refreshCloudStatus();
+        } catch (error) {
+            App.toastError("Error descargando: " + error.message);
+        }
+    },
+
+    async _disconnectCloud() {
+        if (confirm("¿Desconectar de cloud? Se mantendrán los datos locales.")) {
+            await CloudSync.disableCloudSync();
+            App.toast("❌ Desconectado de cloud");
+            await App._refreshCloudStatus();
+        }
     },
 
     openManualZonas() {

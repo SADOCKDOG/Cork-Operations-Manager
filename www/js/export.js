@@ -130,6 +130,184 @@ const Export = {
         const arr = new Uint8Array(binStr.length);
         for (let i = 0; i < binStr.length; i++) arr[i] = binStr.charCodeAt(i);
         return new Blob([arr], { type });
+    },
+
+    /**
+     * Exportar reporte a Excel - Global de Campaña
+     */
+    async exportGlobalToExcel() {
+        try {
+            App.toast('Generando Excel Global...');
+            const finca = await Fincas.getActive();
+            const reporte = await Reportes.generarReporteGlobalCampaña();
+
+            const workbook = XLSX.utils.book_new();
+
+            // Hoja 1: Resumen por Calidad
+            const resumenData = [
+                ['Resumen por Calidad', '', ''],
+                ['Calidad', 'Quintales', 'Sacas'],
+                ['1ª Calidad', reporte.totalesGlobales.primera.quintales, reporte.totalesGlobales.primera.sacas],
+                ['Bornizo', reporte.totalesGlobales.bornizo.quintales, reporte.totalesGlobales.bornizo.sacas],
+                ['Refugo', reporte.totalesGlobales.refugo.quintales, reporte.totalesGlobales.refugo.sacas],
+                ['TOTAL', 
+                    reporte.totalesGlobales.primera.quintales + reporte.totalesGlobales.bornizo.quintales + reporte.totalesGlobales.refugo.quintales,
+                    reporte.totalesGlobales.primera.sacas + reporte.totalesGlobales.bornizo.sacas + reporte.totalesGlobales.refugo.sacas
+                ]
+            ];
+            const ws1 = XLSX.utils.aoa_to_sheet(resumenData);
+            XLSX.utils.book_append_sheet(workbook, ws1, 'Resumen');
+
+            // Hoja 2: Desglose por Zona
+            const zonasData = [['Zona', '1ª (kg)', 'Bornizo (kg)', 'Refugo (kg)']];
+            Object.values(reporte.reportePorZona).forEach(z => {
+                zonasData.push([
+                    z.nombre,
+                    Math.round(z.totales.primera.kg),
+                    Math.round(z.totales.bornizo.kg),
+                    Math.round(z.totales.refugo.kg)
+                ]);
+            });
+            const ws2 = XLSX.utils.aoa_to_sheet(zonasData);
+            XLSX.utils.book_append_sheet(workbook, ws2, 'Zonas');
+
+            // Hoja 3: Listado de Pesadas
+            const pesadas = await Pesadas.list();
+            const pesadasData = [['Fecha', 'Saca', 'Zona', 'KG', 'Quintales', 'Calidad', 'Cuadrilla']];
+            pesadas.forEach(p => {
+                let cal = '';
+                if ((p.pesadasPorCalidad?.primera?.kg || 0) > 0) cal = '1ª';
+                else if ((p.pesadasPorCalidad?.bornizo?.kg || 0) > 0) cal = 'Bornizo';
+                else cal = 'Refugo';
+
+                pesadasData.push([
+                    new Date(p.fecha).toLocaleDateString('es-ES'),
+                    p.saca || '',
+                    p.zonaId || '',
+                    p.kg.toFixed(2),
+                    p.quintales.toFixed(2),
+                    cal,
+                    p.cuadrilla || ''
+                ]);
+            });
+            const ws3 = XLSX.utils.aoa_to_sheet(pesadasData);
+            XLSX.utils.book_append_sheet(workbook, ws3, 'Pesadas');
+
+            const fileName = `Reporte_Global_${finca?.nombre || 'Finca'}_${new Date().toISOString().slice(0, 10)}.xlsx`;
+            XLSX.writeFile(workbook, fileName);
+            App.toast('✅ Excel exportado');
+        } catch (error) {
+            console.error(error);
+            App.toastError('Error al exportar Excel');
+        }
+    },
+
+    /**
+     * Exportar reporte económico a Excel
+     */
+    async exportEconomicoToExcel() {
+        try {
+            App.toast('Generando Excel Económico...');
+            const finca = await Fincas.getActive();
+            const reporte = await Reportes.generarReporteEconomicoGlobal();
+            if (!reporte) return;
+
+            const workbook = XLSX.utils.book_new();
+
+            // Hoja 1: Resumen Económico
+            const economicData = [
+                ['REPORTE ECONÓMICO', '', '', '', ''],
+                ['Finca:', finca?.nombre, '', '', ''],
+                ['Generado:', new Date().toLocaleDateString('es-ES'), '', '', ''],
+                ['Oreo (%):', finca?.porcentajeOreo || 0, '', '', ''],
+                ['', '', '', '', ''],
+                ['Calidad', 'Q. Bruto', 'Merma (Q)', 'Q. Neto', 'Valor (€)'],
+                ['1ª Calidad', reporte.totales.primera.bruto, reporte.totales.primera.merma, reporte.totales.primera.neto, reporte.totales.primera.valor],
+                ['Bornizo', reporte.totales.bornizo.bruto, reporte.totales.bornizo.merma, reporte.totales.bornizo.neto, reporte.totales.bornizo.valor],
+                ['Refugo', reporte.totales.refugo.bruto, reporte.totales.refugo.merma, reporte.totales.refugo.neto, reporte.totales.refugo.valor],
+                ['TOTAL', reporte.brutoTotal, (reporte.brutoTotal - reporte.netoTotal), reporte.netoTotal, reporte.valorTotal]
+            ];
+            const ws1 = XLSX.utils.aoa_to_sheet(economicData);
+            XLSX.utils.book_append_sheet(workbook, ws1, 'Económico');
+
+            // Hoja 2: Detalle por Zona
+            const zonasEconData = [
+                ['Zona', 'Sacas', 'Bruto', 'Neto', 'Valor (€)']
+            ];
+            Object.values(reporte.reportePorZona).forEach(z => {
+                zonasEconData.push([
+                    z.nombre,
+                    z.numPesadas || 0,
+                    z.totalQuintales?.toFixed(2) || 0,
+                    z.netoTotal?.toFixed(2) || 0,
+                    z.valorTotal?.toFixed(2) || 0
+                ]);
+            });
+            const ws2 = XLSX.utils.aoa_to_sheet(zonasEconData);
+            XLSX.utils.book_append_sheet(workbook, ws2, 'Zonas');
+
+            const fileName = `Reporte_Economico_${finca?.nombre || 'Finca'}_${new Date().toISOString().slice(0, 10)}.xlsx`;
+            XLSX.writeFile(workbook, fileName);
+            App.toast('✅ Excel económico exportado');
+        } catch (error) {
+            console.error(error);
+            App.toastError('Error al exportar Excel');
+        }
+    },
+
+    /**
+     * Exportar listado de zonas a Excel
+     */
+    async exportZonasToExcel() {
+        try {
+            App.toast('Generando Excel de Zonas...');
+            const finca = await Fincas.getActive();
+            const zonas = await Zonas.list();
+            const stats = await Zonas.getStats();
+
+            const workbook = XLSX.utils.book_new();
+
+            // Hoja 1: Resumen de Zonas
+            const zonasData = [
+                ['Zona', 'Ref. Catastral', 'Polígono', 'Parcela', 'Superficie (m²)', 'Pesadas', 'Total KG', 'Total Q']
+            ];
+            stats.forEach(z => {
+                zonasData.push([
+                    z.nombre || '',
+                    z.refCatastral || '',
+                    z.poligono || '',
+                    z.parcela || '',
+                    z.superficieGrafica || '',
+                    z.numPesadas || 0,
+                    Math.round(z.totalKg),
+                    z.totalQuintales.toFixed(2)
+                ]);
+            });
+            const ws1 = XLSX.utils.aoa_to_sheet(zonasData);
+            XLSX.utils.book_append_sheet(workbook, ws1, 'Zonas');
+
+            // Hoja 2: Detalles por Zona
+            for (const z of stats.slice(0, 5)) {  // Máximo 5 hojas para no saturar
+                const detailData = [
+                    [`Zona: ${z.nombre}`, '', '', ''],
+                    [`Ref. Catastral: ${z.refCatastral}`, '', '', ''],
+                    ['', '', '', ''],
+                    ['Calidad', 'KG', 'Quintales', 'Sacas'],
+                    ['1ª', Math.round(z.totalesPorCalidad.primera.kg), z.totalesPorCalidad.primera.quintales.toFixed(2), ''],
+                    ['Bornizo', Math.round(z.totalesPorCalidad.bornizo.kg), z.totalesPorCalidad.bornizo.quintales.toFixed(2), ''],
+                    ['Refugo', Math.round(z.totalesPorCalidad.refugo.kg), z.totalesPorCalidad.refugo.quintales.toFixed(2), '']
+                ];
+                const ws = XLSX.utils.aoa_to_sheet(detailData);
+                XLSX.utils.book_append_sheet(workbook, ws, z.nombre.slice(0, 31));
+            }
+
+            const fileName = `Zonas_${finca?.nombre || 'Finca'}_${new Date().toISOString().slice(0, 10)}.xlsx`;
+            XLSX.writeFile(workbook, fileName);
+            App.toast('✅ Excel de zonas exportado');
+        } catch (error) {
+            console.error(error);
+            App.toastError('Error al exportar Excel');
+        }
     }
 };
 window.Export = Export;

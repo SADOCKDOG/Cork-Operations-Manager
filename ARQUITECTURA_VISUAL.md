@@ -1,0 +1,412 @@
+# 🏗️ ARQUITECTURA Y VISUALIZACIONES
+
+## 1. FLUJO DE DATOS
+
+```
+┌─────────────────────────────────────────────────────┐
+│                    USUARIO (Mobile)                  │
+│                    (Navegador/Android)               │
+└────────────────────┬────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────┐
+│              app.js (Router & UI)                    │
+│  ├─ Renderiza vistas                               │
+│  ├─ Maneja eventos                                 │
+│  └─ Exporta PDFs/JSON                              │
+└────────┬──────────────┬──────────────┬──────────────┘
+         │              │              │
+         ▼              ▼              ▼
+    ┌────────────┐ ┌───────────┐ ┌────────────┐
+    │ pesadas.js │ │ zonas.js  │ │ fincas.js  │
+    │ (Negocio)  │ │ (Negocio) │ │ (Config)   │
+    └──────┬─────┘ └─────┬─────┘ └──────┬─────┘
+           │             │              │
+           └─────────────┬──────────────┘
+                         │
+                         ▼
+            ┌────────────────────────┐
+            │  db.js (Persistencia)  │
+            │                        │
+            │  ├─ IndexedDB v6      │
+            │  ├─ Stores           │
+            │  ├─ Indices          │
+            │  └─ Migrations       │
+            └────────────┬──────────┘
+                         │
+                         ▼
+            ┌────────────────────────┐
+            │  IndexedDB (Browser)   │
+            │                        │
+            │  ├─ pesadas           │
+            │  ├─ zonas             │
+            │  ├─ fincas            │
+            │  ├─ config            │
+            │  └─ precios           │
+            └────────────────────────┘
+```
+
+## 2. ARQUITECTURA MVC
+
+```
+MODEL LAYER
+├─ pesadas.js
+│  └─ list(), get(), save(), delete()
+├─ zonas.js
+│  └─ list(), get(), save(), delete(), getStats()
+├─ fincas.js
+│  └─ list(), get(), save(), getActive()
+├─ informes.js
+│  └─ getDailyData(), getQualityData()
+├─ reportes.js
+│  └─ generarReporte*()
+└─ export.js
+   └─ exportBackup(), parseBackupFile()
+
+VIEW LAYER
+├─ index.html
+│  ├─ Header + Logo
+│  ├─ Main content area
+│  ├─ Bottom navigation
+│  └─ Toast container
+├─ styles.css
+│  └─ Deep dark theme (#1a1a1a)
+└─ HTML templates (inline in app.js)
+
+CONTROLLER LAYER
+├─ app.js (Router)
+│  ├─ route() - routing logic
+│  ├─ renderXXX() - view methods
+│  └─ _eventHandlers() - events
+└─ Event listeners
+   ├─ Form submissions
+   ├─ Button clicks
+   └─ Navigation
+```
+
+## 3. FLUJO DE PESADA
+
+```
+START: Usuario accede /nueva
+
+        ↓
+  
+┌─────────────────────────────────┐
+│ renderFormPesada()              │
+│  ├─ Cargar zonas               │
+│  ├─ Obtener máxima saca        │
+│  └─ Mostrar formulario         │
+└─────────────────────────────────┘
+        
+        ↓
+
+┌─────────────────────────────────┐
+│ Usuario completa:               │
+│  ├─ Zona (requerido)            │
+│  ├─ Fecha (hoy por defecto)     │
+│  ├─ Nº Saca (auto-increment)    │
+│  ├─ Peso Bruto (kg)             │
+│  ├─ Tara (kg)                   │
+│  ├─ Calidad (1ª/Bornizo/Refugo)│
+│  └─ Notas (opcional)            │
+└─────────────────────────────────┘
+        
+        ↓
+
+┌─────────────────────────────────┐
+│ form.onsubmit                   │
+│  └─ Pesadas.save(data)          │
+└─────────────────────────────────┘
+        
+        ↓
+
+┌─────────────────────────────────┐
+│ Pesadas.save() LÓGICA:          │
+│                                 │
+│  1. Validar finca activa        │
+│  2. Calcular neto:              │
+│     neto = bruto - tara         │
+│  3. Convertir quintales:        │
+│     Q = neto / 46               │
+│  4. Crear objeto pesada         │
+│  5. Guardar en IndexedDB        │
+│  6. Actualizar ultimaSaca       │
+└─────────────────────────────────┘
+        
+        ↓
+
+┌─────────────────────────────────┐
+│ Toast: ✅ Pesada guardada       │
+│ Redirigir: location.hash=/lista │
+└─────────────────────────────────┘
+
+END
+```
+
+## 4. FLUJO DE IMPORTACIÓN PDF
+
+```
+START: Usuario accede /importar-pdf
+
+        ↓
+
+┌─────────────────────────────────┐
+│ Usuario selecciona PDFs         │
+│ (múltiples permitidos)          │
+└─────────────────────────────────┘
+        
+        ↓
+
+┌─────────────────────────────────┐
+│ Para cada PDF:                  │
+│                                 │
+│ parsePdfCatastro(file)          │
+│  ├─ Cargar PDF con pdfjs        │
+│  ├─ Extraer texto línea a línea │
+│  ├─ Reconocer patrones:         │
+│  │  ├─ Referencia catastral     │
+│  │  ├─ Polígono/Parcela         │
+│  │  ├─ Localización             │
+│  │  ├─ Cultivos                 │
+│  │  ├─ Construcciones           │
+│  │  └─ Superficies              │
+│  └─ Renderizar croquis (PNG)    │
+└─────────────────────────────────┘
+        
+        ↓
+
+┌─────────────────────────────────┐
+│ Usuario asigna nombres a zonas  │
+│ (o mantiene automático)         │
+└─────────────────────────────────┘
+        
+        ↓
+
+┌─────────────────────────────────┐
+│ Click: Guardar                  │
+│                                 │
+│ Para cada zona:                 │
+│  └─ Zonas.save(zonaData)        │
+│     └─ IndexedDB.add('zonas')   │
+└─────────────────────────────────┘
+        
+        ↓
+
+┌─────────────────────────────────┐
+│ Toast: ✅ Importado              │
+│ Redirigir: /zonas               │
+└─────────────────────────────────┘
+
+END
+```
+
+## 5. FLUJO DE INFORME
+
+```
+START: Usuario accede /informes
+
+        ↓
+
+┌─────────────────────────────────┐
+│ renderReportesView()            │
+│ Mostrar menú 4 opciones         │
+└─────────────────────────────────┘
+        
+        ↓
+
+    ┌───┴───┬───────┬──────┐
+    │       │       │      │
+    ▼       ▼       ▼      ▼
+  Global Económico Zona Calidad
+
+  (Ej: Global)
+
+┌─────────────────────────────────┐
+│ Reportes.generarReporteGlobal() │
+│                                 │
+│ 1. Obtener todas pesadas        │
+│ 2. Para cada pesada:            │
+│    ├─ Sumar kg por calidad      │
+│    ├─ Sumar quintales           │
+│    └─ Contar sacas              │
+│ 3. Agrupar por zona             │
+│ 4. Retornar objeto             │
+└─────────────────────────────────┘
+        
+        ↓
+
+┌─────────────────────────────────┐
+│ app.renderReporteGlobal()       │
+│ Mostrar tablas HTML             │
+│  ├─ Tabla: por calidad          │
+│  └─ Tabla: por zona             │
+└─────────────────────────────────┘
+        
+        ↓
+
+┌─────────────────────────────────┐
+│ Usuario: Click "Exportar PDF"   │
+└─────────────────────────────────┘
+        
+        ↓
+
+┌─────────────────────────────────┐
+│ app.exportarPDF()               │
+│  1. Obtener HTML del reporte    │
+│  2. Remover botones/selects     │
+│  3. Crear plantilla PDF         │
+│  4. Incluir logo + header       │
+│  5. Aplicar estilos print       │
+│  6. html2pdf.js.save()          │
+└─────────────────────────────────┘
+        
+        ↓
+
+┌─────────────────────────────────┐
+│ Descarga: Cork_global_<finca>   │
+│                                 │
+│ O en Android:                   │
+│  └─ Capacitor Share plugin      │
+└─────────────────────────────────┘
+
+END
+```
+
+## 6. ESTRUCTURA DE CALIDAD
+
+```
+              PESADA
+              
+    ┌─────────────────────┐
+    │pesadasPorCalidad    │
+    └──────────┬──────────┘
+               │
+    ┌──────────┼──────────┐
+    │          │          │
+    ▼          ▼          ▼
+
+⭐ 1ª     🟡 Bornizo   🔴 Refugo
+─────────────────────────────────
+{           {              {
+ kg: 50,     kg: 0,        kg: 0,
+ Q: 1.09     Q: 0          Q: 0
+}           }              }
+┌──────────┬──────────┬──────────┐
+│ Color    │ Color    │ Color    │
+│ #7fb069  │ #d4a373  │ #ff4d4d  │
+│ Verde    │ Amarillo │ Rojo     │
+│ "Primera"│"Bornizo" │"Refugo"  │
+└──────────┴──────────┴──────────┘
+
+QUINTALES = KG / FACTOR
+Factor por defecto: 46 kg
+
+LIQUIDACIÓN:
+Bruto = Q original
+Merma = Bruto × (oreo% / 100)
+Neto  = Bruto - Merma
+Valor = Neto × precioQuintal
+```
+
+## 7. MATRIZ: FEATURES vs VERSIONES
+
+```
+Feature              v1-v4  v5.0  v5.9  v5.9.3  v5.9.4  v6
+──────────────────────────────────────────────────────────
+Core pesadas         ✅     ✅    ✅    ✅      ✅      ✅
+Core zonas           ✅     ✅    ✅    ✅      ✅      ✅
+Importar PDF         ✅     ✅    ✅    ✅      ✅      ✅
+Informes             ✅     ✅    ✅    ✅      ✅      ✅
+Editar pesada        ❌     ✅    ✅    ✅      ✅      ✅
+Editar zona          ❌     ✅    ✅    ✅      ✅      ✅
+Multi-finca          ❌     ✅    ✅    ✅      ✅      ✅
+Unidades custom      ❌     ⚠️    ✅    ✅      ✅      ✅
+Service Worker       ❌     ❌    ✅    ✅      ✅      ✅
+Manual integrado     ❌     ❌    ✅    ✅      ✅      ✅
+DB migration         ❌     ✅    ✅    ✅      ✅      ✅
+──────────────────────────────────────────────────────────
+Stores: 4-5           5-6    5-6   5-6   5-6     5-6    5-6
+Rutas: 6              7      11    11    11      11     11
+```
+
+## 8. DEPENDENCY TREE
+
+```
+PESADAS-CORCHO
+│
+├── HTML5 Base
+│   ├─ index.html
+│   ├─ manifest.webmanifest
+│   └─ sw.js
+│
+├── CSS
+│   └─ styles.css (Dark theme)
+│
+├── Core JS
+│   ├─ app.js (Router 1300+ líneas)
+│   ├─ db.js (DB layer 200+ líneas)
+│   ├─ pesadas.js (Model)
+│   ├─ zonas.js (Model)
+│   └─ fincas.js (Model)
+│
+├── Business Logic
+│   ├─ informes.js (Analytics)
+│   ├─ reportes.js (Report generation)
+│   └─ export.js (I/O)
+│
+├── Utilities
+│   ├─ pdf-import.js (PDF parsing)
+│   ├─ idb-local.js (IndexedDB wrapper)
+│   └─ seed-zonas.js (Test data)
+│
+└── External Dependencies (CDN)
+    ├─ idb@8 (IndexedDB wrapper)
+    ├─ xlsx@0.18.5 (NOT USED)
+    ├─ html2pdf.js (PDF export)
+    ├─ chart.js (NOT USED)
+    ├─ pdfjs-dist@3.11.174 (PDF parsing)
+    └─ Capacitor@5.0
+        ├─ @capacitor/core
+        ├─ @capacitor/filesystem
+        └─ @capacitor/share
+```
+
+## 9. DIAGRAMA TEMPORAL: SESIÓN TÍPICA
+
+```
+Tiempo |  Usuario              App              IndexedDB
+────────────────────────────────────────────────────────
+ T0    | Abre app              
+       |                       ├─ init()
+       |                       ├─ dbPromise
+       |                       ├─ route()
+       |
+ T1    | Ve dashboard          
+       |                       ├─ renderDashboard()
+       |                       ├─ actualizarResumenHoy()
+       |                       ├─ Pesadas.list()         ───→ getAllFromIndex
+       |                       |   (filtra por fincaId)      ↓ READ
+       |
+ T2    | Click "Nueva"         
+       |                       ├─ renderFormPesada()
+       |                       ├─ Zonas.list()          ───→ getAllFromIndex
+       |
+ T3    | Completa forma
+       | Presiona Guardar
+       |                       ├─ Pesadas.save()
+       |                       ├─ Valida datos
+       |                       ├─ Calcula neto/Q      ───→ IndexedDB.add()
+       |                       ├─ Fincas.save()            ↓ WRITE
+       |
+ T4    | Toast ✅
+       | Redirige a /lista
+       |                       ├─ renderLista()
+       |                       ├─ Pesadas.list()        ───→ getAllFromIndex
+       |
+ T5    | Ve lista
+       | actualizada
+```
+
+---
+
+Estos diagramas muestran la arquitectura completa, flujos de datos, y patrones de uso del sistema.
