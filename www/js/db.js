@@ -1,7 +1,7 @@
 const { openDB } = self.idb;
 
 const DB_NAME = 'CorchoDB';
-const DB_VERSION = 6;
+const DB_VERSION = 7;
 
 async function initDB() {
     const database = await openDB(DB_NAME, DB_VERSION, {
@@ -56,6 +56,15 @@ async function initDB() {
                 }
                 zoneStore.createIndex('refCatastral', 'refCatastral', { unique: false });
                 console.log("[DB] Index 'refCatastral' updated to non-unique.");
+            }
+
+            // --- VERSION 7: GASTOS ---
+            if (oldVersion < 7) {
+                if (!db.objectStoreNames.contains('gastos')) {
+                    const gastoStore = db.createObjectStore('gastos', { keyPath: 'id', autoIncrement: true });
+                    gastoStore.createIndex('fincaId', 'fincaId');
+                    gastoStore.createIndex('fecha', 'fecha');
+                }
             }
         },
     });
@@ -196,6 +205,7 @@ const db = {
         await d.clear('pesadas');
         await d.clear('zonas');
         await d.clear('fincas');
+        await d.clear('gastos');
         await d.clear('config');
         await d.clear('precios');
         localStorage.removeItem('activeFincaId');

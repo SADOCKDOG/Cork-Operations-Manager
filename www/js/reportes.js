@@ -98,6 +98,10 @@ class Reportes {
     const brutoTotal = totales.primera.bruto + totales.bornizo.bruto + totales.refugo.bruto;
     const netoTotal = totales.primera.neto + totales.bornizo.neto + totales.refugo.neto;
     
+    // Calcular gastos y beneficio neto (NUEVO v5.9.6)
+    const totalGastos = await Gastos.getTotal();
+    const beneficioNeto = valorTotal - totalGastos;
+    
     return {
         tipo: 'economicoGlobal',
         precios,
@@ -106,6 +110,8 @@ class Reportes {
         valorTotal,
         brutoTotal,
         netoTotal,
+        totalGastos,
+        beneficioNeto,
         fechaGeneracion: new Date().toISOString()
     };
   }

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'corcho-v5.9.4';
+const CACHE_NAME = 'corcho-v6.0.0';
 const ASSETS = [
   './',
   './index.html',
@@ -11,6 +11,7 @@ const ASSETS = [
   './js/idb-local.js',
   './js/pesadas.js',
   './js/zonas.js',
+  './js/gastos.js',
   './js/informes.js',
   './js/export.js',
   './js/pdf-import.js',

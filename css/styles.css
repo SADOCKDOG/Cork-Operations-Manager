@@ -227,10 +227,192 @@ input:focus { border-color: var(--p-cork); outline: none; }
 .q-pill.pb { background: #2b1f0f; color: #d4a373; border-color: #4d3a1e; }
 .q-pill.pr { background: #2e0f11; color: #ff4d4d; border-color: #4d1a1e; }
 
-/* TABLAS DE INFORMES (EN WEB SON DARK, EN PDF SERÁN WHITE) */
-.reporte-table { width: 100%; border-collapse: collapse; color: var(--text-p); }
-.reporte-table th { text-align: left; padding: 12px 8px; border-bottom: 2px solid var(--border); color: var(--text-s); font-size: 0.8rem; }
-.reporte-table td { padding: 12px 8px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+/* TABLAS DE INFORMES (RESPONSIVAS) */
+.reporte-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    color: var(--text-p); 
+    font-size: 0.8rem;
+    table-layout: auto;
+}
+.reporte-table th { 
+    text-align: left; 
+    padding: 10px 6px; 
+    border-bottom: 2px solid var(--border); 
+    color: var(--text-s); 
+    background: var(--surface-light);
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+}
+.reporte-table td { 
+    padding: 10px 6px; 
+    border-bottom: 1px solid var(--border); 
+}
+.reporte-table tfoot td { 
+    background: var(--surface-light); 
+    font-weight: 800; 
+    border-top: 2px solid var(--p-cork); 
+    font-size: 0.85rem;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 15px;
+}
+
+/* DUAL ENTITY GRID PARA INFORMES */
+.dual-entity-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.entity-card {
+    background: var(--surface-light);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.entity-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 4px;
+}
+
+.entity-card.vendedor::before { background: var(--accent); }
+.entity-card.comprador::before { background: var(--p-cork); }
+
+.entity-card small {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    opacity: 0.8;
+}
+
+.entity-card.vendedor small { color: var(--accent); }
+.entity-card.comprador small { color: var(--p-cork); }
+
+.entity-card strong {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-p);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.entity-card p {
+    margin: 4px 0 0 0;
+    font-size: 0.7rem;
+    color: var(--text-s);
+    line-height: 1.2;
+}
+
+@media (max-width: 400px) {
+    .dual-entity-grid { gap: 8px; }
+    .entity-card { padding: 8px; }
+    .entity-card strong { font-size: 0.75rem; }
+}
+
+/* Grillas genéricas */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.reportes-selector-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Forzar 2 columnas en móviles */
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+    .reportes-selector-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+}
+
+.report-select-btn {
+    background: var(--surface-light);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column; /* Icono arriba, texto abajo para ahorrar ancho */
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    min-height: 90px;
+}
+
+.report-select-btn .btn-icon {
+    font-size: 1.6rem;
+    background: rgba(212, 163, 115, 0.08);
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+}
+
+.report-select-btn strong {
+    color: #ffffff !important; /* Blanco puro para máxima visibilidad */
+    font-size: 0.9rem;
+    line-height: 1.2;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.report-select-btn .btn-icon {
+    font-size: 1.8rem;
+    background: rgba(255, 255, 255, 0.1);
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+.report-select-btn:active {
+    transform: scale(0.95);
+    background: var(--surface);
+}
+
+/* Grilla de gráficos mejorada */
+.graficos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+/* TEMAS DE COLOR PARA INFORMES (v6.0.3) */
+.report-select-btn.theme-global { border-color: #4facfe; background: rgba(79, 172, 254, 0.05); }
+.report-select-btn.theme-global strong { color: #4facfe; }
+.report-select-btn.theme-global .btn-icon { background: rgba(79, 172, 254, 0.1); }
+
+.report-select-btn.theme-econ { border-color: #f6d365; background: rgba(246, 211, 101, 0.05); }
+.report-select-btn.theme-econ strong { color: #f6d365; }
+.report-select-btn.theme-econ .btn-icon { background: rgba(246, 211, 101, 0.1); }
+
+.report-select-btn.theme-zona { border-color: #d4a373; background: rgba(212, 163, 115, 0.05); }
+.report-select-btn.theme-zona strong { color: #d4a373; }
+.report-select-btn.theme-zona .btn-icon { background: rgba(212, 163, 115, 0.1); }
+
+.report-select-btn.theme-calidad { border-color: #7fb069; background: rgba(127, 176, 105, 0.05); }
+.report-select-btn.theme-calidad strong { color: #7fb069; }
+.report-select-btn.theme-calidad .btn-icon { background: rgba(127, 176, 105, 0.1); }
+
+.report-select-btn.theme-graficos { border-color: #a18cd1; background: rgba(161, 140, 209, 0.05); }
+.report-select-btn.theme-graficos strong { color: #a18cd1; }
+.report-select-btn.theme-graficos .btn-icon { background: rgba(161, 140, 209, 0.1); }
 
 /* UTILS */
 .text-muted { color: var(--text-s) !important; }
