@@ -1,84 +1,103 @@
-<h1 align="center"</h1>
+<h1 align="center">Chamorro's Cork Manager</h1>
 
 <p align="center">
-  <img src="MANUAL/README/Logo%20cabecera.png" width="400" alt="Logo Cabecera">
+  <img src="MANUAL/README/Logo%20cabecera.png" width="500" alt="Logo Cabecera">
 </p>
 
 <p align="center">
   <b>Solución profesional para la gestión financiera, operativa y digitalización de sacas de corcho</b>
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Versión-6.1.5-d4a373?style=for-the-badge" alt="Versión">
-  <img src="https://img.shields.io/badge/UI-Premium-7fb069?style=for-the-badge" alt="UI Premium">
-  <img src="https://img.shields.io/badge/Offline-100%25-blue?style=for-the-badge" alt="Offline">
-</p>
-
 ---
 
 ### Descripción General
 
-**Chamorro's Cork Manager** es una plataforma móvil avanzada diseñada específicamente para optimizar la gestión integral de explotaciones corcheras. En su versión **6.1.5**, la aplicación se consolida como una herramienta de **Inteligencia Financiera**, permitiendo un control técnico, operativo y económico total en tiempo real, con una interfaz de vanguardia.
+Chamorro's Cork Manager es una plataforma avanzada diseñada para la optimización integral de explotaciones corcheras. En su versión 6.1.5, el sistema se posiciona como una herramienta de inteligencia de negocio que permite un control técnico, operativo y económico exhaustivo en tiempo real a través de una interfaz de alta eficiencia.
 
 ---
 
-### Funcionalidades de Élite (v6.1.5)
+### Módulos Principales
 
-#### 💎 Interfaz Premium e Informes Duales
-Nueva experiencia de usuario con navegación táctil de gran formato. Los informes ahora cuentan con una **Cabecera Dual (Lado a Lado)** que muestra los datos del Vendedor y Comprador de forma profesional, optimizada para tablets y smartphones.
+#### Panel de Control y Monitorización
+Visualización centralizada de la producción activa. El sistema ofrece un desglose inmediato de kilogramos y unidades de medida regionales (Quintales) clasificados por calidades: Primera, Bornizo y Refugo.
 
-#### 🖨️ Exportación Nativa Garantizada (Fix Android)
-Motor de exportación optimizado que permite generar documentos PDF directamente en dispositivos Android, facilitando el guardado y el envío inmediato por aplicaciones externas como WhatsApp o Email.
+<p align="center">
+  <img src="MANUAL/README/Pantalla%20Inicio.jpg" width="400" alt="Panel de Control">
+</p>
 
-#### 💸 Inteligencia Financiera: Control de Gastos
-Gestión rigurosa de los costes de explotación. Registre gastos de mano de obra, seguridad social, transporte, maquinaria y suministros. El sistema calcula automáticamente el **Beneficio Neto Real**, descontando los gastos del valor bruto de la producción.
+#### Gestión Técnica y Catastral (SIGPAC)
+Administración detallada de parcelas mediante la integración de datos oficiales. La aplicación procesa documentos catastrales para extraer referencias, superficies gráficas y tablas de aprovechamiento técnico por subparcela.
 
-#### 📂 Gestión de Backups Centralizada
-Se han consolidado las herramientas de seguridad. Exporte o importe datos de fincas individuales desde Ajustes o realice respaldos globales de toda la plataforma desde el Gestor de Fincas, garantizando la integridad de su información en todo momento.
+<p align="center">
+  <img src="MANUAL/README/Pantalla%20Gestión%20de%20Zonas.jpg" width="400" alt="Gestión Catastral">
+</p>
 
-#### 📄 Exportación Profesional (PDF & Excel)
-*   **PDF Corporativo:** Independiente del zoom del dispositivo, con cabecera dual, logo centrado y tablas responsivas de alta definición.
-*   **Excel Detallado:** Formatos `.xlsx` listos para contabilidad avanzada.
+#### Control de Operaciones y Trazabilidad
+Registro exhaustivo de pesadas con trazabilidad completa. Permite el seguimiento de cada saca individual, incluyendo gestión de históricos, auditoría de pesos y clasificación automatizada por calidad.
 
-#### 📍 Gestión Técnica y Catastral (SIGPAC)
-Administración detallada de parcelas mediante la integración de datos oficiales. Procesa documentos PDF del Catastro para extraer automáticamente referencias, superficies gráficas y croquis.
+<p align="center">
+  <img src="MANUAL/README/Pantalla%20De%20Lista%20de%20pesadas.jpg" width="400" alt="Listado de Operaciones">
+</p>
 
-#### 🏭 Registro de Operaciones y Trazabilidad
-Seguimiento exhaustivo de cada saca con trazabilidad completa. Incluye edición histórica, eliminación de registros, clasificación automática por calidad y auditoría de pesos.
+#### Inteligencia Financiera y Gestión de Gastos
+Control riguroso de los costes de explotación. El sistema permite el registro de gastos operativos (mano de obra, logística, maquinaria) y calcula automáticamente el beneficio neto real de la campaña.
+
+<p align="center">
+  <img src="MANUAL/README/Pantalla%20de%20Gestión%20de%20Gastos.jpg" width="400" alt="Gestión de Gastos">
+</p>
+
+#### Administración Multi-Finca
+Soporte para múltiples explotaciones independientes. Cada finca cuenta con su propia configuración técnica, acuerdos comerciales y base de datos de producción.
+
+<p align="center">
+  <img src="MANUAL/README/Pantalla%20Gestor%20de%20Fincas.jpg" width="400" alt="Gestor de Fincas">
+  <img src="MANUAL/README/Pantalla%20Gestión%20de%20Fincas%20y%20Gastos.jpg" width="400" alt="Configuración de Finca">
+</p>
+
+#### Análisis e Informes Avanzados
+Generación de documentación profesional con cabeceras duales (Vendedor/Comprador). Incluye herramientas de análisis visual mediante gráficas dinámicas y exportación nativa a PDF y Excel.
+
+<p align="center">
+  <img src="MANUAL/README/Informe%20Balance%20de%20Sacas.jpg" width="400" alt="Balance de Sacas">
+  <img src="MANUAL/README/informe%20por%20Zonas.jpg" width="400" alt="Producción por Zona">
+</p>
+
+<p align="center">
+  <img src="MANUAL/README/informe%20histórico%20de%20sacas.jpg" width="400" alt="Histórico de Liquidación">
+  <img src="MANUAL/README/Graficas.jpg" width="400" alt="Análisis Estadístico">
+</p>
 
 ---
 
 ### Especificaciones Técnicas
 
-*   **Arquitectura:** Capacitor para despliegue multiplataforma nativo (Android listo).
-*   **Motor de Datos:** IndexedDB v7 con persistencia de alta velocidad y módulo de Gastos integrado.
-*   **Interfaz de Usuario:** Premium Dark UI v6 con iconos táctiles XL (2.4rem) para uso en campo.
-*   **Operación Offline:** Service Worker v6.0.0 para funcionamiento 100% autónomo.
+*   Arquitectura: Capacitor para despliegue multiplataforma nativo (Android e iOS).
+*   Motor de Datos: IndexedDB con persistencia local de alta velocidad.
+*   Interfaz: Dark UI optimizada para condiciones de campo y paneles OLED.
+*   Exportación: Motores especializados para generación de documentos técnicos en alta resolución.
+*   Operación: Funcionamiento offline total con sincronización automática mediante Service Workers.
 
 ---
 
-### Notas de Versión (Hito v6.1.5)
+### Configuración y Seguridad
 
-**Novedades destacadas:**
-- ⭐ **UI Premium v6.1:** Rediseño de informes con vista dividida Vendedor/Comprador.
-- 🖨️ **Native PDF Fix:** Solucionado el error de exportación en Android (vía Capacitor Plugins).
-- 💰 **Backup Financiero:** Inclusión automática de gastos en las copias de seguridad.
-- 🖱️ **Ergonomía XL:** Iconos de acción gigantes en el gestor de fincas para uso táctil preciso.
-- 📊 **Análisis Visual:** 6 tipos de gráficos dinámicos integrados con Chart.js.
+El sistema permite una personalización corporativa completa, incluyendo datos legales del emisor y receptor, factores de conversión y porcentajes de merma técnica (Oreo). Dispone de un sistema de copias de seguridad cifradas para garantizar la integridad de la información.
 
-**Compatibilidad:** Restauración automática de datos desde versiones v3.x hasta v5.x.
+<p align="center">
+  <img src="MANUAL/README/Ajustes%20Datos%20de%20la%20saca.jpg" width="400" alt="Configuración de Sistema">
+</p>
 
 ---
 
 ### Licencia y Propiedad
 
-Este software es de uso exclusivo familiar y privado. Todos los derechos reservados por **@ Sdog Farm Software Factory**.
+Este software es de uso exclusivo familiar y privado. Todos los derechos reservados por Sdog Farm Software Factory.
 
-*Innovación y digitalización para el sector corchero.*
+Sdog Farm Software Factory - Innovación y digitalización para el sector primario.
 
 ---
 
 ### Contacto y Soporte
 
-Para asistencia técnica o consultas sobre la plataforma:
-📧 [soporte.sdogfarm@gmail.com](mailto:soporte.sdogfarm@gmail.com)
+Para asistencia técnica o consultas sobre la plataforma, puede contactar a través de la siguiente dirección:
+Correo electrónico: soporte.sdogfarm@gmail.com
