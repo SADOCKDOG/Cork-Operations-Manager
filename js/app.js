@@ -1,6 +1,6 @@
 /**
- * App.js - Router y Orquestador (Version 6.2.0 - Full UI & PDF Import Integration)
- * Restauración completa de la interfaz profesional con todas las utilidades activas.
+ * App.js - Router y Orquestador (Version 6.2.2 - Complete Data Restoration)
+ * Pantalla de inicio estructurada y Fichas de Zona con información catastral completa.
  */
 
 const App = {
@@ -19,7 +19,7 @@ const App = {
 
     async init() {
         try {
-            console.log("App: Iniciando v6.2.0...");
+            console.log("App: Iniciando v6.2.2...");
             window.addEventListener('hashchange', () => App.route());
             window.addEventListener('fincaChanged', () => { App.updateHeader().then(() => App.route()); });
             this._activeObjectUrls = [];
@@ -74,8 +74,63 @@ const App = {
 
     async renderDashboard() {
         const main = document.getElementById('app-content');
-        main.innerHTML = `<div id="resumenHoy" class="card" style="border-top: 5px solid var(--p-cork); padding: 25px;"><h3 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none;">📅 Resumen Hoy</h3><div class="summary-table-grid"><div class="summary-cell c-1a"><div class="s-lbl">1ª CAL</div><div class="s-val"><span id="qPrimera">0.0</span><span style="font-size:0.5em; margin-left:2px;">Q</span></div><div style="font-size:0.8rem; opacity:0.8;"><span id="kgPrimera">0</span> kg</div></div><div class="summary-cell c-bo"><div class="s-lbl">BORNIZO</div><div class="s-val"><span id="qBornizo">0.0</span><span style="font-size:0.5em; margin-left:2px;">Q</span></div><div style="font-size:0.8rem; opacity:0.8;"><span id="kgBornizo">0</span> kg</div></div><div class="summary-cell c-re"><div class="s-lbl">REFUGO</div><div class="s-val"><span id="qRefugo">0.0</span><span style="font-size:0.5em; margin-left:2px;">Q</span></div><div style="font-size:0.8rem; opacity:0.8;"><span id="kgRefugo">0</span> kg</div></div></div><div style="text-align: center; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;"><span style="font-size: 0.9rem; color: var(--text-s); text-transform: uppercase; font-weight:800; letter-spacing:1px;">Total (Hoy)</span><br><strong style="font-size: 2.2rem; color: var(--p-cork);"><span id="qTotal">0.0</span> <span style="font-size:0.6em">Q</span></strong><br><span style="font-size:0.9rem; opacity:0.8;"><span id="kgTotal">0</span> kg</span></div><p id="pesadasHoyCount" class="text-muted" style="text-align:center; margin-top: 15px; font-size: 0.9rem;"></p></div><button class="btn btn-primary" onclick="location.hash='/nueva'" style="margin-bottom: 25px; height: 60px; font-size: 1.1rem; box-shadow: 0 8px 20px rgba(212, 163, 115, 0.4);">➕ NUEVA PESADA</button><div class="card" style="border-top: 5px solid var(--accent); padding: 25px;"><h3 style="font-size: 1.5rem; margin-bottom: 15px; color: #fff; border:none; text-align: center;">Últimas Pesadas</h3><div id="recent-list" class="lista-detallada"></div></div>`;
-        await App.actualizarResumenHoy(); await App.renderUltimasPesadas();
+        const finca = await Fincas.getActive();
+        const pesadas = await Pesadas.list();
+        const tGlobal = App._calculateQualityTotals(pesadas);
+        const totalQGlobal = (tGlobal.primera.quintales + tGlobal.bornizo.quintales + tGlobal.refugo.quintales).toFixed(2);
+
+        main.innerHTML = `
+            <!-- Nombre de la Finca Centrado -->
+            <div style="text-align: center; margin-bottom: 30px; margin-top: 10px;">
+                <h1 style="color: var(--p-cork); font-size: 2.2rem; margin: 0; font-weight: 900; letter-spacing: -1px; text-transform: uppercase;">
+                    ${finca ? finca.nombre : 'SIN FINCA'}
+                </h1>
+                <div style="width: 60px; height: 4px; background: var(--p-cork); margin: 10px auto; border-radius: 2px; opacity: 0.6;"></div>
+            </div>
+
+            <!-- 1. Resumen Global de Pesadas -->
+            <div class="card" style="border-top: 5px solid var(--p-cork); padding: 25px; margin-bottom: 25px;">
+                <h3 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none; padding:0;">Resumen Global de Pesadas</h3>
+                <div class="summary-table-grid">
+                    <div class="summary-cell c-1a"><div class="s-lbl">1ª CAL</div><div class="s-val">${tGlobal.primera.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div>
+                    <div class="summary-cell c-bo"><div class="s-lbl">BORNIZO</div><div class="s-val">${tGlobal.bornizo.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div>
+                    <div class="summary-cell c-re"><div class="s-lbl">REFUGO</div><div class="s-val">${tGlobal.refugo.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div>
+                </div>
+                <div style="text-align: center; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                    <span style="font-size: 0.9rem; color: var(--text-s); text-transform: uppercase; font-weight:800; letter-spacing:1px;">Total Acumulado</span><br>
+                    <strong style="font-size: 2.2rem; color: var(--p-cork);">${totalQGlobal} <span style="font-size:0.6em">Q</span></strong>
+                </div>
+            </div>
+
+            <!-- 2. Resumen de Hoy -->
+            <div id="resumenHoy" class="card" style="border-top: 5px solid var(--p-cork); padding: 25px;">
+                <h3 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none; padding:0;">📅 Resumen Hoy</h3>
+                <div class="summary-table-grid">
+                    <div class="summary-cell c-1a">
+                        <div class="s-lbl">1ª CAL</div>
+                        <div class="s-val"><span id="qPrimera">0.0</span><span style="font-size:0.5em; margin-left:2px;">Q</span></div>
+                        <div style="font-size:0.8rem; opacity:0.8;"><span id="kgPrimera">0</span> kg</div>
+                    </div>
+                    <div class="summary-cell c-bo">
+                        <div class="s-lbl">BORNIZO</div>
+                        <div class="s-val"><span id="qBornizo">0.0</span><span style="font-size:0.5em; margin-left:2px;">Q</span></div>
+                        <div style="font-size:0.8rem; opacity:0.8;"><span id="kgBornizo">0</span> kg</div>
+                    </div>
+                    <div class="summary-cell c-re">
+                        <div class="s-lbl">REFUGO</div>
+                        <div class="s-val"><span id="qRefugo">0.0</span><span style="font-size:0.5em; margin-left:2px;">Q</span></div>
+                        <div style="font-size:0.8rem; opacity:0.8;"><span id="kgRefugo">0</span> kg</div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                    <span style="font-size: 0.9rem; color: var(--text-s); text-transform: uppercase; font-weight:800; letter-spacing:1px;">Total (Hoy)</span><br>
+                    <strong style="font-size: 2.2rem; color: var(--p-cork);"><span id="qTotal">0.0</span> <span style="font-size:0.6em">Q</span></strong><br>
+                    <span style="font-size:0.9rem; opacity:0.8;"><span id="kgTotal">0</span> kg</span>
+                </div>
+                <p id="pesadasHoyCount" class="text-muted" style="text-align:center; margin-top: 15px; font-size: 0.9rem;"></p>
+            </div>
+        `;
+        await App.actualizarResumenHoy();
     },
 
     async actualizarResumenHoy() {
@@ -100,8 +155,8 @@ const App = {
         if (!listEl) return;
         listEl.innerHTML = pesadas.length ? pesadas.map(p => {
             const z = zonas.find(z => Number(z.id) === Number(p.zonaId)), fH = new Date(p.fecha).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-            let em = '⭐', cal = '1ª Calidad', cl = 'p1', col = '#10b981';
-            if (p.pesadasPorCalidad.bornizo.kg > 0) { em = '🟡'; cal = 'Bornizo'; cl = 'pb'; col = '#d4a373'; } else if (p.pesadasPorCalidad.refugo.kg > 0) { em = '🔴'; cal = 'Refugo'; cl = 'pr'; col = '#ef4444'; }
+            let em = '⭐', cal = '1ª Calidad', col = '#10b981';
+            if (p.pesadasPorCalidad.bornizo.kg > 0) { em = '🟡'; cal = 'Bornizo'; col = '#d4a373'; } else if (p.pesadasPorCalidad.refugo.kg > 0) { em = '🔴'; cal = 'Refugo'; col = '#ef4444'; }
             return `<div class="pesada-card" style="--card-color: ${col};" onclick="location.hash='/pesada/${p.id}/editar'"><div class="pesada-card-left"><small>${fH}</small><strong>${z?z.nombre:'?'}</strong><div class="pesada-saca-badge">SACA #${p.saca}</div></div><div class="pesada-card-right"><table class="pesada-data-table"><tr><td class="pesada-data-label">Calidad</td><td class="pesada-data-value">${em} ${cal}</td></tr><tr><td class="pesada-data-label">Bruto</td><td class="pesada-data-value highlight-kg">${p.kg.toFixed(1)} kg</td></tr><tr><td class="pesada-data-label">Neto</td><td class="pesada-data-value highlight-q">${p.quintales.toFixed(2)} Q</td></tr></table></div></div>`;
         }).join('') : '<p class="text-center text-muted">Sin pesadas.</p>';
     },
@@ -113,7 +168,7 @@ const App = {
         if (isEdit && d) { d.fecha = d.fecha.split('T')[0]; if (d.pesadasPorCalidad.primera.kg > 0) d.calidad = 'primera'; else if (d.pesadasPorCalidad.refugo.kg > 0) d.calidad = 'refugo'; }
         if (zonas.length === 0) { main.innerHTML = `<div class="card text-center"><p>Primero crea una zona.</p><button class="btn btn-primary" onclick="location.hash='/zonas'">Ir a Zonas</button></div>`; return; }
         main.innerHTML = `<div class="card"><h2>${isEdit ? 'Editar' : 'Nueva'} Pesada</h2><form id="form-pesada"><div class="form-group"><label>Zona</label><select id="p-zona">${zonas.map(z => `<option value="${z.id}" ${d.zonaId == z.id ? 'selected' : ''}>${z.nombre}</option>`).join('')}</select></div><div class="grid-2"><div class="form-group"><label>Fecha</label><input type="date" id="p-fecha" value="${d.fecha}"></div><div class="form-group"><label>Nº Saca</label><input type="number" id="p-saca" value="${d.saca}"></div></div><div class="grid-2"><div class="form-group"><label>Bruto (kg)</label><input type="number" id="p-bruto" value="${d.pesoBruto || ''}"></div><div class="form-group"><label>Tara (kg)</label><input type="number" id="p-tara" value="${d.tara || 0}"></div></div><div class="card stat-grid" style="display:flex; justify-content:space-around;"><div><div id="calc-neto" class="stat-value">0.0</div><div class="stat-label">Neto (kg)</div></div><div><div id="calc-q" class="stat-value">0.00</div><div class="stat-label">Quintales</div></div></div><div class="form-group"><label>Calidad</label><div class="quality-selector" style="display:flex; gap:10px;"><button type="button" class="quality-btn" data-quality="primera" style="flex:1;">⭐ 1ª</button><button type="button" class="quality-btn" data-quality="bornizo" style="flex:1;">🟡 Bo</button><button type="button" class="quality-btn" data-quality="refugo" style="flex:1;">🔴 Re</button></div></div><button type="submit" class="btn btn-primary">Guardar</button>${isEdit ? `<button type="button" class="btn btn-danger mt-1" onclick="App._deletePesada(${id})">🗑️ Eliminar</button>` : ''}<button type="button" class="btn btn-outline mt-1" onclick="history.back()">Cancelar</button></form></div>`;
-        const inB = document.getElementById('p-bruto'), inT = document.getElementById('p-tara'), up = () => { const n = (parseFloat(inB.value) || 0) - (parseFloat(inT.value) || 0); document.getElementById('calc-neto').textContent = n.toFixed(1); document.getElementById('calc-q').textContent = (n / (finca.factorQuintal || 46)).toFixed(2); };
+        const inB = document.getElementById('p-bruto'), inT = document.getElementById('p-tara'), up = () => { const n = (parseFloat(inB.value) || 0) - (parseFloat(inT.value) || 0); document.getElementById('calc-neto').textContent = n.toFixed(1); document.getElementById('calc-q').textContent = (n / finca.factorQuintal).toFixed(2); };
         inB.oninput = inT.oninput = up; up();
         let selQ = d.calidad || 'bornizo'; const upQ = () => document.querySelectorAll('.quality-btn').forEach(b => b.classList.toggle('selected', b.dataset.quality === selQ));
         document.querySelectorAll('.quality-btn').forEach(b => b.onclick = () => { selQ = b.dataset.quality; upQ(); }); upQ();
@@ -122,11 +177,23 @@ const App = {
 
     async _deletePesada(id) { if (confirm("¿Eliminar pesada?")) { await Pesadas.delete(id); App.toast("✅ Eliminada"); location.hash = '/lista'; } },
 
+    async _deleteZona(id) {
+        if (confirm("¿Eliminar zona permanentemente?")) {
+            try {
+                await Zonas.delete(id);
+                App.toast("✅ Zona eliminada");
+                location.hash = '/zonas';
+            } catch (e) {
+                App.toastError(e.message);
+            }
+        }
+    },
+
     async renderLista() {
         const main = document.getElementById('app-content'), pesadas = await Pesadas.list(), zonas = await Zonas.list();
         const t = App._calculateQualityTotals(pesadas);
         const totalQ = (t.primera.quintales + t.bornizo.quintales + t.refugo.quintales).toFixed(2);
-        main.innerHTML = `<div class="card" style="border-top: 5px solid var(--p-cork); padding: 25px;"><h3 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none;">Resumen Global de Pesadas</h3><div class="summary-table-grid"><div class="summary-cell c-1a"><div class="s-lbl">1ª CAL</div><div class="s-val">${t.primera.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div><div class="summary-cell c-bo"><div class="s-lbl">BORNIZO</div><div class="s-val">${t.bornizo.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div><div class="summary-cell c-re"><div class="s-lbl">REFUGO</div><div class="s-val">${t.refugo.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div></div><div style="text-align: center; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;"><span style="font-size: 0.9rem; color: var(--text-s); text-transform: uppercase; font-weight:800; letter-spacing:1px;">Total Acumulado</span><br><strong style="font-size: 2.2rem; color: var(--p-cork);">${totalQ} <span style="font-size:0.6em">Q</span></strong></div></div><button class="btn btn-primary" style="margin-bottom: 25px; height: 60px; font-size: 1.1rem; box-shadow: 0 8px 20px rgba(212, 163, 115, 0.4);" onclick="location.hash='/nueva'">➕ NUEVA PESADA</button><div class="card" style="border-top: 5px solid var(--accent); text-align: center; padding: 25px;"><h3 style="font-size: 1.5rem; margin-bottom: 15px; color: #fff; border:none;">Listado de Pesadas</h3><button class="btn btn-secondary mt-1" onclick="App.exportarPDF('lista')">📄 Exportar a PDF</button></div><div class="lista-detallada">${pesadas.map(p => { const z = zonas.find(z => z.id == p.zonaId); let em = '⭐', cal = '1ª Calidad', col = '#10b981'; if (p.pesadasPorCalidad.bornizo.kg > 0) { em = '🟡'; cal = 'Bornizo'; col = '#eab308'; } else if (p.pesadasPorCalidad.refugo.kg > 0) { em = '🔴'; cal = 'Refugo'; col = '#ef4444'; } const fH = new Date(p.fecha).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); return `<div class="pesada-card" style="--card-color: ${col};" onclick="location.hash='/pesada/${p.id}/editar'"><div class="pesada-card-content"><div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;"><div class="pesada-saca-badge">SACA #${p.saca}</div><strong style="color: ${col}; font-size: 1.3rem;">${em} ${cal}</strong></div><div style="font-size: 1.1rem; margin-bottom: 12px; color: #fff;"><strong>🌲 ${z ? z.nombre : '?'}</strong></div><table class="pesada-table-bordered"><tr><th>FECHA Y HORA</th><td class="val-large">${fH}</td></tr><tr><th>PESO BRUTO</th><td class="val-large highlight">${p.kg.toFixed(1)} kg</td></tr><tr><th>PESO NETO</th><td class="val-large highlight">${p.quintales.toFixed(2)} Q</td></tr></table></div></div>`; }).join('')}</div>`;
+        main.innerHTML = `<div class="card" style="border-top: 5px solid var(--p-cork); padding: 25px;"><h3 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none;">Resumen Global de Pesadas</h3><div class="summary-table-grid"><div class="summary-cell c-1a"><div class="s-lbl">1ª CAL</div><div class="s-val">${t.primera.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div><div class="summary-cell c-bo"><div class="s-lbl">BORNIZO</div><div class="s-val">${t.bornizo.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div><div class="summary-cell c-re"><div class="s-lbl">REFUGO</div><div class="s-val">${t.refugo.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div></div><div style="text-align: center; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;"><span style="font-size: 0.9rem; color: var(--text-s); text-transform: uppercase; font-weight:800; letter-spacing:1px;">Total Acumulado</span><br><strong style="font-size: 2.2rem; color: var(--p-cork);">${totalQ} <span style="font-size:0.6em">Q</span></strong></div></div><button class="btn btn-primary" style="margin-bottom: 25px; height: 60px; font-size: 1.1rem; box-shadow: 0 8px 20px rgba(212, 163, 115, 0.4);" onclick="location.hash='/nueva'">➕ NUEVA PESADA</button><div class="card" style="border-top: 5px solid var(--accent); text-align: center; padding: 25px;"><h3 style="font-size: 1.5rem; margin-bottom: 15px; color: #fff; border:none;">Listado de Pesadas</h3><button class="btn btn-secondary mt-1" onclick="App.exportarPDF('lista')">📄 Exportar a PDF</button></div><div class="lista-detallada">${pesadas.map(p => { const z = zonas.find(z => z.id == p.zonaId); let em = '⭐', cal = '1ª Calidad', col = '#10b981'; if (p.pesadasPorCalidad.bornizo.kg > 0) { em = '🟡'; cal = 'Bornizo'; col = '#eab308'; } else if (p.pesadasPorCalidad.refugo.kg > 0) { em = '🔴'; cal = 'Refugo'; col = '#ef4444'; } const fH = new Date(p.fecha).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); let trNotas = p.notas ? `<tr><th>NOTAS</th><td class="val-large" style="font-size: 1.1rem; font-weight: normal; font-style: italic; color: #ccc;">${p.notas}</td></tr>` : ''; return `<div class="pesada-card" style="--card-color: ${col};" onclick="location.hash='/pesada/${p.id}/editar'"><div class="pesada-card-content"><div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;"><div class="pesada-saca-badge">SACA #${p.saca}</div><strong style="color: ${col}; font-size: 1.3rem;">${em} ${cal}</strong></div><div style="font-size: 1.1rem; margin-bottom: 12px; color: #fff;"><strong>🌲 ${z ? z.nombre : '?'}</strong></div><table class="pesada-table-bordered"><tr><th>FECHA Y HORA</th><td class="val-large">${fH}</td></tr><tr><th>PESO BRUTO</th><td class="val-large highlight">${p.kg.toFixed(1)} kg</td></tr><tr><th>PESO NETO</th><td class="val-large highlight">${p.quintales.toFixed(2)} Q</td></tr>${trNotas}</table></div></div>`; }).join('')}</div>`;
     },
 
     async renderZonas() {
@@ -186,9 +253,47 @@ const App = {
 
     async renderFormZona(id = null) {
         const main = document.getElementById('app-content'); let isEdit = id !== null;
-        let d = id ? await Zonas.get(parseInt(id)) : { nombre: '', refCatastral: '', poligono: '', parcela: '' };
-        main.innerHTML = `<div class="card"><h3>${isEdit ? 'Editar' : 'Nueva'} Zona</h3><form id="form-zona"><div class="form-group"><label>Nombre*</label><input type="text" id="z-nom" value="${d.nombre}" required></div><div class="form-group"><label>Referencia Catastral</label><input type="text" id="z-ref" value="${d.refCatastral || ''}"></div><div class="grid-2"><div class="form-group"><label>Polígono</label><input type="number" id="z-pol" value="${d.poligono || ''}"></div><div class="form-group"><label>Parcela</label><input type="number" id="z-parcela" value="${d.parcela || ''}"></div></div><button type="submit" class="btn btn-primary">Guardar Zona</button><button type="button" class="btn btn-outline mt-1" onclick="history.back()">Cancelar</button></form></div>`;
-        document.getElementById('form-zona').onsubmit = async (e) => { e.preventDefault(); const dS = { ...d, id: isEdit ? d.id : undefined, nombre: document.getElementById('z-nom').value.trim(), refCatastral: document.getElementById('z-ref').value.trim(), poligono: document.getElementById('z-pol').value, parcela: document.getElementById('z-parcela').value }; await Zonas.save(dS); App.toast('✅ Guardada'); location.hash = '/zonas'; };
+        let d = id ? await Zonas.get(parseInt(id)) : { nombre: '', paraje: '', municipio: '', provincia: '', refCatastral: '', poligono: '', parcela: '', superficieGrafica: '', usoPrincipal: '', clase: '' };
+        main.innerHTML = `
+            <div class="card">
+                <h3>${isEdit ? 'Editar' : 'Nueva'} Zona</h3>
+                <form id="form-zona">
+                    <div class="form-group"><label>Nombre de la Zona*</label><input type="text" id="z-nom" value="${d.nombre}" required></div>
+                    <h4>Datos Catastrales</h4>
+                    <div class="form-group"><label>Referencia Catastral</label><input type="text" id="z-ref" value="${d.refCatastral || ''}"></div>
+                    <div class="grid-2">
+                        <div class="form-group"><label>Polígono</label><input type="number" id="z-pol" value="${d.poligono || ''}"></div>
+                        <div class="form-group"><label>Parcela</label><input type="number" id="z-parcela" value="${d.parcela || ''}"></div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group"><label>Municipio</label><input type="text" id="z-mun" value="${d.municipio || ''}"></div>
+                        <div class="form-group"><label>Superficie (m²)</label><input type="number" id="z-sup" value="${d.superficieGrafica || ''}"></div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group"><label>Uso Principal</label><input type="text" id="z-uso" value="${d.usoPrincipal || ''}"></div>
+                        <div class="form-group"><label>Clase</label><input type="text" id="z-clase" value="${d.clase || ''}"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar Zona</button>
+                    ${isEdit ? `<button type="button" class="btn btn-danger mt-1" onclick="App._deleteZona(${id})">🗑️ Eliminar Zona</button>` : ''}
+                    <button type="button" class="btn btn-outline mt-1" onclick="history.back()">Cancelar</button>
+                </form>
+            </div>`;
+        document.getElementById('form-zona').onsubmit = async (e) => {
+            e.preventDefault();
+            const dS = {
+                ...d,
+                id: isEdit ? d.id : undefined,
+                nombre: document.getElementById('z-nom').value.trim(),
+                refCatastral: document.getElementById('z-ref').value.trim(),
+                poligono: document.getElementById('z-pol').value,
+                parcela: document.getElementById('z-parcela').value,
+                municipio: document.getElementById('z-mun').value.trim(),
+                superficieGrafica: document.getElementById('z-sup').value,
+                usoPrincipal: document.getElementById('z-uso').value.trim(),
+                clase: document.getElementById('z-clase').value.trim()
+            };
+            await Zonas.save(dS); App.toast('✅ Guardada'); location.hash = '/zonas';
+        };
     },
 
     async renderReportesView() {
