@@ -1,5 +1,6 @@
 /**
- * App.js - Router y Orquestador (Version 6.1.5 - Dual Reports & Native PDF Fix)
+ * App.js - Router y Orquestador (Version 6.2.0 - Full UI & PDF Import Integration)
+ * Restauración completa de la interfaz profesional con todas las utilidades activas.
  */
 
 const App = {
@@ -18,7 +19,7 @@ const App = {
 
     async init() {
         try {
-            console.log("App: Iniciando v6.1.5...");
+            console.log("App: Iniciando v6.2.0...");
             window.addEventListener('hashchange', () => App.route());
             window.addEventListener('fincaChanged', () => { App.updateHeader().then(() => App.route()); });
             this._activeObjectUrls = [];
@@ -53,7 +54,7 @@ const App = {
         const fincaId = await Fincas.getActiveId();
         if (!fincaId && path !== '/fincas') return await App.renderFincasManager();
         main.innerHTML = '<div class="loader">Cargando...</div>';
-        try { 
+        try {
             if (path === '/zona' && id) { if (action === 'editar' || id === 'nueva') await App.renderFormZona(id === 'nueva' ? null : id); else await App.renderFichaZona(id); }
             else if (path === '/pesada' && id && action === 'editar') await App.renderFormPesada(id);
             else if (App.routes[path]) await App[App.routes[path]]();
@@ -112,7 +113,7 @@ const App = {
         if (isEdit && d) { d.fecha = d.fecha.split('T')[0]; if (d.pesadasPorCalidad.primera.kg > 0) d.calidad = 'primera'; else if (d.pesadasPorCalidad.refugo.kg > 0) d.calidad = 'refugo'; }
         if (zonas.length === 0) { main.innerHTML = `<div class="card text-center"><p>Primero crea una zona.</p><button class="btn btn-primary" onclick="location.hash='/zonas'">Ir a Zonas</button></div>`; return; }
         main.innerHTML = `<div class="card"><h2>${isEdit ? 'Editar' : 'Nueva'} Pesada</h2><form id="form-pesada"><div class="form-group"><label>Zona</label><select id="p-zona">${zonas.map(z => `<option value="${z.id}" ${d.zonaId == z.id ? 'selected' : ''}>${z.nombre}</option>`).join('')}</select></div><div class="grid-2"><div class="form-group"><label>Fecha</label><input type="date" id="p-fecha" value="${d.fecha}"></div><div class="form-group"><label>Nº Saca</label><input type="number" id="p-saca" value="${d.saca}"></div></div><div class="grid-2"><div class="form-group"><label>Bruto (kg)</label><input type="number" id="p-bruto" value="${d.pesoBruto || ''}"></div><div class="form-group"><label>Tara (kg)</label><input type="number" id="p-tara" value="${d.tara || 0}"></div></div><div class="card stat-grid" style="display:flex; justify-content:space-around;"><div><div id="calc-neto" class="stat-value">0.0</div><div class="stat-label">Neto (kg)</div></div><div><div id="calc-q" class="stat-value">0.00</div><div class="stat-label">Quintales</div></div></div><div class="form-group"><label>Calidad</label><div class="quality-selector" style="display:flex; gap:10px;"><button type="button" class="quality-btn" data-quality="primera" style="flex:1;">⭐ 1ª</button><button type="button" class="quality-btn" data-quality="bornizo" style="flex:1;">🟡 Bo</button><button type="button" class="quality-btn" data-quality="refugo" style="flex:1;">🔴 Re</button></div></div><button type="submit" class="btn btn-primary">Guardar</button>${isEdit ? `<button type="button" class="btn btn-danger mt-1" onclick="App._deletePesada(${id})">🗑️ Eliminar</button>` : ''}<button type="button" class="btn btn-outline mt-1" onclick="history.back()">Cancelar</button></form></div>`;
-        const inB = document.getElementById('p-bruto'), inT = document.getElementById('p-tara'), up = () => { const n = (parseFloat(inB.value) || 0) - (parseFloat(inT.value) || 0); document.getElementById('calc-neto').textContent = n.toFixed(1); document.getElementById('calc-q').textContent = (n / finca.factorQuintal).toFixed(2); };
+        const inB = document.getElementById('p-bruto'), inT = document.getElementById('p-tara'), up = () => { const n = (parseFloat(inB.value) || 0) - (parseFloat(inT.value) || 0); document.getElementById('calc-neto').textContent = n.toFixed(1); document.getElementById('calc-q').textContent = (n / (finca.factorQuintal || 46)).toFixed(2); };
         inB.oninput = inT.oninput = up; up();
         let selQ = d.calidad || 'bornizo'; const upQ = () => document.querySelectorAll('.quality-btn').forEach(b => b.classList.toggle('selected', b.dataset.quality === selQ));
         document.querySelectorAll('.quality-btn').forEach(b => b.onclick = () => { selQ = b.dataset.quality; upQ(); }); upQ();
@@ -125,7 +126,7 @@ const App = {
         const main = document.getElementById('app-content'), pesadas = await Pesadas.list(), zonas = await Zonas.list();
         const t = App._calculateQualityTotals(pesadas);
         const totalQ = (t.primera.quintales + t.bornizo.quintales + t.refugo.quintales).toFixed(2);
-        main.innerHTML = `<div class="card" style="border-top: 5px solid var(--p-cork); padding: 25px;"><h3 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none;">Resumen Global de Pesadas</h3><div class="summary-table-grid"><div class="summary-cell c-1a"><div class="s-lbl">1ª CAL</div><div class="s-val">${t.primera.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div><div class="summary-cell c-bo"><div class="s-lbl">BORNIZO</div><div class="s-val">${t.bornizo.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div><div class="summary-cell c-re"><div class="s-lbl">REFUGO</div><div class="s-val">${t.refugo.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div></div><div style="text-align: center; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;"><span style="font-size: 0.9rem; color: var(--text-s); text-transform: uppercase; font-weight:800; letter-spacing:1px;">Total Acumulado</span><br><strong style="font-size: 2.2rem; color: var(--p-cork);">${totalQ} <span style="font-size:0.6em">Q</span></strong></div></div><button class="btn btn-primary" style="margin-bottom: 25px; height: 60px; font-size: 1.1rem; box-shadow: 0 8px 20px rgba(212, 163, 115, 0.4);" onclick="location.hash='/nueva'">➕ NUEVA PESADA</button><div class="card" style="border-top: 5px solid var(--accent); text-align: center; padding: 25px;"><h3 style="font-size: 1.5rem; margin-bottom: 15px; color: #fff; border:none;">Listado de Pesadas</h3><button class="btn btn-secondary mt-1" onclick="App.exportarPDF('lista')">📄 Exportar a PDF</button></div><div class="lista-detallada">${pesadas.map(p => { const z = zonas.find(z => z.id == p.zonaId); let em = '⭐', cal = '1ª Calidad', col = '#10b981'; if (p.pesadasPorCalidad.bornizo.kg > 0) { em = '🟡'; cal = 'Bornizo'; col = '#eab308'; } else if (p.pesadasPorCalidad.refugo.kg > 0) { em = '🔴'; cal = 'Refugo'; col = '#ef4444'; } const fH = new Date(p.fecha).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); let trNotas = p.notas ? `<tr><th>NOTAS</th><td class="val-large" style="font-size: 1.1rem; font-weight: normal; font-style: italic; color: #ccc;">${p.notas}</td></tr>` : ''; return `<div class="pesada-card" style="--card-color: ${col};" onclick="location.hash='/pesada/${p.id}/editar'"><div class="pesada-card-content"><div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;"><div class="pesada-saca-badge">SACA #${p.saca}</div><strong style="color: ${col}; font-size: 1.3rem;">${em} ${cal}</strong></div><div style="font-size: 1.1rem; margin-bottom: 12px; color: #fff;"><strong>🌲 ${z ? z.nombre : '?'}</strong></div><table class="pesada-table-bordered"><tr><th>FECHA Y HORA</th><td class="val-large">${fH}</td></tr><tr><th>PESO BRUTO</th><td class="val-large highlight">${p.kg.toFixed(1)} kg</td></tr><tr><th>PESO NETO</th><td class="val-large highlight">${p.quintales.toFixed(2)} Q</td></tr>${trNotas}</table></div></div>`; }).join('')}</div>`;
+        main.innerHTML = `<div class="card" style="border-top: 5px solid var(--p-cork); padding: 25px;"><h3 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none;">Resumen Global de Pesadas</h3><div class="summary-table-grid"><div class="summary-cell c-1a"><div class="s-lbl">1ª CAL</div><div class="s-val">${t.primera.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div><div class="summary-cell c-bo"><div class="s-lbl">BORNIZO</div><div class="s-val">${t.bornizo.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div><div class="summary-cell c-re"><div class="s-lbl">REFUGO</div><div class="s-val">${t.refugo.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div></div><div style="text-align: center; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;"><span style="font-size: 0.9rem; color: var(--text-s); text-transform: uppercase; font-weight:800; letter-spacing:1px;">Total Acumulado</span><br><strong style="font-size: 2.2rem; color: var(--p-cork);">${totalQ} <span style="font-size:0.6em">Q</span></strong></div></div><button class="btn btn-primary" style="margin-bottom: 25px; height: 60px; font-size: 1.1rem; box-shadow: 0 8px 20px rgba(212, 163, 115, 0.4);" onclick="location.hash='/nueva'">➕ NUEVA PESADA</button><div class="card" style="border-top: 5px solid var(--accent); text-align: center; padding: 25px;"><h3 style="font-size: 1.5rem; margin-bottom: 15px; color: #fff; border:none;">Listado de Pesadas</h3><button class="btn btn-secondary mt-1" onclick="App.exportarPDF('lista')">📄 Exportar a PDF</button></div><div class="lista-detallada">${pesadas.map(p => { const z = zonas.find(z => z.id == p.zonaId); let em = '⭐', cal = '1ª Calidad', col = '#10b981'; if (p.pesadasPorCalidad.bornizo.kg > 0) { em = '🟡'; cal = 'Bornizo'; col = '#eab308'; } else if (p.pesadasPorCalidad.refugo.kg > 0) { em = '🔴'; cal = 'Refugo'; col = '#ef4444'; } const fH = new Date(p.fecha).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); return `<div class="pesada-card" style="--card-color: ${col};" onclick="location.hash='/pesada/${p.id}/editar'"><div class="pesada-card-content"><div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;"><div class="pesada-saca-badge">SACA #${p.saca}</div><strong style="color: ${col}; font-size: 1.3rem;">${em} ${cal}</strong></div><div style="font-size: 1.1rem; margin-bottom: 12px; color: #fff;"><strong>🌲 ${z ? z.nombre : '?'}</strong></div><table class="pesada-table-bordered"><tr><th>FECHA Y HORA</th><td class="val-large">${fH}</td></tr><tr><th>PESO BRUTO</th><td class="val-large highlight">${p.kg.toFixed(1)} kg</td></tr><tr><th>PESO NETO</th><td class="val-large highlight">${p.quintales.toFixed(2)} Q</td></tr></table></div></div>`; }).join('')}</div>`;
     },
 
     async renderZonas() {
@@ -138,7 +139,49 @@ const App = {
         const pesadas = await db.getAllFromIndex('pesadas', 'zonaId', z.id), t = { primera: 0, bornizo: 0, refugo: 0 };
         pesadas.forEach(p => { t.primera += p.pesadasPorCalidad.primera.quintales || 0; t.bornizo += p.pesadasPorCalidad.bornizo.quintales || 0; t.refugo += p.pesadasPorCalidad.refugo.quintales || 0; });
         let croquisHtml = z.croquisBlob ? `<div style="text-align:center; margin-bottom:20px;"><img src="${URL.createObjectURL(z.croquisBlob)}" style="max-width:100%; border-radius:12px; border:1px solid var(--border);"></div>` : '';
-        main.innerHTML = `<div class="card"><h3>Detalle Zona: ${z.nombre}</h3><p><strong>Ref:</strong> ${z.refCatastral || '-'}</p><p><strong>Localización:</strong> Pol.${z.poligono} / Par.${z.parcela}</p><button class="btn btn-secondary mt-1" onclick="location.hash='/zona/${z.id}/editar'">✏️ Editar Zona</button></div><div class="card"><h4>Parcela Catastral</h4>${croquisHtml}</div><div class="card" style="border-top: 5px solid var(--p-cork); padding:25px;"><h4 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none;">Producción Acumulada</h4><div class="summary-table-grid"><div class="summary-cell c-1a"><div class="s-lbl">1ª CAL</div><div class="s-val">${t.primera.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div><div class="summary-cell c-bo"><div class="s-lbl">BORNIZO</div><div class="s-val">${t.bornizo.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div><div class="summary-cell c-re"><div class="s-lbl">REFUGO</div><div class="s-val">${t.refugo.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div></div></div><button class="btn btn-outline" onclick="location.hash='/zonas'">Volver</button>`;
+
+        let cultivosHtml = '';
+        if (z.cultivos && z.cultivos.length > 0) {
+            cultivosHtml = `
+                <div class="card">
+                    <h4>CULTIVO SIGPAC</h4>
+                    <table class="reporte-table" style="font-size:0.8rem;">
+                        <thead><tr><th>Sub</th><th>Aprovechamiento</th><th>Int</th><th>Sup. m²</th></tr></thead>
+                        <tbody>${z.cultivos.map(c => `<tr><td>${c.letra || ''}</td><td>${c.cultivo || '-'}</td><td>${c.intensidad || ''}</td><td>${c.superficie || '0'}</td></tr>`).join('')}</tbody>
+                    </table>
+                </div>`;
+        }
+
+        main.innerHTML = `
+            <div class="card">
+                <h3>DATOS DESCRIPTIVOS INMUEBLE</h3>
+                <div style="font-size:0.9rem; line-height:1.8;">
+                    <p><strong>Referencia catastral:</strong> ${z.refCatastral || '-'}</p>
+                    <p><strong>Localización:</strong> Polígono ${z.poligono || '-'} Parcela ${z.parcela || '-'}<br>
+                       <span class="text-muted">${z.municipio || '-'}</span></p>
+                    <p><strong>Clase:</strong> ${z.clase || '-'}</p>
+                    <p><strong>Uso principal:</strong> ${z.usoPrincipal || '-'}</p>
+                    <p><strong>Superficie gráfica:</strong> ${z.superficieGrafica ? z.superficieGrafica + ' m²' : '-'}</p>
+                </div>
+                <button class="btn btn-secondary mt-1" onclick="location.hash='/zona/${z.id}/editar'">✏️ Editar Zona</button>
+            </div>
+
+            <div class="card">
+                <h3>PARCELA CATASTRAL</h3>
+                ${croquisHtml}
+            </div>
+
+            ${cultivosHtml}
+
+            <div class="card" style="border-top: 5px solid var(--p-cork); padding:25px;">
+                <h4 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none;">Producción Acumulada</h4>
+                <div class="summary-table-grid">
+                    <div class="summary-cell c-1a"><div class="s-lbl">1ª CAL</div><div class="s-val">${t.primera.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div>
+                    <div class="summary-cell c-bo"><div class="s-lbl">BORNIZO</div><div class="s-val">${t.bornizo.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div>
+                    <div class="summary-cell c-re"><div class="s-lbl">REFUGO</div><div class="s-val">${t.refugo.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div>
+                </div>
+            </div>
+            <button class="btn btn-outline" onclick="location.hash='/zonas'">Volver</button>`;
     },
 
     async renderFormZona(id = null) {
@@ -271,7 +314,7 @@ const App = {
         } else { const contRep = document.getElementById('cont-rep'); contenidoHtml = contRep ? contRep.innerHTML : ""; }
         if (!contenidoHtml) { App.toastError("No hay contenido"); return; }
         const printContainer = document.createElement('div');
-        printContainer.style.position = 'absolute'; printContainer.style.left = '-9999px'; printContainer.style.width = '800px'; 
+        printContainer.style.position = 'absolute'; printContainer.style.left = '-9999px'; printContainer.style.width = '800px';
         printContainer.innerHTML = contenidoHtml; document.body.appendChild(printContainer);
         printContainer.querySelectorAll('button, select, .reporte-header, h2').forEach(el => el.remove());
         printContainer.querySelectorAll('.card-finance, .card, .entity-card').forEach(el => { el.style.background = 'white'; el.style.color = '#333'; el.style.border = '0.5pt solid #eee'; el.style.boxShadow = 'none'; });
@@ -308,7 +351,62 @@ const App = {
 
     async _handleGastoSubmit(e, id) { e.preventDefault(); try { const dS = { id: id?Number(id):undefined, concepto: document.getElementById('g-con').value.trim(), monto: document.getElementById('g-mon').value, categoria: document.getElementById('g-cat').value, fecha: document.getElementById('g-fec').value }; await Gastos.save(dS); App.toast('✅ Gasto guardado'); await App.renderGastosManager(); } catch(err){ App.toastError(err.message); } },
 
-    async _deleteGasto(id) { if (confirm("¿Eliminar gasto?")) { await Gastos.delete(id); App.toast('✅ Eliminado'); App.renderGastosManager(); } }
+    async _deleteGasto(id) { if (confirm("¿Eliminar gasto?")) { await Gastos.delete(id); App.toast('✅ Eliminado'); App.renderGastosManager(); } },
+
+    async renderImportarPdf() {
+        const main = document.getElementById('app-content');
+        main.innerHTML = `
+            <div class="card animate-in">
+                <h3>📥 Importar Zonas (SIGPAC/Catastro)</h3>
+                <p class="text-muted small">Seleccione uno o varios archivos PDF oficiales del Catastro para extraer automáticamente los datos de las parcelas.</p>
+                <input type="file" id="pdf-input" accept=".pdf" multiple class="mt-1" style="height: auto; padding: 20px 0;">
+                <div id="pdf-preview-container" class="mt-2" style="display:none;">
+                    <h4>Zonas Detectadas</h4>
+                    <div id="pdf-items-list"></div>
+                    <button id="btn-save-imported-zonas" class="btn btn-primary mt-2">💾 Guardar Zonas en Base de Datos</button>
+                </div>
+            </div>
+            <button class="btn btn-outline" onclick="location.hash='/zonas'">Volver a Zonas</button>
+        `;
+
+        const input = document.getElementById('pdf-input'), container = document.getElementById('pdf-preview-container'), list = document.getElementById('pdf-items-list'), btnSave = document.getElementById('btn-save-imported-zonas');
+        let zonesToSave = [];
+
+        input.onchange = async (e) => {
+            if (!e.target.files.length) return;
+            zonesToSave = []; list.innerHTML = '<div class="loader">Procesando documentos...</div>'; container.style.display = 'block';
+
+            for (const file of e.target.files) {
+                try {
+                    const data = await parsePdfCatastro(file);
+                    if (data) {
+                        data._tempId = Math.random().toString(36).substr(2, 9);
+                        zonesToSave.push(data);
+                    }
+                } catch (err) { App.toastError(`Error en ${file.name}`); }
+            }
+
+            if (zonesToSave.length === 0) { list.innerHTML = '<p class="text-center text-muted">No se detectaron datos válidos en los PDFs.</p>'; return; }
+
+            list.innerHTML = zonesToSave.map(z => `
+                <div class="card" style="background: rgba(255,255,255,0.03); margin-bottom: 10px; border-left: 4px solid var(--p-cork);">
+                    <div style="font-size: 0.8rem; margin-bottom: 5px; color: var(--text-s);">Ref: ${z.refCatastral}</div>
+                    <strong>Pol. ${z.poligono} / Par. ${z.parcela}</strong>
+                    <input type="text" placeholder="Asignar nombre (ej: Las Solanas)" id="name-${z._tempId}" value="${z.nombre || ''}" class="mt-1" style="height: 45px; font-size: 0.9rem;">
+                </div>
+            `).join('');
+        };
+
+        btnSave.onclick = async () => {
+            for (const z of zonesToSave) {
+                z.nombre = document.getElementById(`name-${z._tempId}`).value.trim() || `Zona ${z.poligono}/${z.parcela}`;
+                delete z._tempId;
+                await Zonas.save(z);
+            }
+            App.toast(`✅ ${zonesToSave.length} zonas añadidas correctamente`);
+            location.hash = '/zonas';
+        };
+    }
 };
 
 window.App = App;
