@@ -12,7 +12,32 @@
 
 ### Descripción General
 
-Chamorro's Cork Manager es una plataforma avanzada diseñada para la optimización integral de explotaciones corcheras. En su versión 6.1.5, el sistema se posiciona como una herramienta de inteligencia de negocio que permite un control técnico, operativo y económico exhaustivo en tiempo real a través de una interfaz de alta eficiencia.
+Chamorro's Cork Manager es una plataforma avanzada diseñada para la optimización integral de explotaciones corcheras. En su versión 6.2.3, el sistema se posiciona como una herramienta de inteligencia de negocio que permite un control técnico, operativo y económico exhaustivo en tiempo real a través de una interfaz de alta eficiencia.
+
+---
+
+### Últimas Mejoras (v6.2.3)
+
+#### Rediseño de Dashboard
+Interfaz completamente renovada con una visualización mejorada y más intuitiva. El dashboard ahora ofrece un desglose visual más claro de la información crítica con mejor usabilidad.
+
+#### Gestión Avanzada de Zonas
+Restauración completa de datos de zona con funcionalidades expandidas. Ahora incluye:
+- Visualización enriquecida de datos catastrales
+- Sincronización completa de información de parcelas
+- **Nuevo botón de eliminación de parcelas** para mejor control administrativo
+
+#### Panel de Resumen Global de Pesadas
+Nuevo panel integrado en la pantalla de pesadas que proporciona:
+- Vista consolidada de todas las pesadas del período
+- Sistema de etiquetas con códigos de color por calidad (Primera, Bornizo, Refugo)
+- Estadísticas en tiempo real
+
+#### Mejoras Visuales y de Interfaz (v6.1.6)
+- Modernización completa de estilos CSS
+- Botón "Nueva Pesada" integrado directamente en pantalla principal
+- Personalización avanzada de colores de borde en paneles de Ajustes
+- Interfaz optimizada para pesadas, zonas y configuración
 
 ---
 
