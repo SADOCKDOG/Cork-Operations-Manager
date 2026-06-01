@@ -4,16 +4,6 @@
   <img src="docs/Logo%20cabecera.png" width="220" alt="Logo Cabecera">
 </p>
 
-<p align="center">
-  <img src="docs/Informe%20con%20Graficas.jpg" width="56" alt="Charts" />
-  <img src="docs/Informe%20Econ%C3%B3mico.jpg" width="56" alt="Reports" />
-  <img src="docs/Informe%20Balance%20de%20Sacas.jpg" width="56" alt="Layout" />
-  <img src="docs/Logo%20cabecera.png" width="56" alt="Capacitor" />
-</p>
-
-<p align="center"><em>Built with: TypeScript · HTML5 · CSS3 · Capacitor (PWA-ready)</em></p>
-<p align="center"><em>License: Proprietary — Sdog Farm Software Factory. All rights reserved.</em></p>
-
 ---
 
 ## Resumen
