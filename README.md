@@ -4,141 +4,199 @@
   <img src="docs/Logo%20cabecera.png" width="220" alt="Logo Cabecera">
 </p>
 
----
-
-## Resumen
-
-Aplicación multiplataforma para la gestión integral de explotaciones corcheras: registro y trazabilidad de pesadas, gestión catastral (SIGPAC), control de costes, informes profesionales y operación offline con sincronización.
+<p align="center"><strong>Built with:</strong> TypeScript · HTML5 · CSS3 · Capacitor (PWA-ready)</p>
+<p align="center"><strong>License:</strong> Proprietary — Sdog Farm Software Factory. All rights reserved.</p>
 
 ---
 
-## Índice
+## Descripción completa
 
-- [Características principales](#características-principales)
-- [Flujo de trabajo (rápido)](#flujo-de-trabajo-rápido)
-- [Instalación y despliegue](#instalación-y-despliegue)
-- [Estructura de datos y exportación](#estructura-de-datos-y-exportación)
-- [Imágenes y guía visual](#imágenes-y-guía-visual)
-- [Soporte y licencia](#soporte-y-licencia)
+Chamorro's Cork Manager es una aplicación multiplataforma diseñada para gestionar de forma integral la producción y la parte económica de explotaciones corcheras. A continuación se describen en detalle las funcionalidades de cada módulo/screen: qué hace, qué datos maneja y casos de uso principales. Tras cada descripción funcional, se muestran las capturas de pantalla relacionadas.
 
 ---
 
-## Características principales
+## Módulos y funcionalidades
 
-A continuación la funcionalidad agrupada por áreas. Cada entrada incluye una captura representativa y la descripción resumida.
+### 1) Panel de control (Dashboard)
+Descripción funcional:
+- Vista inicial que muestra indicadores clave: total kg/pesadas diarias, quintales por calidad (1ª, Bornizo, Refugo), y balance acumulado por campaña.
+- Accesos rápidos a: Nueva Pesada, Listado de Pesadas, Informes y Gestión de Fincas.
+- Filtros por finca y rango de fechas para contextualizar los datos mostrados.
+- Objetivo: ofrecer una foto inmediata del estado operativo y financiero para la toma de decisiones sobre recolección y logística.
 
-<table>
-  <tr>
-    <td width="260" valign="top" align="center">
-      <img src="docs/Pantalla%20Inicio.jpg" width="220" alt="Dashboard" />
-      <p><strong>Figura:</strong> Panel principal / Dashboard</p>
-    </td>
-    <td valign="top">
-      <h3>Panel de control</h3>
-      <p>Resumen global y diario de producción por finca, con totales por calidad y accesos directos a operaciones principales.</p>
-    </td>
-  </tr>
+Casos de uso:
+- Comprobación rápida del rendimiento diario en campo.
+- Monitorizar desviaciones por calidad o merma técnica.
 
-  <tr>
-    <td valign="top" align="center">
-      <img src="docs/Pantalla%20Nueva%20Pesada.jpg" width="220" alt="Nueva Pesada" />
-      <p><strong>Figura:</strong> Formulario "Nueva Pesada"</p>
-    </td>
-    <td valign="top">
-      <h3>Registro de pesadas</h3>
-      <p>Entrada rápida de bruto/tara, selección de calidad (1ª, Bornizo, Refugo), neto/Quintales, foto opcional y notas. Histórico y auditoría de cambios.</p>
-    </td>
-  </tr>
+Imágenes relacionadas:
 
-  <tr>
-    <td valign="top" align="center">
-      <img src="docs/Pantalla%20De%20Lista%20de%20pesadas.jpg" width="220" alt="Listado de pesadas" />
-      <p><strong>Figura:</strong> Listado de pesadas</p>
-    </td>
-    <td valign="top">
-      <h3>Listado y trazabilidad</h3>
-      <p>Filtros por finca, comprador y fecha; edición y exportación de selecciones. Trazabilidad por saca.</p>
-    </td>
-  </tr>
-
-  <tr>
-    <td valign="top" align="center">
-      <img src="docs/Pantalla%20Gesti%C3%B3n%20de%20Fincas.jpg" width="220" alt="Gestión de Fincas" />
-      <p><strong>Figura:</strong> Gestión de fincas</p>
-    </td>
-    <td valign="top">
-      <h3>Gestión Multi-Finca</h3>
-      <p>Administración de fincas con datos legales (DNI/CIF), dirección y contactos. Configuración independiente por explotación.</p>
-    </td>
-  </tr>
-
-  <tr>
-    <td valign="top" align="center">
-      <img src="docs/Pantalla%20Gesti%C3%B3n%20e%20Importaci%C3%B3n%20SigPac%20de%20Zonas.jpg" width="220" alt="SIGPAC" />
-      <p><strong>Figura:</strong> Importación SIGPAC</p>
-    </td>
-    <td valign="top">
-      <h3>Gestión catastral (SIGPAC)</h3>
-      <p>Importación y restauración de fichas catastrales, gestión de subparcelas y superficies, validaciones para evitar eliminaciones accidentales.</p>
-    </td>
-  </tr>
-
-  <tr>
-    <td valign="top" align="center">
-      <img src="docs/Pantalla%20de%20Gesti%C3%B3n%20de%20Gastos.jpg" width="220" alt="Gastos" />
-      <p><strong>Figura:</strong> Gestión de gastos</p>
-    </td>
-    <td valign="top">
-      <h3>Control de costes</h3>
-      <p>Registro de gastos por campaña y finca (mano de obra, logística, insumos); cálculo automático de coste por quintal y margen por comprador.</p>
-    </td>
-  </tr>
-
-  <tr>
-    <td valign="top" align="center">
-      <img src="docs/Informe%20Balance%20de%20Sacas.jpg" width="220" alt="Informes" />
-      <p><strong>Figura:</strong> Informes</p>
-    </td>
-    <td valign="top">
-      <h3>Informes y análisis</h3>
-      <p>Balance de sacas, histórico, producción por zonas y informe económico con cabeceras vendedor/comprador. Exportación a PDF y Excel; gráficas dinámicas.</p>
-    </td>
-  </tr>
-</table>
+<p align="center">
+  <img src="docs/Pantalla%20Inicio.jpg" width="220" alt="Dashboard" />
+</p>
+<p align="center"><strong>Figura:</strong> Panel principal / Dashboard con resumen de producción.</p>
 
 ---
 
-## Flujo de trabajo (rápido)
+### 2) Registro de pesadas (Nueva Pesada)
+Descripción funcional:
+- Formulario optimizado para captura en campo: campos principales (Bruto, Tara, Calidad), cálculo automático de Neto y conversión a Quintales.
+- Selección de comprador, asignación de saca y número identificador único por pesada.
+- Campos opcionales: foto de la saca, notas de observación, coordenadas GPS si el dispositivo las proporciona.
+- Validaciones: límites razonables en pesos, comprobación de valores obligatorios y guardado offline en IndexedDB si no hay conexión.
+- Objetivo: máxima velocidad y fiabilidad en la entrada de datos para evitar manipulación posterior.
 
-1. Crear o seleccionar una finca.
-2. Configurar compradores y precios por calidad.
-3. Registrar pesadas en campo desde "Nueva Pesada".
-4. Revisar y depurar en el listado de pesadas.
-5. Registrar gastos asociados.
-6. Generar y exportar informes.
+Casos de uso:
+- Registro inmediato tras el pesaje en báscula.
+- Corregir entradas en el listado con auditoría de cambios.
+
+Imágenes relacionadas:
+
+<p align="center">
+  <img src="docs/Pantalla%20Nueva%20Pesada.jpg" width="220" alt="Nueva Pesada" />
+</p>
+<p align="center"><strong>Figura:</strong> Formulario "Nueva Pesada" (entrada rápida en campo).</p>
+
+---
+
+### 3) Listado y trazabilidad de pesadas
+Descripción funcional:
+- Listado tabular de todas las pesadas con paginación y filtros por finca, comprador, calidad, fecha y rango de pesos.
+- Operaciones sobre registros: ver detalle, editar (con registro de auditoría), marcar como verificada, y eliminación (con confirmación y control de permisos).
+- Exportación de subconjuntos a Excel para conciliaciones y auditorías.
+- Objetivo: disponer de histórico accesible y exportable para trazabilidad y gestión administrativa.
+
+Imágenes relacionadas:
+
+<p align="center">
+  <img src="docs/Pantalla%20De%20Lista%20de%20pesadas.jpg" width="220" alt="Listado de pesadas" />
+</p>
+<p align="center"><strong>Figura:</strong> Listado de pesadas con filtros y controles de edición.</p>
+
+<p align="center">
+  <img src="docs/Screenshot_2026-06-01-15-59-52-541_com.elchamorro.pesadascorcho.jpg" width="220" alt="Vista móvil" />
+</p>
+<p align="center"><strong>Figura:</strong> Vista móvil / captura en dispositivo Android.</p>
+
+---
+
+### 4) Gestión de fincas y compradores
+Descripción funcional:
+- Panel para gestionar múltiples fincas: datos legales (DNI/CIF), dirección completa, responsables, contacto telefónico y e-mail.
+- Per-file settings por finca: factores de conversión, merma técnica por defecto, moneda y preferencias de exportación.
+- Gestión de compradores: perfil de comprador con precios por calidad (1ª, Bornizo, Refugo), condiciones comerciales y datos fiscales.
+- Objetivo: centralizar la información administrativa y comercial por explotación.
+
+Imágenes relacionadas:
+
+<p align="center">
+  <img src="docs/Pantalla%20Gesti%C3%B3n%20de%20Fincas.jpg" width="220" alt="Gestión de Fincas" />
+</p>
+<p align="center"><strong>Figura:</strong> Gestión de fincas con datos legales y contacto.</p>
+
+---
+
+### 5) Gestión catastral (SIGPAC) y zonas
+Descripción funcional:
+- Importación de fichas SIGPAC y asociación a fincas/subparcelas.
+- Almacenamiento de metadatos: referencia catastral, polígono, superficie y tablas de aprovechamiento técnico.
+- Herramientas para restaurar fichas y evitar la pérdida accidental de información; validaciones antes de eliminar parcelas.
+- Objetivo: asegurar la consistencia técnica de las superficies y su vinculación con la producción.
+
+Imágenes relacionadas:
+
+<p align="center">
+  <img src="docs/Pantalla%20Gesti%C3%B3n%20e%20Importaci%C3%B3n%20SigPac%20de%20Zonas.jpg" width="220" alt="Importación SIGPAC" />
+</p>
+<p align="center"><strong>Figura:</strong> Importación y restauración de fichas SIGPAC.</p>
+
+<p align="center">
+  <img src="docs/Pantalla%20Gesti%C3%B3n%20de%20Zonas.jpg" width="220" alt="Gestión de Zonas" />
+</p>
+<p align="center"><strong>Figura:</strong> Visor de zonas catastrales y subparcelas.</p>
+
+---
+
+### 6) Gestión de gastos y control económico
+Descripción funcional:
+- Registro de gastos operativos vinculado a finca o campaña: mano de obra, transporte, maquinaria, insumos y otros costes.
+- Clasificación por tipo de gasto y posibilidad de asociar al lote o a una serie de pesadas.
+- Cálculo automático de coste unitario por quintal y generación de un informe económico consolidado.
+- Objetivo: obtener visibilidad real del coste de explotación y márgenes por comprador.
+
+Imágenes relacionadas:
+
+<p align="center">
+  <img src="docs/Pantalla%20de%20Gesti%C3%B3n%20de%20Gastos.jpg" width="220" alt="Gestión de Gastos" />
+</p>
+<p align="center"><strong>Figura:</strong> Registro y asignación de gastos por campaña.</p>
+
+<p align="center">
+  <img src="docs/Pantalla%20Ajustess.jpg" width="220" alt="Ajustes" />
+</p>
+<p align="center"><strong>Figura:</strong> Pantalla de ajustes y configuración del sistema.</p>
+
+---
+
+### 7) Informes y análisis
+Descripción funcional:
+- Generación de informes: balance de sacas, informe por zonas, histórico de liquidaciones e informe económico con cabeceras vendedor/comprador.
+- Motor de gráficas dinámicas para análisis temporal y por calidad.
+- Exportación nativa a PDF y Excel con formato profesional y logo configurable en cabecera.
+- Objetivo: facilitar la documentación técnica y comercial para compradores, auditorías y presentaciones.
+
+Imágenes relacionadas:
+
+<p align="center">
+  <img src="docs/Informe%20Balance%20de%20Sacas.jpg" width="220" alt="Informe Balance de Sacas" />
+  <br />
+  <img src="docs/informe%20por%20Zonas.jpg" width="220" alt="Informe por Zonas" />
+</p>
+<p align="center"><strong>Figura:</strong> Informes de balance y por zonas; exportación a PDF/XLSX.</p>
+
+<p align="center">
+  <img src="docs/informe%20hist%C3%B3rico%20de%20sacas.jpg" width="220" alt="Histórico" />
+  <br />
+  <img src="docs/Informe%20Econ%C3%B3mico.jpg" width="220" alt="Informe Económico" />
+</p>
+<p align="center"><strong>Figura:</strong> Histórico de sacas y resumen económico por campaña.</p>
+
+<p align="center">
+  <img src="docs/Informe%20con%20Graficas.jpg" width="220" alt="Gráficas" />
+</p>
+<p align="center"><strong>Figura:</strong> Gráficas dinámicas para análisis estadístico.</p>
+
+---
+
+## Operación offline y sincronización
+
+- Almacenamiento local en IndexedDB con cola de cambios para sincronizar cuando haya conexión.
+- Estrategia de fusión para minimizar conflictos; registro de última modificación y usuario.
+
+---
+
+## Seguridad y copias de seguridad
+
+- Copias de seguridad cifradas y exportables. Recomendación: realizar backups periódicos tras jornadas de pesada.
+- Control de accesos y permisos para evitar eliminaciones accidentales o cambios sin auditoría.
 
 ---
 
 ## Instalación y despliegue
 
-Requisitos: Node.js, npm, Ionic/Capacitor.
+Requisitos básicos: Node.js, npm, Capacitor. Pasos resumidos:
 
-Comandos básicos:
-
-- npm install
-- npm run build
-- npx cap add android
-- npx cap sync
-- npx cap open android
-
-(Compilar desde Android Studio / Xcode para generar binarios nativos.)
+1. npm install
+2. npm run build
+3. npx cap add android
+4. npx cap sync
+5. npx cap open android (Compilar y firmar desde Android Studio/Xcode)
 
 ---
 
 ## Estructura de datos y exportación
 
-- Almacenamiento local: IndexedDB — objetos: fincas, parcelas, pesadas, compradores, gastos.
-- Exportación: XLSX (tablas) y PDF (informes). 
+- IndexedDB: tablas/objetos principales (fincas, parcelas, pesadas, compradores, gastos).
+- Exportación: XLSX para tablas y PDF para informes formateados.
 
 ---
 
@@ -148,11 +206,10 @@ soporte.sdogfarm@gmail.com
 
 ---
 
-## Cambios principales
+## Historial de cambios principales
 
-- v6.2.9: Optimización visual, campos de contacto y mejoras en formularios de pesada.
-- v6.2.6: Reordenación de campos y validaciones SIGPAC.
+- v6.2.9: optimizaciones visuales, campos de contacto, mejoras en formularios de pesada.
+- v6.2.6: reordenación de campos y validaciones de zonas/SIGPAC.
 
----
 
-<p align="center"><em>Documento generado y estructurado para presentar la aplicación de forma clara y profesional.</em></p>
+<p align="center"><em>Documento actualizado con estructura funcional: descripción detallada de módulos seguida de las imágenes relacionadas.</em></p>
