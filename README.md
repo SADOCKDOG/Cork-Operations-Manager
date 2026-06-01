@@ -1,10 +1,23 @@
 # Chamorro's Cork Manager
 
 <p align="center">
-  <img src="MANUAL/README/Logo cabecera.png" width="350" alt="Logo Cabecera">
+  <img src="docs/Logo cabecera.png" width="350" alt="Logo Cabecera">
 </p>
 
 Solución profesional para la gestión financiera, operativa y la digitalización de sacas de corcho.
+
+---
+
+## Índice
+
+- [Descripción general](#descripción-general)
+- [Características clave](#características-clave-detaladas)
+- [Instalación y despliegue](#instalación-y-despliegue)
+- [Uso rápido](#uso-rápido-flujo-típico)
+- [Estructura de datos](#estructura-de-datos-y-formatos)
+- [Capturas y guía visual](#capturas-y-guía-visual)
+- [Buenas prácticas](#buenas-prácticas-y-recomendaciones)
+- [Licencia y soporte](#licencia-y-soporte)
 
 ---
 
@@ -30,20 +43,23 @@ Versión documentada: v6.2.9 (con historial de mejoras desde v6.2.6).
    - Historial por saca y auditoría de modificaciones.
    - Captura de foto (opcional) y notas por pesada.
 
-   ![Nueva Pesada](MANUAL/README/Pantalla Nueva Pesada.jpg)
+   ![Nueva Pesada](docs/Pantalla Nueva Pesada.jpg)
+   **Figura:** Formulario "Nueva Pesada" (entrada rápida en campo).
 
 2. Gestión de fincas y parcelas (SIGPAC)
    - Administración de múltiples fincas con datos legales (DNI/CIF, dirección, contacto).
    - Importación y restauración de fichas SIGPAC; gestión de subparcelas y superficies.
    - Evita la eliminación accidental de parcelas con validaciones y restauraciones.
 
-   ![Gestión de Zonas](MANUAL/README/Pantalla Gestión e Importación SigPac de Zonas.jpg)
+   ![Gestión de Zonas](docs/Pantalla Gestión e Importación SigPac de Zonas.jpg)
+   **Figura:** Gestión e importación de fichas SIGPAC.
 
 3. Control de costes y gestión de gastos
    - Registro de gastos (mano de obra, logística, insumos, servicios) y su asignación por finca/parte.
    - Cálculo automático de coste unitario por quintal y margen por comprador.
 
-   ![Gestión de Gastos](MANUAL/README/Pantalla de Gestión de Gastos.jpg)
+   ![Gestión de Gastos](docs/Pantalla de Gestión de Gastos.jpg)
+   **Figura:** Registro y asignación de gastos por campaña.
 
 4. Compradores y tarifas por calidad
    - Perfil completo de compradores con precios por calidad (1ª, Bornizo, Refugo).
@@ -54,14 +70,14 @@ Versión documentada: v6.2.9 (con historial de mejoras desde v6.2.6).
    - Gráficas dinámicas para análisis de producción y rendimiento.
    - Exportación a PDF y Excel con formato profesional.
 
-   ![Informe Balance de Sacas](MANUAL/README/Informe Balance de Sacas.jpg)
-   ![Informe por Zonas](MANUAL/README/informe por Zonas.jpg)
+   ![Informe Balance de Sacas](docs/Informe Balance de Sacas.jpg)
+   ![Informe por Zonas](docs/informe por Zonas.jpg)
 
 6. Panel de control y UX optimizada
    - Dashboard con resumen global y diario de producción por finca.
    - Interfaz optimizada para uso en pantallas oscuras (modo dark) y condiciones de campo.
 
-   ![Inicio](MANUAL/README/Pantalla Inicio.jpg)
+   ![Inicio](docs/Pantalla Inicio.jpg)
 
 7. Operación offline y sincronización
    - Almacenamiento local con IndexedDB.
@@ -106,17 +122,7 @@ La aplicación está empaquetada con Capacitor y es compatible con Android e iOS
 
 ## Capturas y guía visual
 
-Se incluyen capturas dentro de MANUAL/README para referencia rápida:
-
-- Pantalla Inicio: MANUAL/README/Pantalla Inicio.jpg
-- Nueva Pesada: MANUAL/README/Pantalla Nueva Pesada.jpg
-- Listado de pesadas: MANUAL/README/Pantalla De Lista de pesadas.jpg
-- Gestión de Zonas / SIGPAC: MANUAL/README/Pantalla Gestión e Importación SigPac de Zonas.jpg
-- Gestión de Fincas: MANUAL/README/Pantalla Gestión de Fincas.jpg
-- Gestión de Gastos: MANUAL/README/Pantalla de Gestión de Gastos.jpg
-- Informes: MANUAL/README/Informe Balance de Sacas.jpg, MANUAL/README/informe por Zonas.jpg, MANUAL/README/informe histórico de sacas.jpg
-
-Colocar las imágenes en el README facilita la formación del usuario y la documentación comercial.
+Las imágenes se han movido a la carpeta `docs/`. Referencias incluidas en el README para formación rápida.
 
 ---
 
@@ -128,15 +134,11 @@ Colocar las imágenes en el README facilita la formación del usuario y la docum
 
 ---
 
-## Licencia y propiedad
+## Licencia y soporte
 
-Software de uso privado/familiar propiedad de Sdog Farm Software Factory. Para consultas comerciales o licencias, contactar al soporte.
+Software de uso privado/familiar propiedad de Sdog Farm Software Factory.
 
----
-
-## Contacto y soporte
-
-soporte.sdogfarm@gmail.com
+Contacto: soporte.sdogfarm@gmail.com
 
 ---
 
@@ -146,4 +148,4 @@ soporte.sdogfarm@gmail.com
 - v6.2.6: Reordenación de campos y validaciones de zonas/SIGPAC.
 
 
-*Fin del README mejorado.*
+*Fin del README actualizado.*
