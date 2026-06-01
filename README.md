@@ -4,8 +4,17 @@
   <img src="docs/Logo%20cabecera.png" width="220" alt="Logo Cabecera">
 </p>
 
-<p align="center"><strong>Built with:</strong> TypeScript, HTML5, CSS3, Capacitor (PWA-ready)</p>
-<p align="center"><strong>License:</strong> Proprietary — Sdog Farm Software Factory. All rights reserved.</p>
+<p align="center">
+  <img src="docs/Informe%20con%20Graficas.jpg" width="80" alt="TypeScript/Charts" />
+  <img src="docs/Informe%20Econ%C3%B3mico.jpg" width="80" alt="HTML5/Reports" />
+  <img src="docs/Informe%20Balance%20de%20Sacas.jpg" width="80" alt="CSS3/Layout" />
+  <img src="docs/Logo%20cabecera.png" width="80" alt="Capacitor/Logo" />
+</p>
+<p align="center"><em>Built with: TypeScript, HTML5, CSS3, Capacitor (PWA-ready)</em></p>
+<p align="center">
+  <img src="docs/Logo%20cabecera.png" width="140" alt="License: Proprietary" />
+</p>
+<p align="center"><em>License: Proprietary — Sdog Farm Software Factory. All rights reserved.</em></p>
 
 <p>
 Solución profesional para la gestión financiera, operativa y la digitalización de sacas de corcho.
@@ -147,7 +156,99 @@ La aplicación está empaquetada con Capacitor y es compatible con Android e iOS
 
 ## Capturas y guía visual
 
-Las imágenes se han movido a la carpeta `docs/`. Referencias incluidas en el README para formación rápida.
+A continuación están todas las capturas disponibles organizadas por categoría. Las imágenes residen en `docs/` y cada figura incluye su descripción debajo.
+
+### Pantallas de la aplicación
+
+<p align="center">
+  <img src="docs/Pantalla%20Inicio.jpg" width="180" alt="Inicio" />
+  <br />
+  <strong>Figura:</strong> Panel principal / Dashboard con resumen de producción.
+</p>
+
+<p align="center">
+  <img src="docs/Pantalla%20Nueva%20Pesada.jpg" width="180" alt="Nueva Pesada" />
+  <br />
+  <strong>Figura:</strong> Formulario "Nueva Pesada" (entrada rápida en campo).
+</p>
+
+<p align="center">
+  <img src="docs/Pantalla%20De%20Lista%20de%20pesadas.jpg" width="180" alt="Listado de pesadas" />
+  <br />
+  <strong>Figura:</strong> Listado de pesadas con filtros y controles de edición.
+</p>
+
+<p align="center">
+  <img src="docs/Screenshot_2026-06-01-15-59-52-541_com.elchamorro.pesadascorcho.jpg" width="180" alt="Mobile screenshot" />
+  <br />
+  <strong>Figura:</strong> Captura en dispositivo Android (vista móvil).
+</p>
+
+### Gestión catastral y de fincas
+
+<p align="center">
+  <img src="docs/Pantalla%20Gesti%C3%B3n%20de%20Fincas.jpg" width="180" alt="Gestión de Fincas" />
+  <br />
+  <strong>Figura:</strong> Gestión de fincas con datos legales y contacto.
+</p>
+
+<p align="center">
+  <img src="docs/Pantalla%20Gesti%C3%B3n%20de%20Zonas.jpg" width="180" alt="Gestión de Zonas" />
+  <br />
+  <strong>Figura:</strong> Visor de zonas catastrales.
+</p>
+
+<p align="center">
+  <img src="docs/Pantalla%20Gesti%C3%B3n%20e%20Importaci%C3%B3n%20SigPac%20de%20Zonas.jpg" width="180" alt="Importación SIGPAC" />
+  <br />
+  <strong>Figura:</strong> Importación y restauración de fichas SIGPAC.
+</p>
+
+### Gestión y control operativo
+
+<p align="center">
+  <img src="docs/Pantalla%20de%20Gesti%C3%B3n%20de%20Gastos.jpg" width="180" alt="Gestión de Gastos" />
+  <br />
+  <strong>Figura:</strong> Registro y asignación de gastos por campaña.
+</p>
+
+<p align="center">
+  <img src="docs/Pantalla%20Ajustess.jpg" width="180" alt="Ajustes" />
+  <br />
+  <strong>Figura:</strong> Pantalla de ajustes y configuración del sistema.
+</p>
+
+### Informes y análisis
+
+<p align="center">
+  <img src="docs/Informe%20Balance%20de%20Sacas.jpg" width="180" alt="Informe Balance de Sacas" />
+  <br />
+  <strong>Figura:</strong> Informe — Balance de sacas.
+</p>
+
+<p align="center">
+  <img src="docs/informe%20por%20Zonas.jpg" width="180" alt="Informe por Zonas" />
+  <br />
+  <strong>Figura:</strong> Informe por zonas — producción por parcela.
+</p>
+
+<p align="center">
+  <img src="docs/informe%20hist%C3%B3rico%20de%20sacas.jpg" width="180" alt="Informe histórico de sacas" />
+  <br />
+  <strong>Figura:</strong> Histórico de liquidaciones y sacas.
+</p>
+
+<p align="center">
+  <img src="docs/Informe%20Econ%C3%B3mico.jpg" width="180" alt="Informe Económico" />
+  <br />
+  <strong>Figura:</strong> Informe económico con cabeceras vendedor/comprador.
+</p>
+
+<p align="center">
+  <img src="docs/Informe%20con%20Graficas.jpg" width="180" alt="Informes con gráficas" />
+  <br />
+  <strong>Figura:</strong> Informes con gráficas dinámicas y análisis estadístico.
+</p>
 
 ---
 
