@@ -1,7 +1,7 @@
 # Chamorro's Cork Manager
 
 <p align="center">
-  <img src="docs/Logo%20cabecera.png" width="350" alt="Logo Cabecera">
+  <img src="docs/Logo%20cabecera.png" width="220" alt="Logo Cabecera">
 </p>
 
 Solución profesional para la gestión financiera, operativa y la digitalización de sacas de corcho.
@@ -43,7 +43,7 @@ Versión documentada: v6.2.9 (con historial de mejoras desde v6.2.6).
    - Historial por saca y auditoría de modificaciones.
    - Captura de foto (opcional) y notas por pesada.
 
-   <img src="docs/Pantalla%20Nueva%20Pesada.jpg" width="600" alt="Nueva Pesada" />
+   <img src="docs/Pantalla%20Nueva%20Pesada.jpg" width="300" alt="Nueva Pesada" />
    **Figura:** Formulario "Nueva Pesada" (entrada rápida en campo).
 
 2. Gestión de fincas y parcelas (SIGPAC)
@@ -51,14 +51,14 @@ Versión documentada: v6.2.9 (con historial de mejoras desde v6.2.6).
    - Importación y restauración de fichas SIGPAC; gestión de subparcelas y superficies.
    - Evita la eliminación accidental de parcelas con validaciones y restauraciones.
 
-   <img src="docs/Pantalla%20Gesti%C3%B3n%20e%20Importaci%C3%B3n%20SigPac%20de%20Zonas.jpg" width="600" alt="Gestión de Zonas" />
+   <img src="docs/Pantalla%20Gesti%C3%B3n%20e%20Importaci%C3%B3n%20SigPac%20de%20Zonas.jpg" width="300" alt="Gestión de Zonas" />
    **Figura:** Gestión e importación de fichas SIGPAC.
 
 3. Control de costes y gestión de gastos
    - Registro de gastos (mano de obra, logística, insumos, servicios) y su asignación por finca/parte.
    - Cálculo automático de coste unitario por quintal y margen por comprador.
 
-   <img src="docs/Pantalla%20de%20Gesti%C3%B3n%20de%20Gastos.jpg" width="600" alt="Gestión de Gastos" />
+   <img src="docs/Pantalla%20de%20Gesti%C3%B3n%20de%20Gastos.jpg" width="300" alt="Gestión de Gastos" />
    **Figura:** Registro y asignación de gastos por campaña.
 
 4. Compradores y tarifas por calidad
@@ -70,14 +70,14 @@ Versión documentada: v6.2.9 (con historial de mejoras desde v6.2.6).
    - Gráficas dinámicas para análisis de producción y rendimiento.
    - Exportación a PDF y Excel con formato profesional.
 
-   <img src="docs/Informe%20Balance%20de%20Sacas.jpg" width="600" alt="Informe Balance de Sacas" />
-   <img src="docs/informe%20por%20Zonas.jpg" width="600" alt="Informe por Zonas" />
+   <img src="docs/Informe%20Balance%20de%20Sacas.jpg" width="300" alt="Informe Balance de Sacas" />
+   <img src="docs/informe%20por%20Zonas.jpg" width="300" alt="Informe por Zonas" />
 
 6. Panel de control y UX optimizada
    - Dashboard con resumen global y diario de producción por finca.
    - Interfaz optimizada para uso en pantallas oscuras (modo dark) y condiciones de campo.
 
-   <img src="docs/Pantalla%20Inicio.jpg" width="600" alt="Inicio" />
+   <img src="docs/Pantalla%20Inicio.jpg" width="300" alt="Inicio" />
 
 7. Operación offline y sincronización
    - Almacenamiento local con IndexedDB.
