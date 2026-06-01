@@ -12,32 +12,25 @@
 
 ### Descripción General
 
-Chamorro's Cork Manager es una plataforma avanzada diseñada para la optimización integral de explotaciones corcheras. En su versión 6.2.3, el sistema se posiciona como una herramienta de inteligencia de negocio que permite un control técnico, operativo y económico exhaustivo en tiempo real a través de una interfaz de alta eficiencia.
+Chamorro's Cork Manager es una plataforma avanzada diseñada para la optimización integral de explotaciones corcheras. En su versión 6.2.9, el sistema se posiciona como una herramienta de inteligencia de negocio que permite un control técnico, operativo y económico exhaustivo en tiempo real a través de una interfaz de alta eficiencia.
 
 ---
 
-### Últimas Mejoras (v6.2.3)
+### Últimas Mejoras (v6.2.9)
 
-#### Rediseño de Dashboard
-Interfaz completamente renovada con una visualización mejorada y más intuitiva. El dashboard ahora ofrece un desglose visual más claro de la información crítica con mejor usabilidad.
+#### Refinamiento Visual y Modernización de Interfaz
+- **Botones con Transparencias:** Aplicación de transparencia al 50% y gradientes modernos en los selectores principales de Gestión de Fincas e Informes.
+- **Optimización de Espacio:** Reducción del tamaño de botones e iconos para una interfaz más compacta y profesional.
+- **Dashboard Estructurado:** Rediseño de la pantalla de inicio con el nombre de la finca centrado y paneles de resumen global y diario integrados.
 
-#### Gestión Avanzada de Zonas
-Restauración completa de datos de zona con funcionalidades expandidas. Ahora incluye:
-- Visualización enriquecida de datos catastrales
-- Sincronización completa de información de parcelas
-- **Nuevo botón de eliminación de parcelas** para mejor control administrativo
+#### Gestión de Datos Expandida
+- **Nuevos Campos de Ajustes:** Inclusión de campos de contacto (Teléfono y Email) para Propietarios y Compradores.
+- **Precios por Calidad:** Configuración individualizada de precios para 1ª, Bornizo y Refugo vinculada al comprador.
+- **Gestor de Fincas Completo:** Formulario de edición de fincas con soporte para DNI/CIF, dirección y datos de contacto.
 
-#### Panel de Resumen Global de Pesadas
-Nuevo panel integrado en la pantalla de pesadas que proporciona:
-- Vista consolidada de todas las pesadas del período
-- Sistema de etiquetas con códigos de color por calidad (Primera, Bornizo, Refugo)
-- Estadísticas en tiempo real
-
-#### Mejoras Visuales y de Interfaz (v6.1.6)
-- Modernización completa de estilos CSS
-- Botón "Nueva Pesada" integrado directamente en pantalla principal
-- Personalización avanzada de colores de borde en paneles de Ajustes
-- Interfaz optimizada para pesadas, zonas y configuración
+#### Mejoras en Operaciones (v6.2.6)
+- **Formulario de Pesada Optimizado:** Reordenación de campos (Bruto/Tara arriba, Calidad central, Neto/Quintales destacados) para agilizar la entrada de datos en campo.
+- **Seguridad en Zonas:** Implementación de validaciones para la eliminación de parcelas y restauración de fichas técnicas SIGPAC.
 
 ---
 

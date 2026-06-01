@@ -1,6 +1,6 @@
 {
     "name": "chamorros-cork-manager",
-    "version": "6.2.3",
+    "version": "6.2.9",
     "private": true,
     "description": "PWA para la gestión de pesadas de corcho.",
     "scripts": {

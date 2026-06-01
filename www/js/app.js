@@ -1,6 +1,6 @@
 /**
- * App.js - Router y Orquestador (Version 6.2.2 - Complete Data Restoration)
- * Pantalla de inicio estructurada y Fichas de Zona con información catastral completa.
+ * App.js - Router y Orquestador (Version 6.2.4 - UI & Data Fields Update)
+ * Actualización de campos en Ajustes y Gestión de Fincas.
  */
 
 const App = {
@@ -19,7 +19,7 @@ const App = {
 
     async init() {
         try {
-            console.log("App: Iniciando v6.2.2...");
+            console.log("App: Iniciando v6.2.4...");
             window.addEventListener('hashchange', () => App.route());
             window.addEventListener('fincaChanged', () => { App.updateHeader().then(() => App.route()); });
             this._activeObjectUrls = [];
@@ -80,7 +80,6 @@ const App = {
         const totalQGlobal = (tGlobal.primera.quintales + tGlobal.bornizo.quintales + tGlobal.refugo.quintales).toFixed(2);
 
         main.innerHTML = `
-            <!-- Nombre de la Finca Centrado -->
             <div style="text-align: center; margin-bottom: 30px; margin-top: 10px;">
                 <h1 style="color: var(--p-cork); font-size: 2.2rem; margin: 0; font-weight: 900; letter-spacing: -1px; text-transform: uppercase;">
                     ${finca ? finca.nombre : 'SIN FINCA'}
@@ -88,7 +87,6 @@ const App = {
                 <div style="width: 60px; height: 4px; background: var(--p-cork); margin: 10px auto; border-radius: 2px; opacity: 0.6;"></div>
             </div>
 
-            <!-- 1. Resumen Global de Pesadas -->
             <div class="card" style="border-top: 5px solid var(--p-cork); padding: 25px; margin-bottom: 25px;">
                 <h3 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none; padding:0;">Resumen Global de Pesadas</h3>
                 <div class="summary-table-grid">
@@ -102,7 +100,6 @@ const App = {
                 </div>
             </div>
 
-            <!-- 2. Resumen de Hoy -->
             <div id="resumenHoy" class="card" style="border-top: 5px solid var(--p-cork); padding: 25px;">
                 <h3 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none; padding:0;">📅 Resumen Hoy</h3>
                 <div class="summary-table-grid">
@@ -167,12 +164,87 @@ const App = {
         let d = id ? await Pesadas.get(parseInt(id)) : { fecha: new Date().toISOString().split('T')[0], saca: maxS + 1, calidad: 'bornizo', tara: 0, pesoBruto: '' };
         if (isEdit && d) { d.fecha = d.fecha.split('T')[0]; if (d.pesadasPorCalidad.primera.kg > 0) d.calidad = 'primera'; else if (d.pesadasPorCalidad.refugo.kg > 0) d.calidad = 'refugo'; }
         if (zonas.length === 0) { main.innerHTML = `<div class="card text-center"><p>Primero crea una zona.</p><button class="btn btn-primary" onclick="location.hash='/zonas'">Ir a Zonas</button></div>`; return; }
-        main.innerHTML = `<div class="card"><h2>${isEdit ? 'Editar' : 'Nueva'} Pesada</h2><form id="form-pesada"><div class="form-group"><label>Zona</label><select id="p-zona">${zonas.map(z => `<option value="${z.id}" ${d.zonaId == z.id ? 'selected' : ''}>${z.nombre}</option>`).join('')}</select></div><div class="grid-2"><div class="form-group"><label>Fecha</label><input type="date" id="p-fecha" value="${d.fecha}"></div><div class="form-group"><label>Nº Saca</label><input type="number" id="p-saca" value="${d.saca}"></div></div><div class="grid-2"><div class="form-group"><label>Bruto (kg)</label><input type="number" id="p-bruto" value="${d.pesoBruto || ''}"></div><div class="form-group"><label>Tara (kg)</label><input type="number" id="p-tara" value="${d.tara || 0}"></div></div><div class="card stat-grid" style="display:flex; justify-content:space-around;"><div><div id="calc-neto" class="stat-value">0.0</div><div class="stat-label">Neto (kg)</div></div><div><div id="calc-q" class="stat-value">0.00</div><div class="stat-label">Quintales</div></div></div><div class="form-group"><label>Calidad</label><div class="quality-selector" style="display:flex; gap:10px;"><button type="button" class="quality-btn" data-quality="primera" style="flex:1;">⭐ 1ª</button><button type="button" class="quality-btn" data-quality="bornizo" style="flex:1;">🟡 Bo</button><button type="button" class="quality-btn" data-quality="refugo" style="flex:1;">🔴 Re</button></div></div><button type="submit" class="btn btn-primary">Guardar</button>${isEdit ? `<button type="button" class="btn btn-danger mt-1" onclick="App._deletePesada(${id})">🗑️ Eliminar</button>` : ''}<button type="button" class="btn btn-outline mt-1" onclick="history.back()">Cancelar</button></form></div>`;
-        const inB = document.getElementById('p-bruto'), inT = document.getElementById('p-tara'), up = () => { const n = (parseFloat(inB.value) || 0) - (parseFloat(inT.value) || 0); document.getElementById('calc-neto').textContent = n.toFixed(1); document.getElementById('calc-q').textContent = (n / finca.factorQuintal).toFixed(2); };
+
+        main.innerHTML = `
+            <div class="card">
+                <h2>${isEdit ? 'Editar' : 'Nueva'} Pesada</h2>
+                <form id="form-pesada">
+                    <!-- 1. Bruto y Tara en la parte superior -->
+                    <div class="grid-2">
+                        <div class="form-group"><label>Bruto (kg)</label><input type="number" id="p-bruto" value="${d.pesoBruto || ''}" placeholder="0.0"></div>
+                        <div class="form-group"><label>Tara (kg)</label><input type="number" id="p-tara" value="${d.tara || 0}"></div>
+                    </div>
+
+                    <!-- 2. Zona -->
+                    <div class="form-group">
+                        <label>Zona / Parcela</label>
+                        <select id="p-zona">${zonas.map(z => `<option value="${z.id}" ${d.zonaId == z.id ? 'selected' : ''}>${z.nombre}</option>`).join('')}</select>
+                    </div>
+
+                    <!-- 3. Selector de Calidad -->
+                    <div class="form-group">
+                        <label>Calidad del Corcho</label>
+                        <div class="quality-selector" style="display:flex; gap:10px;">
+                            <button type="button" class="quality-btn" data-quality="primera" style="flex:1;">⭐ 1ª</button>
+                            <button type="button" class="quality-btn" data-quality="bornizo" style="flex:1;">🟡 Bo</button>
+                            <button type="button" class="quality-btn" data-quality="refugo" style="flex:1;">🔴 Re</button>
+                        </div>
+                    </div>
+
+                    <!-- 4. Datos calculados: Neto y Quintales -->
+                    <div class="card stat-grid" style="display:flex; justify-content:space-around; background: rgba(255,255,255,0.03); margin: 15px 0;">
+                        <div style="text-align:center;">
+                            <div id="calc-neto" class="stat-value" style="font-size: 1.8rem; color: var(--accent);">0.0</div>
+                            <div class="stat-label">Neto (kg)</div>
+                        </div>
+                        <div style="text-align:center;">
+                            <div id="calc-q" class="stat-value" style="font-size: 1.8rem; color: var(--p-cork);">0.00</div>
+                            <div class="stat-label">Quintales</div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Fecha y Nº Saca al final -->
+                    <div class="grid-2">
+                        <div class="form-group"><label>Fecha</label><input type="date" id="p-fecha" value="${d.fecha}"></div>
+                        <div class="form-group"><label>Nº Saca</label><input type="number" id="p-saca" value="${d.saca}"></div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button type="submit" class="btn btn-primary">💾 Guardar Pesada</button>
+                        ${isEdit ? `<button type="button" class="btn btn-danger mt-1" onclick="App._deletePesada(${id})">🗑️ Eliminar</button>` : ''}
+                        <button type="button" class="btn btn-outline mt-1" onclick="history.back()">Cancelar</button>
+                    </div>
+                </form>
+            </div>`;
+
+        const inB = document.getElementById('p-bruto'), inT = document.getElementById('p-tara');
+        const up = () => {
+            const n = (parseFloat(inB.value) || 0) - (parseFloat(inT.value) || 0);
+            document.getElementById('calc-neto').textContent = n.toFixed(1);
+            document.getElementById('calc-q').textContent = (n / (finca.factorQuintal || 46)).toFixed(2);
+        };
         inB.oninput = inT.oninput = up; up();
-        let selQ = d.calidad || 'bornizo'; const upQ = () => document.querySelectorAll('.quality-btn').forEach(b => b.classList.toggle('selected', b.dataset.quality === selQ));
-        document.querySelectorAll('.quality-btn').forEach(b => b.onclick = () => { selQ = b.dataset.quality; upQ(); }); upQ();
-        document.getElementById('form-pesada').onsubmit = async (e) => { e.preventDefault(); const dS = { id: isEdit ? d.id : undefined, zonaId: document.getElementById('p-zona').value, fecha: document.getElementById('p-fecha').value, saca: document.getElementById('p-saca').value, pesoBruto: inB.value, tara: inT.value, calidad: selQ }; await Pesadas.save(dS); App.toast('✅ Éxito'); location.hash = '/lista'; };
+
+        let selQ = d.calidad || 'bornizo';
+        const upQ = () => document.querySelectorAll('.quality-btn').forEach(b => b.classList.toggle('selected', b.dataset.quality === selQ));
+        document.querySelectorAll('.quality-btn').forEach(b => b.onclick = () => { selQ = b.dataset.quality; upQ(); });
+        upQ();
+
+        document.getElementById('form-pesada').onsubmit = async (e) => {
+            e.preventDefault();
+            const dS = {
+                id: isEdit ? d.id : undefined,
+                zonaId: document.getElementById('p-zona').value,
+                fecha: document.getElementById('p-fecha').value,
+                saca: document.getElementById('p-saca').value,
+                pesoBruto: inB.value,
+                tara: inT.value,
+                calidad: selQ
+            };
+            await Pesadas.save(dS);
+            App.toast('✅ Guardada correctamente');
+            location.hash = '/lista';
+        };
     },
 
     async _deletePesada(id) { if (confirm("¿Eliminar pesada?")) { await Pesadas.delete(id); App.toast("✅ Eliminada"); location.hash = '/lista'; } },
@@ -193,7 +265,7 @@ const App = {
         const main = document.getElementById('app-content'), pesadas = await Pesadas.list(), zonas = await Zonas.list();
         const t = App._calculateQualityTotals(pesadas);
         const totalQ = (t.primera.quintales + t.bornizo.quintales + t.refugo.quintales).toFixed(2);
-        main.innerHTML = `<div class="card" style="border-top: 5px solid var(--p-cork); padding: 25px;"><h3 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none;">Resumen Global de Pesadas</h3><div class="summary-table-grid"><div class="summary-cell c-1a"><div class="s-lbl">1ª CAL</div><div class="s-val">${t.primera.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div><div class="summary-cell c-bo"><div class="s-lbl">BORNIZO</div><div class="s-val">${t.bornizo.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div><div class="summary-cell c-re"><div class="s-lbl">REFUGO</div><div class="s-val">${t.refugo.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div></div><div style="text-align: center; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;"><span style="font-size: 0.9rem; color: var(--text-s); text-transform: uppercase; font-weight:800; letter-spacing:1px;">Total Acumulado</span><br><strong style="font-size: 2.2rem; color: var(--p-cork);">${totalQ} <span style="font-size:0.6em">Q</span></strong></div></div><button class="btn btn-primary" style="margin-bottom: 25px; height: 60px; font-size: 1.1rem; box-shadow: 0 8px 20px rgba(212, 163, 115, 0.4);" onclick="location.hash='/nueva'">➕ NUEVA PESADA</button><div class="card" style="border-top: 5px solid var(--accent); text-align: center; padding: 25px;"><h3 style="font-size: 1.5rem; margin-bottom: 15px; color: #fff; border:none;">Listado de Pesadas</h3><button class="btn btn-secondary mt-1" onclick="App.exportarPDF('lista')">📄 Exportar a PDF</button></div><div class="lista-detallada">${pesadas.map(p => { const z = zonas.find(z => z.id == p.zonaId); let em = '⭐', cal = '1ª Calidad', col = '#10b981'; if (p.pesadasPorCalidad.bornizo.kg > 0) { em = '🟡'; cal = 'Bornizo'; col = '#eab308'; } else if (p.pesadasPorCalidad.refugo.kg > 0) { em = '🔴'; cal = 'Refugo'; col = '#ef4444'; } const fH = new Date(p.fecha).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); let trNotas = p.notas ? `<tr><th>NOTAS</th><td class="val-large" style="font-size: 1.1rem; font-weight: normal; font-style: italic; color: #ccc;">${p.notas}</td></tr>` : ''; return `<div class="pesada-card" style="--card-color: ${col};" onclick="location.hash='/pesada/${p.id}/editar'"><div class="pesada-card-content"><div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;"><div class="pesada-saca-badge">SACA #${p.saca}</div><strong style="color: ${col}; font-size: 1.3rem;">${em} ${cal}</strong></div><div style="font-size: 1.1rem; margin-bottom: 12px; color: #fff;"><strong>🌲 ${z ? z.nombre : '?'}</strong></div><table class="pesada-table-bordered"><tr><th>FECHA Y HORA</th><td class="val-large">${fH}</td></tr><tr><th>PESO BRUTO</th><td class="val-large highlight">${p.kg.toFixed(1)} kg</td></tr><tr><th>PESO NETO</th><td class="val-large highlight">${p.quintales.toFixed(2)} Q</td></tr>${trNotas}</table></div></div>`; }).join('')}</div>`;
+        main.innerHTML = `<div class="card" style="border-top: 5px solid var(--p-cork); padding: 25px;"><h3 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none;">Resumen Global de Pesadas</h3><div class="summary-table-grid"><div class="summary-cell c-1a"><div class="s-lbl">1ª CAL</div><div class="s-val">${t.primera.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div><div class="summary-cell c-bo"><div class="s-lbl">BORNIZO</div><div class="s-val">${t.bornizo.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div><div class="summary-cell c-re"><div class="s-lbl">REFUGO</div><div class="s-val">${t.refugo.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div></div><div style="text-align: center; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;"><span style="font-size: 0.9rem; color: var(--text-s); text-transform: uppercase; font-weight:800; letter-spacing:1px;">Total Acumulado</span><br><strong style="font-size: 2.2rem; color: var(--p-cork);">${totalQ} <span style="font-size:0.6em">Q</span></strong></div></div><button class="btn btn-primary" style="margin-bottom: 25px; height: 60px; font-size: 1.1rem; box-shadow: 0 8px 20px rgba(212, 163, 115, 0.4);" onclick="location.hash='/nueva'">➕ NUEVA PESADA</button><div class="card" style="border-top: 5px solid var(--accent); text-align: center; padding: 25px;"><h3 style="font-size: 1.5rem; margin-bottom: 15px; color: #fff; border:none;">Listado de Pesadas</h3><button class="btn btn-secondary mt-1" onclick="App.exportarPDF('lista')">📄 Exportar a PDF</button></div><div class="lista-detallada">${pesadas.map(p => { const z = zonas.find(z => z.id == p.zonaId); let em = '⭐', cal = '1ª Calidad', col = '#10b981'; if (p.pesadasPorCalidad.bornizo.kg > 0) { em = '🟡'; cal = 'Bornizo'; col = '#eab308'; } else if (p.pesadasPorCalidad.refugo.kg > 0) { em = '🔴'; cal = 'Refugo'; col = '#ef4444'; } const fH = new Date(p.fecha).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); return `<div class="pesada-card" style="--card-color: ${col};" onclick="location.hash='/pesada/${p.id}/editar'"><div class="pesada-card-content"><div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;"><div class="pesada-saca-badge">SACA #${p.saca}</div><strong style="color: ${col}; font-size: 1.3rem;">${em} ${cal}</strong></div><div style="font-size: 1.1rem; margin-bottom: 12px; color: #fff;"><strong>🌲 ${z ? z.nombre : '?'}</strong></div><table class="pesada-table-bordered"><tr><th>FECHA Y HORA</th><td class="val-large">${fH}</td></tr><tr><th>PESO BRUTO</th><td class="val-large highlight">${p.kg.toFixed(1)} kg</td></tr><tr><th>PESO NETO</th><td class="val-large highlight">${p.quintales.toFixed(2)} Q</td></tr></table></div></div>`; }).join('')}</div>`;
     },
 
     async renderZonas() {
@@ -298,7 +370,35 @@ const App = {
 
     async renderReportesView() {
         const main = document.getElementById('app-content');
-        main.innerHTML = `<div style="display:flex; align-items:center; gap:12px; margin-bottom:25px;"><div style="width:5px; height:30px; background:var(--p-cork); border-radius:3px;"></div><h2 style="margin:0; border:none; padding:0; color:var(--text-p); font-weight:800;">Central de Informes</h2></div><div class="reportes-selector-grid"><button class="report-select-btn theme-global" onclick="App.renderReporteGlobal()"><span class="btn-icon">🌍</span><strong>Balance Global</strong></button><button class="report-select-btn theme-econ" onclick="App.renderReporteEconomico()"><span class="btn-icon">💶</span><strong>Liq. Económica</strong></button><button class="report-select-btn theme-zona" onclick="App.renderMenuZonasReport()"><span class="btn-icon">🌲</span><strong>Prod. Zona</strong></button><button class="report-select-btn theme-calidad" onclick="App.renderMenuCalidadesReport()"><span class="btn-icon">⭐</span><strong>Liq. Calidad</strong></button><button class="report-select-btn theme-graficos" onclick="App.renderGraficos()"><span class="btn-icon">📈</span><strong>Panel Gráficos</strong></button></div><hr style="border:0; border-top:1px solid var(--border); margin:25px 0;"><div id="cont-rep"></div>`;
+        main.innerHTML = `
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:25px;">
+                <div style="width:5px; height:30px; background:var(--p-cork); border-radius:3px;"></div>
+                <h2 style="margin:0; border:none; padding:0; color:var(--text-p); font-weight:800;">Central de Informes</h2>
+            </div>
+            <div class="reportes-selector-grid">
+                <button class="report-select-btn" onclick="App.renderReporteGlobal()" style="background: linear-gradient(135deg, rgba(160,103,58,0.5) 0%, rgba(212,163,115,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(160,103,58,0.15); min-height: 80px; padding: 10px;">
+                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">🌍</span>
+                    <strong style="font-size:0.85rem;">Balance Global</strong>
+                </button>
+                <button class="report-select-btn" onclick="App.renderReporteEconomico()" style="background: linear-gradient(135deg, rgba(44,62,80,0.5) 0%, rgba(76,161,175,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(44,62,80,0.15); min-height: 80px; padding: 10px;">
+                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">💶</span>
+                    <strong style="font-size:0.85rem;">Liq. Económica</strong>
+                </button>
+                <button class="report-select-btn" onclick="App.renderMenuZonasReport()" style="background: linear-gradient(135deg, rgba(19,78,94,0.5) 0%, rgba(113,178,128,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(19,78,94,0.15); min-height: 80px; padding: 10px;">
+                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">🌲</span>
+                    <strong style="font-size:0.85rem;">Prod. Zona</strong>
+                </button>
+                <button class="report-select-btn" onclick="App.renderMenuCalidadesReport()" style="background: linear-gradient(135deg, rgba(127,176,105,0.5) 0%, rgba(141,179,105,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(127,176,105,0.15); min-height: 80px; padding: 10px;">
+                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">⭐</span>
+                    <strong style="font-size:0.85rem;">Liq. Calidad</strong>
+                </button>
+                <button class="report-select-btn" onclick="App.renderGraficos()" style="background: linear-gradient(135deg, rgba(106,17,203,0.5) 0%, rgba(37,117,252,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(106,17,203,0.15); min-height: 80px; padding: 10px;">
+                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">📈</span>
+                    <strong style="font-size:0.85rem;">Panel Gráficos</strong>
+                </button>
+            </div>
+            <hr style="border:0; border-top:1px solid var(--border); margin:25px 0;">
+            <div id="cont-rep"></div>`;
         await App.renderReporteGlobal();
     },
 
@@ -309,14 +409,14 @@ const App = {
     async renderReporteGlobal() {
         const r = await Reportes.generarReporteGlobalCampaña(), finca = await Fincas.getActive(); if (!r || !finca) return;
         const comp = finca.comprador || {};
-        let h = `<div class="reporte-container"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;"><h2 style="margin:0; color:var(--p-cork); font-weight:800;">🌍 Balance de Campaña</h2><div style="display:flex; gap:10px;"><button class="btn btn-outline" style="height:40px; padding:0 15px; font-size:0.85rem; border-radius:10px;" onclick="App.exportarPDF('global')">📄 PDF</button><button class="btn btn-outline" style="height:40px; padding:0 15px; font-size:0.85rem; border-radius:10px;" onclick="Export.exportGlobalToExcel()">📊 Excel</button></div></div>${this._getDualHeaderHtml(finca.nombre, finca.propietario||'-', finca.cif||'-', comp.nombreEmpresa||'Sin Empresa', comp.cifNif||'-', comp.representante||'-')}<div class="card"><h4>Resumen por Calidad</h4><div class="table-responsive"><table class="reporte-table"><thead><tr><th>Calidad</th><th style="text-align:right;">Quintales</th><th style="text-align:right;">Sacas</th></tr></thead><tbody><tr><td><span class="q-pill p1">⭐ 1ª Calidad</span></td><td style="text-align:right; font-weight:700;">${r.totalesGlobales.primera.quintales.toFixed(2)}</td><td style="text-align:right;">${r.totalesGlobales.primera.sacas}</td></tr><tr><td><span class="q-pill pb">🟡 Bornizo</span></td><td style="text-align:right; font-weight:700;">${r.totalesGlobales.bornizo.quintales.toFixed(2)}</td><td style="text-align:right;">${r.totalesGlobales.bornizo.sacas}</td></tr><tr><td><span class="q-pill pr">🔴 Refugo</span></td><td style="text-align:right; font-weight:700;">${r.totalesGlobales.refugo.quintales.toFixed(2)}</td><td style="text-align:right;">${r.totalesGlobales.refugo.sacas}</td></tr></tbody><tfoot><tr><td><strong>TOTAL GENERAL</strong></td><td style="text-align:right; color:var(--p-cork); font-size:1rem;"><strong>${(r.totalesGlobales.primera.quintales + r.totalesGlobales.bornizo.quintales + r.totalesGlobales.refugo.quintales).toFixed(2)} Q</strong></td><td style="text-align:right;"><strong>${r.totalesGlobales.primera.sacas + r.totalesGlobales.bornizo.sacas + r.totalesGlobales.refugo.sacas}</strong></td></tr></tfoot></table></div></div><div class="card"><h4>Desglose por Zona (kg)</h4><div class="table-responsive"><table class="reporte-table"><thead><tr><th>Zona</th><th style="text-align:right;">1ª</th><th style="text-align:right;">Bo</th><th style="text-align:right;">Re</th></tr></thead><tbody>${Object.values(r.reportePorZona).map(z => `<tr><td><strong>${z.nombre}</strong></td><td style="text-align:right;">${Math.round(z.totales.primera.kg)}</td><td style="text-align:right;">${Math.round(z.totales.bornizo.kg)}</td><td style="text-align:right;">${Math.round(z.totales.refugo.kg)}</td></tr>`).join('')}</tbody></table></div></div></div>`;
+        let h = `<div class="reporte-container"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;"><h2 style="margin:0; color:var(--p-cork); font-weight:800;">🌍 Balance de Campaña</h2><div style="display:flex; gap:10px;"><button class="btn btn-outline" style="height:40px; padding:0 15px; font-size:0.85rem; border-radius:10px;" onclick="App.exportarPDF('global')">📄 PDF</button><button class="btn btn-outline" style="height:40px; padding:0 15px; font-size:0.85rem; border-radius:10px;" onclick="Export.exportGlobalToExcel()">📊 Excel</button></div></div>${App._getDualHeaderHtml(finca.nombre, finca.propietario||'-', finca.cif||'-', comp.nombreEmpresa||'Sin Empresa', comp.cifNif||'-', comp.representante||'-')}<div class="card"><h4>Resumen por Calidad</h4><div class="table-responsive"><table class="reporte-table"><thead><tr><th>Calidad</th><th style="text-align:right;">Quintales</th><th style="text-align:right;">Sacas</th></tr></thead><tbody><tr><td><span class="q-pill p1">⭐ 1ª Calidad</span></td><td style="text-align:right; font-weight:700;">${r.totalesGlobales.primera.quintales.toFixed(2)}</td><td style="text-align:right;">${r.totalesGlobales.primera.sacas}</td></tr><tr><td><span class="q-pill pb">🟡 Bornizo</span></td><td style="text-align:right; font-weight:700;">${r.totalesGlobales.bornizo.quintales.toFixed(2)}</td><td style="text-align:right;">${r.totalesGlobales.bornizo.sacas}</td></tr><tr><td><span class="q-pill pr">🔴 Refugo</span></td><td style="text-align:right; font-weight:700;">${r.totalesGlobales.refugo.quintales.toFixed(2)}</td><td style="text-align:right;">${r.totalesGlobales.refugo.sacas}</td></tr></tbody><tfoot><tr><td><strong>TOTAL GENERAL</strong></td><td style="text-align:right; color:var(--p-cork); font-size:1rem;"><strong>${(r.totalesGlobales.primera.quintales + r.totalesGlobales.bornizo.quintales + r.totalesGlobales.refugo.quintales).toFixed(2)} Q</strong></td><td style="text-align:right;"><strong>${r.totalesGlobales.primera.sacas + r.totalesGlobales.bornizo.sacas + r.totalesGlobales.refugo.sacas}</strong></td></tr></tfoot></table></div></div><div class="card"><h4>Desglose por Zona (kg)</h4><div class="table-responsive"><table class="reporte-table"><thead><tr><th>Zona</th><th style="text-align:right;">1ª</th><th style="text-align:right;">Bo</th><th style="text-align:right;">Re</th></tr></thead><tbody>${Object.values(r.reportePorZona).map(z => `<tr><td><strong>${z.nombre}</strong></td><td style="text-align:right;">${Math.round(z.totales.primera.kg)}</td><td style="text-align:right;">${Math.round(z.totales.bornizo.kg)}</td><td style="text-align:right;">${Math.round(z.totales.refugo.kg)}</td></tr>`).join('')}</tbody></table></div></div></div>`;
         document.getElementById('cont-rep').innerHTML = h;
     },
 
     async renderReporteEconomico() {
         const r = await Reportes.generarReporteEconomicoGlobal(), finca = await Fincas.getActive(); if (!r || !finca) return;
         const totalGastos = await Gastos.getTotal(), beneficioNeto = r.valorTotal - totalGastos, comp = finca.comprador || {};
-        let h = `<div class="reporte-container"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;"><h2 style="margin:0; color:var(--p-cork); font-weight:800;">💶 Liquidación Final</h2><div style="display:flex; gap:10px;"><button class="btn btn-outline" style="height:40px; padding:0 15px; border-radius:10px;" onclick="App.exportarPDF('economico')">📄 PDF</button><button class="btn btn-outline" style="height:40px; padding:0 15px; border-radius:10px;" onclick="Export.exportEconomicoToExcel()">📊 Excel</button></div></div>${this._getDualHeaderHtml(finca.nombre, finca.propietario||'-', finca.cif||'-', comp.nombreEmpresa||'Sin Empresa', comp.cifNif||'-', comp.representante||'-')}<div class="card"><h4>Desglose Económico</h4><div class="table-responsive"><table class="reporte-table"><thead><tr><th>Calidad</th><th>Precio</th><th>Q.Bruto</th><th style="color:#ff9800;">Oreo</th><th>Q.Neto</th><th style="text-align:right;">Total</th></tr></thead><tbody><tr><td><span class="q-pill p1">⭐ 1ª</span></td><td>${(r.precios.primera?.precioQuintal || 0).toFixed(2)}€</td><td>${r.totales.primera.bruto.toFixed(2)}</td><td style="color:#ff9800;">${r.totales.primera.merma.toFixed(2)}</td><td>${r.totales.primera.neto.toFixed(2)}</td><td style="text-align:right; font-weight:800;">${r.totales.primera.valor.toFixed(2)}€</td></tr><tr><td><span class="q-pill pb">🟡 Bo</span></td><td>${(r.precios.bornizo?.precioQuintal || 0).toFixed(2)}€</td><td>${r.totales.bornizo.bruto.toFixed(2)}</td><td style="color:#ff9800;">${r.totales.bornizo.merma.toFixed(2)}</td><td>${r.totales.bornizo.neto.toFixed(2)}</td><td style="text-align:right; font-weight:800;">${r.totales.bornizo.valor.toFixed(2)}€</td></tr><tr><td><span class="q-pill pr">🔴 Re</span></td><td>${(r.precios.refugo?.precioQuintal || 0).toFixed(2)}€</td><td>${r.totales.refugo.bruto.toFixed(2)}</td><td style="color:#ff9800;">${r.totales.refugo.merma.toFixed(2)}</td><td>${r.totales.refugo.neto.toFixed(2)}</td><td style="text-align:right; font-weight:800;">${r.totales.refugo.valor.toFixed(2)}€</td></tr></tbody><tfoot><tr><td colspan="2">SUBTOTALES</td><td>${r.brutoTotal.toFixed(2)}</td><td style="color:#ff9800;">${(r.brutoTotal - r.netoTotal).toFixed(2)}</td><td>${r.netoTotal.toFixed(2)}</td><td style="text-align:right; color:var(--p-cork); font-size:1rem;">${r.valorTotal.toFixed(2)}€</td></tr></tfoot></table></div></div><div class="card-finance" style="background: linear-gradient(135deg, #1a1a1a 0%, #000 100%); border: 1px solid var(--border); padding:25px;"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span class="text-muted">Ingresos Brutos</span><span>${r.valorTotal.toFixed(2)}€</span></div><div style="display:flex; justify-content:space-between; margin-bottom:15px;"><span style="color:#ff4d4d;">Gastos Campaña (-)</span><span style="color:#ff4d4d;">-${totalGastos.toFixed(2)}€</span></div><hr style="opacity:0.3; margin-bottom:15px;"><div style="display:flex; justify-content:space-between; align-items:center;"><span style="color:var(--accent); font-weight:900; font-size:1.1rem;">BENEFICIO NETO REAL</span><span class="total-neto" style="color:var(--accent); font-size:1.8rem; font-weight:900;">${beneficioNeto.toFixed(2)}€</span></div></div></div>`;
+        let h = `<div class="reporte-container"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;"><h2 style="margin:0; color:var(--p-cork); font-weight:800;">💶 Liquidación Final</h2><div style="display:flex; gap:10px;"><button class="btn btn-outline" style="height:40px; padding:0 15px; border-radius:10px;" onclick="App.exportarPDF('economico')">📄 PDF</button><button class="btn btn-outline" style="height:40px; padding:0 15px; border-radius:10px;" onclick="Export.exportEconomicoToExcel()">📊 Excel</button></div></div>${App._getDualHeaderHtml(finca.nombre, finca.propietario||'-', finca.cif||'-', comp.nombreEmpresa||'Sin Empresa', comp.cifNif||'-', comp.representante||'-')}<div class="card"><h4>Desglose Económico</h4><div class="table-responsive"><table class="reporte-table"><thead><tr><th>Calidad</th><th>Precio</th><th>Q.Bruto</th><th style="color:#ff9800;">Oreo</th><th>Q.Neto</th><th style="text-align:right;">Total</th></tr></thead><tbody><tr><td><span class="q-pill p1">⭐ 1ª</span></td><td>${(r.precios.primera?.precioQuintal || 0).toFixed(2)}€</td><td>${r.totales.primera.bruto.toFixed(2)}</td><td style="color:#ff9800;">${r.totales.primera.merma.toFixed(2)}</td><td>${r.totales.primera.neto.toFixed(2)}</td><td style="text-align:right; font-weight:800;">${r.totales.primera.valor.toFixed(2)}€</td></tr><tr><td><span class="q-pill pb">🟡 Bo</span></td><td>${(r.precios.bornizo?.precioQuintal || 0).toFixed(2)}€</td><td>${r.totales.bornizo.bruto.toFixed(2)}</td><td style="color:#ff9800;">${r.totales.bornizo.merma.toFixed(2)}</td><td>${r.totales.bornizo.neto.toFixed(2)}</td><td style="text-align:right; font-weight:800;">${r.totales.bornizo.valor.toFixed(2)}€</td></tr><tr><td><span class="q-pill pr">🔴 Re</span></td><td>${(r.precios.refugo?.precioQuintal || 0).toFixed(2)}€</td><td>${r.totales.refugo.bruto.toFixed(2)}</td><td style="color:#ff9800;">${r.totales.refugo.merma.toFixed(2)}</td><td>${r.totales.refugo.neto.toFixed(2)}</td><td style="text-align:right; font-weight:800;">${r.totales.refugo.valor.toFixed(2)}€</td></tr></tbody><tfoot><tr><td colspan="2">SUBTOTALES</td><td>${r.brutoTotal.toFixed(2)}</td><td style="color:#ff9800;">${(r.brutoTotal - r.netoTotal).toFixed(2)}</td><td>${r.netoTotal.toFixed(2)}</td><td style="text-align:right; color:var(--p-cork); font-size:1rem;">${r.valorTotal.toFixed(2)}€</td></tr></tfoot></table></div></div><div class="card-finance" style="background: linear-gradient(135deg, #1a1a1a 0%, #000 100%); border: 1px solid var(--border); padding:25px;"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span class="text-muted">Ingresos Brutos</span><span>${r.valorTotal.toFixed(2)}€</span></div><div style="display:flex; justify-content:space-between; margin-bottom:15px;"><span style="color:#ff4d4d;">Gastos Campaña (-)</span><span style="color:#ff4d4d;">-${totalGastos.toFixed(2)}€</span></div><hr style="opacity:0.3; margin-bottom:15px;"><div style="display:flex; justify-content:space-between; align-items:center;"><span style="color:var(--accent); font-weight:900; font-size:1.1rem;">BENEFICIO NETO REAL</span><span class="total-neto" style="color:var(--accent); font-size:1.8rem; font-weight:900;">${beneficioNeto.toFixed(2)}€</span></div></div></div>`;
         document.getElementById('cont-rep').innerHTML = h;
     },
 
@@ -328,7 +428,7 @@ const App = {
 
     async renderReportePorZona(zonaId) {
         const r = await Reportes.generarReportePorZona(zonaId), finca = await Fincas.getActive(); if (!r || !finca) return;
-        let h = `<div class="reporte-container"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;"><h2 style="margin:0; color:var(--p-cork); font-weight:800;">🌲 Informe: ${r.zona.nombre}</h2><button class="btn btn-outline" style="height:40px; padding:0 15px; border-radius:10px;" onclick="App.exportarPDF('zona')">📄 PDF</button></div>${this._getDualHeaderHtml(finca.nombre, 'Explotación Activa', finca.cif||'-', 'ZONA DE SACA', `Pol.${r.zona.poligono} / Par.${r.zona.parcela}`, r.zona.municipio||'-')}<div class="card"><h4>Historial de Sacas</h4><div class="table-responsive"><table class="reporte-table"><thead><tr><th>Fecha</th><th>Saca</th><th style="text-align:right;">Peso (kg)</th><th>Cal</th></tr></thead><tbody>${r.pesadas.map(p => { let em = p.pesadasPorCalidad.primera.kg > 0 ? '⭐' : p.pesadasPorCalidad.bornizo.kg > 0 ? '🟡' : '🔴'; return `<tr><td>${new Date(p.fecha).toLocaleDateString()}</td><td>#${p.saca}</td><td style="text-align:right;"><strong>${p.kg.toFixed(1)}</strong></td><td>${em}</td></tr>`; }).join('')}</tbody></table></div></div><div class="card-finance" style="background:var(--surface-light); padding:20px;"><div style="display:flex; justify-content:space-around; text-align:center;"><div><div class="stat-value">${r.totales.primera.quintales.toFixed(2)}</div><div class="stat-label">1ª (Q)</div></div><div><div class="stat-value">${r.totales.bornizo.quintales.toFixed(2)}</div><div class="stat-label">Bo (Q)</div></div><div><div class="stat-value">${r.totales.refugo.quintales.toFixed(2)}</div><div class="stat-label">Re (Q)</div></div></div></div></div>`;
+        let h = `<div class="reporte-container"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;"><h2 style="margin:0; color:var(--p-cork); font-weight:800;">🌲 Informe: ${r.zona.nombre}</h2><button class="btn btn-outline" style="height:40px; padding:0 15px; border-radius:10px;" onclick="App.exportarPDF('zona')">📄 PDF</button></div>${App._getDualHeaderHtml(finca.nombre, 'Explotación Activa', finca.cif||'-', 'ZONA DE SACA', `Pol.${r.zona.poligono} / Par.${r.zona.parcela}`, r.zona.municipio||'-')}<div class="card"><h4>Historial de Sacas</h4><div class="table-responsive"><table class="reporte-table"><thead><tr><th>Fecha</th><th>Saca</th><th style="text-align:right;">Peso (kg)</th><th>Cal</th></tr></thead><tbody>${r.pesadas.map(p => { let em = p.pesadasPorCalidad.primera.kg > 0 ? '⭐' : p.pesadasPorCalidad.bornizo.kg > 0 ? '🟡' : '🔴'; return `<tr><td>${new Date(p.fecha).toLocaleDateString()}</td><td>#${p.saca}</td><td style="text-align:right;"><strong>${p.kg.toFixed(1)}</strong></td><td>${em}</td></tr>`; }).join('')}</tbody></table></div></div><div class="card-finance" style="background:var(--surface-light); padding:20px;"><div style="display:flex; justify-content:space-around; text-align:center;"><div><div class="stat-value">${r.totales.primera.quintales.toFixed(2)}</div><div class="stat-label">1ª (Q)</div></div><div><div class="stat-value">${r.totales.bornizo.quintales.toFixed(2)}</div><div class="stat-label">Bo (Q)</div></div><div><div class="stat-value">${r.totales.refugo.quintales.toFixed(2)}</div><div class="stat-label">Re (Q)</div></div></div></div></div>`;
         document.getElementById('cont-rep').innerHTML = h;
     },
 
@@ -340,7 +440,7 @@ const App = {
     async renderReporteEconomicoPorCalidad(calidad) {
         const r = await Reportes.generarReporteEconomicoPorCalidad(calidad), finca = await Fincas.getActive(); if (!r || !finca) return;
         const totalG = await Gastos.getTotal(), repG = await Reportes.generarReporteEconomicoGlobal(), bNetoT = repG.valorTotal - totalG, comp = finca.comprador || {};
-        let h = `<div class="reporte-container"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;"><h2 style="margin:0; color:var(--p-cork); font-weight:800;">⭐ Liq. ${r.nombreCalidad}</h2><button class="btn btn-outline" style="height:40px; padding:0 15px; border-radius:10px;" onclick="App.exportarPDF('calidad')">📄 PDF</button></div>${this._getDualHeaderHtml(finca.nombre, finca.propietario||'-', finca.cif||'-', comp.nombreEmpresa||'-', comp.cifNif||'-', comp.representante||'-')}<div class="card-finance" style="background:var(--surface-light); padding:20px;"><small class="text-muted">BENEFICIO NETO CAMP. (GLOBAL)</small><br><strong style="color:var(--accent); font-size:1.4rem;">${bNetoT.toFixed(2)}€</strong></div><div class="card"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;"><h4>Detalle por Zonas</h4><small class="text-muted">Precio: ${r.precioQuintal}€/Q</small></div><div class="table-responsive"><table class="reporte-table"><thead><tr><th>Zona</th><th>Sacas</th><th>Q.Neto</th><th style="text-align:right;">Valor</th></tr></thead><tbody>${Object.values(r.reportePorZona).filter(z => z.sacas > 0).map(z => `<tr><td><strong>${z.nombre}</strong></td><td>${z.sacas}</td><td><strong>${z.neto.toFixed(2)}</strong></td><td style="text-align:right; font-weight:700;">${z.valor.toFixed(2)}€</td></tr>`).join('')}</tbody><tfoot><tr><td>TOTAL</td><td>${r.totales.sacas}</td><td>${r.totales.neto.toFixed(2)}</td><td style="text-align:right; color:var(--p-cork);"><strong>${r.totales.valor.toFixed(2)}€</strong></td></tr></tfoot></table></div></div></div>`;
+        let h = `<div class="reporte-container"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;"><h2 style="margin:0; color:var(--p-cork); font-weight:800;">⭐ Liq. ${r.nombreCalidad}</h2><button class="btn btn-outline" style="height:40px; padding:0 15px; border-radius:10px;" onclick="App.exportarPDF('calidad')">📄 PDF</button></div>${App._getDualHeaderHtml(finca.nombre, finca.propietario||'-', finca.cif||'-', comp.nombreEmpresa||'-', comp.cifNif||'-', comp.representante||'-')}<div class="card-finance" style="background:var(--surface-light); padding:20px;"><small class="text-muted">BENEFICIO NETO CAMP. (GLOBAL)</small><br><strong style="color:var(--accent); font-size:1.4rem;">${bNetoT.toFixed(2)}€</strong></div><div class="card"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;"><h4>Detalle por Zonas</h4><small class="text-muted">Precio: ${r.precioQuintal}€/Q</small></div><div class="table-responsive"><table class="reporte-table"><thead><tr><th>Zona</th><th>Sacas</th><th>Q.Neto</th><th style="text-align:right;">Valor</th></tr></thead><tbody>${Object.values(r.reportePorZona).filter(z => z.sacas > 0).map(z => `<tr><td><strong>${z.nombre}</strong></td><td>${z.sacas}</td><td><strong>${z.neto.toFixed(2)}</strong></td><td style="text-align:right; font-weight:700;">${z.valor.toFixed(2)}€</td></tr>`).join('')}</tbody><tfoot><tr><td>TOTAL</td><td>${r.totales.sacas}</td><td>${r.totales.neto.toFixed(2)}</td><td style="text-align:right; color:var(--p-cork);"><strong>${r.totales.valor.toFixed(2)}€</strong></td></tr></tfoot></table></div></div></div>`;
         document.getElementById('cont-rep').innerHTML = h;
     },
 
@@ -353,21 +453,111 @@ const App = {
     async renderAjustes() {
         const main = document.getElementById('app-content'), finca = await Fincas.getActive(); if (!finca) return App.renderFincasManager();
         const comp = finca.comprador || {};
-        main.innerHTML = `<div style="display:flex; align-items:center; gap:12px; margin-bottom:25px;"><div style="width:5px; height:30px; background:var(--p-cork); border-radius:3px;"></div><h2 style="margin:0; border:none; padding:0; color:var(--text-p); font-weight:800;">Ajustes de Finca</h2></div><div class="card" style="border: 2px solid var(--p-cork); border-left: 8px solid var(--p-cork);"><div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;"><div style="width:4px; height:20px; background:var(--p-cork); border-radius:2px;"></div><h4 style="margin:0; font-size:0.9rem; text-transform:uppercase;">Configuración Técnica</h4></div><div class="form-group"><label>Nombre Explotación</label><input type="text" value="${finca.nombre}" readonly style="opacity:0.6;"></div><div class="grid-2"><div class="form-group"><label>Factor Quintal (kg)</label><input type="number" id="adj-fac" value="${finca.factorQuintal}"></div><div class="form-group"><label>% Oreo</label><input type="number" id="adj-oreo" value="${finca.porcentajeOreo}"></div></div></div><div class="card" style="border: 2px solid var(--accent); border-left: 8px solid var(--accent);"><div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;"><div style="width:4px; height:20px; background:var(--accent); border-radius:2px;"></div><h4 style="margin:0; font-size:0.9rem; text-transform:uppercase;">Datos Comprador</h4></div><div class="form-group"><label>Empresa / Comprador</label><input type="text" id="adj-empresa" value="${comp.nombreEmpresa||''}"></div><div class="grid-2"><div class="form-group"><label>CIF/NIF</label><input type="text" id="adj-cif" value="${comp.cifNif||''}"></div><div class="form-group"><label>Representante</label><input type="text" id="adj-representante" value="${comp.representante||''}"></div></div><div class="form-group"><label>Dirección Comercial</label><input type="text" id="adj-direccion" value="${comp.direccion||''}"></div><button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="App._saveActiveFincaSettings()">💾 Guardar Cambios</button></div><div class="reportes-selector-grid" style="margin-top:20px;"><button class="report-select-btn theme-zona" onclick="location.hash='/gastos'"><span class="btn-icon">💸</span><strong>Control Gastos</strong></button><button class="report-select-btn theme-global" onclick="location.hash='/fincas'"><span class="btn-icon">📍</span><strong>Gestor Fincas</strong></button></div><div class="card text-center" style="border-top: 2px solid var(--p-cork); margin-top:30px; padding:30px;"><img src="icons/logo-header.png" style="width:140px; margin-bottom:20px; filter:drop-shadow(0 0 10px rgba(212,163,115,0.2));"><p style="font-weight:800; color:var(--p-cork);">Chamorro´s Cork Manager v6.1.5</p><small class="text-muted">© 2024 Sdog Farm Software Factory</small><br><small style="color:var(--text-p);">Soporte: <strong>soporte.sdogfarm@gmail.com</strong></small></div>`;
+        const precios = finca.precios || {};
+
+        main.innerHTML = `
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:25px;"><div style="width:5px; height:30px; background:var(--p-cork); border-radius:3px;"></div><h2 style="margin:0; border:none; padding:0; color:var(--text-p); font-weight:800;">Ajustes de Finca</h2></div>
+
+            <div class="card" style="border: 2px solid var(--p-cork); border-left: 8px solid var(--p-cork);">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;"><div style="width:4px; height:20px; background:var(--p-cork); border-radius:2px;"></div><h4 style="margin:0; font-size:0.9rem; text-transform:uppercase;">Datos Propietario</h4></div>
+                <div class="form-group"><label>Nombre Explotación</label><input type="text" value="${finca.nombre}" readonly style="opacity:0.6;"></div>
+                <div class="form-group"><label>Nombre Propietario</label><input type="text" id="adj-prop" value="${finca.propietario||''}"></div>
+                <div class="form-group"><label>Teléfono</label><input type="tel" id="adj-prop-tel" value="${finca.telefono||''}"></div>
+            </div>
+
+            <div class="card" style="border: 2px solid var(--accent); border-left: 8px solid var(--accent);">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;"><div style="width:4px; height:20px; background:var(--accent); border-radius:2px;"></div><h4 style="margin:0; font-size:0.9rem; text-transform:uppercase;">Datos Comprador y Precios</h4></div>
+                <div class="form-group"><label>Empresa / Comprador</label><input type="text" id="adj-empresa" value="${comp.nombreEmpresa||''}"></div>
+                <div class="form-group"><label>CIF/NIF Comprador</label><input type="text" id="adj-cif" value="${comp.cifNif||''}"></div>
+                <div class="form-group"><label>Representante</label><input type="text" id="adj-representante" value="${comp.representante||''}"></div>
+                <div class="form-group"><label>Teléfono</label><input type="tel" id="adj-tel" value="${comp.telefono||''}"></div>
+                <div class="form-group"><label>Correo Electrónico</label><input type="email" id="adj-email" value="${comp.email||''}"></div>
+                <div class="form-group"><label>Dirección Comercial</label><input type="text" id="adj-direccion" value="${comp.direccion||''}"></div>
+
+                <h5 style="margin: 15px 0 10px 0; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 5px;">Precios de Mercado (€/Q)</h5>
+                <div class="form-group"><label>Precio 1ª</label><input type="number" step="0.01" id="adj-p1" value="${precios.primera?.precioQuintal || ''}"></div>
+                <div class="form-group"><label>Precio Bornizo</label><input type="number" step="0.01" id="adj-pb" value="${precios.bornizo?.precioQuintal || ''}"></div>
+                <div class="form-group"><label>Precio Refugo</label><input type="number" step="0.01" id="adj-pr" value="${precios.refugo?.precioQuintal || ''}"></div>
+
+                <button class="btn btn-primary" style="width:100%; margin-top:20px;" onclick="App._saveActiveFincaSettings()">💾 Guardar Ajustes</button>
+            </div>
+
+            <div class="reportes-selector-grid" style="margin-top:20px;">
+                <button class="report-select-btn theme-zona" onclick="location.hash='/gastos'"><span class="btn-icon">💸</span><strong>Control Gastos</strong></button>
+                <button class="report-select-btn theme-global" onclick="location.hash='/fincas'"><span class="btn-icon">📍</span><strong>Gestor Fincas</strong></button>
+            </div>
+
+            <div class="card text-center" style="border-top: 2px solid var(--p-cork); margin-top:30px; padding:30px;"><img src="icons/logo-header.png" style="width:140px; margin-bottom:20px;"><p style="font-weight:800; color:var(--p-cork);">Chamorro´s Cork Manager v6.2.4</p></div>`;
     },
 
     async renderFincasManager() {
         const main = document.getElementById('app-content'), allFincas = await Fincas.list(), activeId = await Fincas.getActiveId();
-        main.innerHTML = `<div style="display:flex; align-items:center; gap:12px; margin-bottom:25px;"><div style="width:5px; height:30px; background:var(--accent); border-radius:3px;"></div><h2 style="margin:0; border:none; padding:0; font-weight:800;">Gestión de Fincas</h2></div><div class="reportes-selector-grid"><button class="report-select-btn theme-calidad" onclick="App._showFincaForm()"><span class="btn-icon">➕</span><strong>Nueva Finca</strong></button><button class="report-select-btn theme-global" onclick="document.getElementById('import-f-mgr').click()"><span class="btn-icon">📥</span><strong>Importar</strong></button><button class="report-select-btn theme-econ" onclick="Export.exportBackup()"><span class="btn-icon">📄</span><strong>Exportar Todo</strong></button></div><div id="fincas-list-container" style="margin-top:20px;">${allFincas.map(f => `<div class="card finca-card ${Number(f.id) === Number(activeId) ? 'active-finca' : ''}" onclick="App._selectFincaForLoad(${f.id}, '${f.nombre}')" style="display:flex; align-items:center; padding:25px; border-left:8px solid ${Number(f.id) === Number(activeId) ? 'var(--accent)' : 'var(--border)'};"><div style="flex:1;"><strong>${f.nombre}</strong><br><small class="text-muted">Prop: ${f.propietario || '-'}</small></div><div style="display:flex; gap:25px; align-items:center;"><button class="btn-icon" style="font-size:2.4rem; padding:10px;" onclick="event.stopPropagation(); Export.exportBackup([${f.id}])" title="Exportar">💾</button><button class="btn-icon" style="font-size:2.4rem; padding:10px;" onclick="event.stopPropagation(); App._showFincaForm(${f.id})" title="Editar">✏️</button><button class="btn-icon" style="font-size:2.4rem; padding:10px; color:#ff4d4d;" onclick="event.stopPropagation(); App._deleteFinca(${f.id}, '${f.nombre}')" title="Borrar">🗑️</button></div></div>`).join('')}</div><div id="load-finca-footer" style="display:none; margin-top:20px;"><button id="btn-load-finca" class="btn btn-primary" style="height:65px; font-weight:900; font-size:1.1rem; border-radius:15px; box-shadow:0 10px 30px rgba(127,176,105,0.3);">🚀 CARGAR FINCA SELECCIONADA</button></div><button class="btn btn-outline mt-2" onclick="location.hash='/ajustes'">Volver a Ajustes</button><input type="file" id="import-f-mgr" accept=".json" style="display:none">`;
+        main.innerHTML = `
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:25px;">
+                <div style="width:5px; height:30px; background:var(--accent); border-radius:3px;"></div>
+                <h2 style="margin:0; border:none; padding:0; font-weight:800;">Gestión de Fincas</h2>
+            </div>
+
+            <div class="reportes-selector-grid">
+                <button class="report-select-btn theme-calidad" onclick="App._showFincaForm()" style="background: linear-gradient(135deg, rgba(127,176,105,0.5) 0%, rgba(141,179,105,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(127,176,105,0.15); min-height: 80px; padding: 10px;">
+                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">➕</span>
+                    <strong style="font-size:0.85rem;">Nueva Finca</strong>
+                </button>
+                <button class="report-select-btn theme-global" onclick="document.getElementById('import-f-mgr').click()" style="background: linear-gradient(135deg, rgba(160,103,58,0.5) 0%, rgba(212,163,115,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(160,103,58,0.15); min-height: 80px; padding: 10px;">
+                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">📥</span>
+                    <strong style="font-size:0.85rem;">Importar</strong>
+                </button>
+                <button class="report-select-btn theme-econ" onclick="Export.exportBackup()" style="background: linear-gradient(135deg, rgba(44,62,80,0.5) 0%, rgba(76,161,175,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(44,62,80,0.15); min-height: 80px; padding: 10px;">
+                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">📄</span>
+                    <strong style="font-size:0.85rem;">Exportar Todo</strong>
+                </button>
+            </div>
+
+            <div id="fincas-list-container" style="margin-top:25px; display:flex; flex-direction:column; gap:15px;">
+                ${allFincas.map(f => {
+                    const isActive = Number(f.id) === Number(activeId);
+                    return `
+                    <div class="card finca-card ${isActive ? 'active-finca' : ''}"
+                         onclick="App._selectFincaForLoad(${f.id}, '${f.nombre}')"
+                         style="display:flex; align-items:center; padding:20px; border-left:8px solid ${isActive ? 'var(--accent)' : 'var(--border)'}; transition: transform 0.2s;">
+
+                        <div style="flex:1;">
+                            <strong style="font-size:1.2rem; color:white;">${f.nombre}</strong><br>
+                            <small class="text-muted">Prop: ${f.propietario || '-'}</small>
+                        </div>
+
+                        <div style="display:flex; gap:12px; align-items:center;">
+                            <button class="btn-modern-action" onclick="event.stopPropagation(); Export.exportBackup([${f.id}])" title="Exportar" style="background: rgba(255,255,255,0.05); border-radius:12px; width:45px; height:45px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.1); cursor:pointer;">
+                                <span style="font-size:1.4rem;">💾</span>
+                            </button>
+                            <button class="btn-modern-action" onclick="event.stopPropagation(); App._showFincaForm(${f.id})" title="Editar" style="background: rgba(255,255,255,0.05); border-radius:12px; width:45px; height:45px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.1); cursor:pointer;">
+                                <span style="font-size:1.4rem;">✏️</span>
+                            </button>
+                            <button class="btn-modern-action" onclick="event.stopPropagation(); App._deleteFinca(${f.id}, '${f.nombre}')" title="Borrar" style="background: rgba(255,77,77,0.1); border-radius:12px; width:45px; height:45px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,77,77,0.2); cursor:pointer; color:#ff4d4d;">
+                                <span style="font-size:1.4rem;">🗑️</span>
+                            </button>
+                        </div>
+                    </div>`;
+                }).join('')}
+            </div>
+
+            <div id="load-finca-footer" style="display:none; margin-top:20px;">
+                <button id="btn-load-finca" class="btn btn-primary" style="height:65px; font-weight:900; font-size:1.1rem; border-radius:15px; box-shadow:0 10px 30px rgba(127,176,105,0.3); width:100%;">
+                    🚀 CARGAR FINCA SELECCIONADA
+                </button>
+            </div>
+
+            <button class="btn btn-outline mt-2" onclick="location.hash='/ajustes'" style="width:100%;">Volver a Ajustes</button>
+            <input type="file" id="import-f-mgr" accept=".json" style="display:none">
+        `;
         document.getElementById('import-f-mgr').onchange = async (e) => { if (e.target.files[0]) await App._handleImportFile(e.target.files[0]); };
         document.getElementById('btn-load-finca').onclick = () => { if (this._pendingFincaId) App._confirmSwitchFinca(this._pendingFincaId, this._pendingFincaNombre); };
     },
 
     _selectFincaForLoad(id, nombre) {
         document.querySelectorAll('.finca-card').forEach(el => el.classList.remove('selected-finca'));
-        const card = document.getElementById(`finca-card-${id}`); if(card) card.classList.add('selected-finca');
-        document.getElementById('load-finca-footer').style.display = 'block';
         this._pendingFincaId = id; this._pendingFincaNombre = nombre;
+        document.getElementById('load-finca-footer').style.display = 'block';
     },
 
     async _confirmSwitchFinca(newId, nombre) { if (confirm(`¿Cargar finca "${nombre}"?`)) { await Fincas.setActiveId(newId); location.reload(); } },
@@ -387,17 +577,59 @@ const App = {
     async _deleteFinca(id, nombre) { if (confirm(`¿Borrar permanentemente ${nombre}?`)) { await Fincas.delete(id); location.reload(); } },
 
     async _showFincaForm(id = null) {
-        let f = id ? await Fincas.get(id) : { nombre: '', propietario: '' };
+        let f = id ? await Fincas.get(id) : { nombre: '', propietario: '', cif: '', direccion: '', telefono: '', email: '' };
         const main = document.getElementById('app-content');
-        main.innerHTML = `<div class="card"><h3>${id?'Editar':'Nueva'} Finca</h3><form id="form-finca"><div class="form-group"><label>Nombre*</label><input type="text" id="f-nom" value="${f.nombre}" required></div><div class="form-group"><label>Propietario*</label><input type="text" id="f-prop" value="${f.propietario}" required></div><button type="submit" class="btn btn-primary mt-1">💾 Guardar Finca</button><button type="button" class="btn btn-outline mt-1" onclick="App.renderFincasManager()">Cancelar</button></form></div>`;
-        document.getElementById('form-finca').onsubmit = async (e) => { e.preventDefault(); const n = document.getElementById('f-nom').value.trim(), p = document.getElementById('f-prop').value.trim(); await Fincas.save({ ...f, nombre: n, propietario: p }); App.toast("✅ Éxito"); await App.renderFincasManager(); };
+        main.innerHTML = `
+            <div class="card">
+                <h3>${id?'Editar':'Nueva'} Finca</h3>
+                <form id="form-finca">
+                    <div class="form-group"><label>Nombre de la Finca*</label><input type="text" id="f-nom" value="${f.nombre}" required></div>
+                    <div class="form-group"><label>Titular / Propietario*</label><input type="text" id="f-prop" value="${f.propietario}" required></div>
+                    <div class="form-group"><label>DNI / CIF</label><input type="text" id="f-cif" value="${f.cif || ''}"></div>
+                    <div class="form-group"><label>Dirección</label><input type="text" id="f-dir" value="${f.direccion || ''}"></div>
+                    <div class="grid-2">
+                        <div class="form-group"><label>Teléfono</label><input type="tel" id="f-tel" value="${f.telefono || ''}"></div>
+                        <div class="form-group"><label>Correo Electrónico</label><input type="email" id="f-email" value="${f.email || ''}"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-1">💾 Guardar Finca</button>
+                    <button type="button" class="btn btn-outline mt-1" onclick="App.renderFincasManager()">Cancelar</button>
+                </form>
+            </div>`;
+        document.getElementById('form-finca').onsubmit = async (e) => {
+            e.preventDefault();
+            const dS = {
+                ...f,
+                nombre: document.getElementById('f-nom').value.trim(),
+                propietario: document.getElementById('f-prop').value.trim(),
+                cif: document.getElementById('f-cif').value.trim(),
+                direccion: document.getElementById('f-dir').value.trim(),
+                telefono: document.getElementById('f-tel').value.trim(),
+                email: document.getElementById('f-email').value.trim()
+            };
+            await Fincas.save(dS); App.toast("✅ Éxito"); await App.renderFincasManager();
+        };
     },
 
     async _saveActiveFincaSettings() {
         const finca = await Fincas.getActive(); if (!finca) return;
-        finca.comprador = { nombreEmpresa: document.getElementById('adj-empresa').value, cifNif: document.getElementById('adj-cif').value, representante: document.getElementById('adj-representante').value, direccion: document.getElementById('adj-direccion').value };
-        finca.factorQuintal = parseFloat(document.getElementById('adj-fac').value) || 46;
-        finca.porcentajeOreo = parseFloat(document.getElementById('adj-oreo').value) || 0;
+        finca.propietario = document.getElementById('adj-prop').value;
+        finca.telefono = document.getElementById('adj-prop-tel').value;
+        finca.comprador = {
+            nombreEmpresa: document.getElementById('adj-empresa').value,
+            cifNif: document.getElementById('adj-cif').value,
+            representante: document.getElementById('adj-representante').value,
+            direccion: document.getElementById('adj-direccion').value,
+            telefono: document.getElementById('adj-tel').value,
+            email: document.getElementById('adj-email').value
+        };
+
+        // Guardar precios
+        finca.precios = {
+            primera: { precioQuintal: parseFloat(document.getElementById('adj-p1').value) || 0 },
+            bornizo: { precioQuintal: parseFloat(document.getElementById('adj-pb').value) || 0 },
+            refugo: { precioQuintal: parseFloat(document.getElementById('adj-pr').value) || 0 }
+        };
+
         await Fincas.save(finca); App.toast("✅ Ajustes guardados");
     },
 
@@ -508,7 +740,7 @@ const App = {
                 delete z._tempId;
                 await Zonas.save(z);
             }
-            App.toast(`✅ ${zonesToSave.length} zonas añadidas correctamente`);
+            App.toast(`✅ ${zonesToSave.length} zonas añadadidas correctamente`);
             location.hash = '/zonas';
         };
     }
