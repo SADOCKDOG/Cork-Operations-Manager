@@ -83,13 +83,6 @@ const App = {
         const totalQGlobal = (tGlobal.primera.quintales + tGlobal.bornizo.quintales + tGlobal.refugo.quintales).toFixed(2);
 
         main.innerHTML = `
-            <div style="text-align: center; margin-bottom: 30px; margin-top: 10px;">
-                <h1 style="color: var(--p-cork); font-size: 2.2rem; margin: 0; font-weight: 900; letter-spacing: -1px; text-transform: uppercase;">
-                    ${finca ? finca.nombre : 'SIN FINCA'}
-                </h1>
-                <div style="width: 60px; height: 4px; background: var(--p-cork); margin: 10px auto; border-radius: 2px; opacity: 0.6;"></div>
-            </div>
-
             <div class="card" style="border-top: 5px solid var(--p-cork); padding: 25px; margin-bottom: 25px;">
                 <h3 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none; padding:0;">Resumen Global de Pesadas</h3>
                 <div class="summary-table-grid">
