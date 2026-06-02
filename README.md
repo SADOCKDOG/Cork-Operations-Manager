@@ -142,7 +142,7 @@ Imágenes relacionadas:
 <p align="center">
   <img src="docs/Informe%20Balance%20de%20Sacas.jpg" width="220" alt="Informe Balance de Sacas" />
   <br />
-  <img src="docs/informe%20por%20Zonas.jpg" width="220" alt="Informe por Zonas" />
+  <img src="docs/informe%20histórico%20de%20sacas.jpg" width="220" alt="Informe Histórico" />
 </p>
 <p align="center"><strong>Figura:</strong> Informes de balance y por zonas; exportación a PDF/XLSX.</p>
 
