@@ -1,5 +1,3 @@
-<h1 align="center">Cork Manager</h1>
-
 <p align="center">
   <img src="icons/Logo para PDF y cabecera de la aplicación.png" width="400" alt="Cork Manager Logo">
 </p>
