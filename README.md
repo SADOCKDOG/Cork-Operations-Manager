@@ -1,7 +1,7 @@
-<h1 align="center">Chamorro's Cork Manager</h1>
+<h1 align="center">Cork Manager</h1>
 
 <p align="center">
-  <img src="docs/Logo%20cabecera.png" width="220" alt="Logo Cabecera">
+  <img src="icons/Logo para PDF y cabecera de la aplicación.png" width="400" alt="Cork Manager Logo">
 </p>
 
 <p align="center"><strong>Built with:</strong> TypeScript · HTML5 · CSS3 · Capacitor (PWA-ready)</p>
@@ -11,7 +11,7 @@
 
 ## Descripción completa
 
-Chamorro's Cork Manager es una aplicación multiplataforma diseñada para gestionar de forma integral la producción y la parte económica de explotaciones corcheras. A continuación se describen en detalle las funcionalidades de cada módulo/screen: qué hace, qué datos maneja y casos de uso principales. Tras cada descripción funcional, se muestran las capturas de pantalla relacionadas.
+Cork Manager es una aplicación multiplataforma diseñada para gestionar de forma integral la producción y la parte económica de explotaciones corcheras. A continuación se describen en detalle las funcionalidades de cada módulo/screen: qué hace, qué datos maneja y casos de uso principales. Tras cada descripción funcional, se muestran las capturas de pantalla relacionadas.
 
 ---
 
@@ -71,11 +71,6 @@ Imágenes relacionadas:
   <img src="docs/Pantalla%20De%20Lista%20de%20pesadas.jpg" width="220" alt="Listado de pesadas" />
 </p>
 <p align="center"><strong>Figura:</strong> Listado de pesadas con filtros y controles de edición.</p>
-
-<p align="center">
-  <img src="docs/Screenshot_2026-06-01-15-59-52-541_com.elchamorro.pesadascorcho.jpg" width="220" alt="Vista móvil" />
-</p>
-<p align="center"><strong>Figura:</strong> Vista móvil / captura en dispositivo Android.</p>
 
 ---
 

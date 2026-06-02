@@ -51,11 +51,12 @@ header {
     background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    height: calc(65px + var(--safe-top));
+    height: calc(95px + var(--safe-top));
     padding-top: var(--safe-top);
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     padding-left: 15px;
     padding-right: 15px;
     position: fixed;
@@ -64,22 +65,45 @@ header {
     border-bottom: 1px solid var(--border);
 }
 
+.header-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
 .header-logo-container {
-    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
-    max-height: calc(65px + var(--safe-top));
+    height: 45px;
+    width: 100%;
     overflow: hidden;
 }
 
 #app-logo {
-    height: 38px;
+    height: 40px;
     width: auto;
-    max-width: 90%;
+    max-width: 95%;
     object-fit: contain;
     display: block;
+}
+
+#finca-header-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--accent);
+    font-weight: 800;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#finca-icon {
+    font-size: 1.1rem;
+    filter: drop-shadow(0 0 5px rgba(127, 176, 105, 0.3));
 }
 
 /* Ajustes adicionales para el wizard */
@@ -89,22 +113,9 @@ header {
     object-fit: contain;
 }
 
-#finca-badge {
-    font-size: 0.75rem;
-    background: var(--surface-light);
-    padding: 4px 10px;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    color: var(--text-s);
-    white-space: nowrap;
-    max-width: 120px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 /* CONTENIDO */
 main#app-content {
-    margin-top: calc(75px + var(--safe-top));
+    margin-top: calc(110px + var(--safe-top));
     margin-bottom: calc(90px + var(--safe-bottom));
     padding: 16px;
     max-width: 600px;

@@ -6,10 +6,10 @@
     <meta name="theme-color" content="#a0673a">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Chamorro´s Cork Manager</title>
+    <title>Cork Manager</title>
     <link rel="stylesheet" href="css/styles.css?v=6.1.3">
     <link rel="manifest" href="manifest.webmanifest">
-    <link rel="apple-touch-icon" href="icons/logo-header.png">
+    <link rel="apple-touch-icon" href="icons/app-icon.png">
     
     <!-- Librerías Críticas Locales para Android -->
     <script src="js/idb-local.js"></script>
@@ -22,10 +22,15 @@
 </head>
 <body>
     <header>
-        <div class="header-logo-container">
-            <img src="icons/logo-header.png" id="app-logo" alt="Chamorro´s Cork Manager">
+        <div class="header-content">
+            <div class="header-logo-container">
+                <img src="icons/logo-header.png" id="app-logo" alt="Cork Manager">
+            </div>
+            <div id="finca-header-info">
+                <span id="finca-icon">🌿</span>
+                <span id="nombre-finca-header">Cargando...</span>
+            </div>
         </div>
-        <div id="finca-badge"><span id="nombre-finca-header">Cargando...</span></div>
     </header>
 
     <main id="app-content">
