@@ -1,6 +1,6 @@
 {
     "name": "cork-manager",
-    "version": "6.3.0",
+    "version": "6.3.1",
     "private": true,
     "description": "PWA para la gestión de pesadas de corcho.",
     "scripts": {

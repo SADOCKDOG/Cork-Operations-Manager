@@ -200,7 +200,7 @@ Requisitos básicos: Node.js, npm, Capacitor. Pasos resumidos:
 
   <h3>📄 Licencia y Soporte</h3>
   <p>© 2026 Cork Manager. Todos los derechos reservados.<br>
-  Licencia de uso profesional v6.3.0</p>
+  Licencia de uso profesional v6.3.1</p>
 
   <p>Para soporte técnico o consultas comerciales:<br>
   📩 <a href="mailto:soporte.sdogfarm@gmail.com">soporte.sdogfarm@gmail.com</a></p>
