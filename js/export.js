@@ -18,7 +18,7 @@ const Export = {
 
             const exportData = {
                 version: '6.1.9',
-                app: "Chamorro's Cork Manager",
+                app: "Cork Manager",
                 exportedAt: new Date().toISOString(),
                 fincas: []
             };

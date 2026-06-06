@@ -50,6 +50,11 @@ const App = {
         let path = hash, id = null, action = null;
         if (hash.startsWith('/zona/')) { const parts = hash.split('/'); path = '/zona'; id = parts[2]; if (parts[3] === 'editar') action = 'editar'; }
         else if (hash.startsWith('/pesada/')) { const parts = hash.split('/'); path = '/pesada'; id = parts[2]; if (parts[3] === 'editar') action = 'editar'; }
+
+        // Modo Pantalla Completa para Pesadas
+        const isFullScreenForm = path === '/nueva' || (path === '/pesada' && action === 'editar');
+        document.body.classList.toggle('full-screen-mode', isFullScreenForm);
+
         document.querySelectorAll('.nav-item').forEach(el => { const base = (path === '/zona' || path === '/importar-pdf') ? '/zonas' : path; el.classList.toggle('active', el.getAttribute('href') === `#${base}`); });
         const main = document.getElementById('app-content');
         const allFincas = await Fincas.list();
@@ -157,37 +162,52 @@ const App = {
     async renderFormPesada(id = null) {
         const main = document.getElementById('app-content'), finca = await Fincas.getActive(), listPesadas = await Pesadas.list(), zonas = await Zonas.list();
         let isEdit = id !== null, maxS = listPesadas.length > 0 ? Math.max(...listPesadas.map(p => p.saca || 0)) : 0;
-        let d = id ? await Pesadas.get(parseInt(id)) : { fecha: new Date().toISOString().split('T')[0], saca: maxS + 1, calidad: 'bornizo', tara: 0, pesoBruto: '' };
-        if (isEdit && d) { d.fecha = d.fecha.split('T')[0]; if (d.pesadasPorCalidad.primera.kg > 0) d.calidad = 'primera'; else if (d.pesadasPorCalidad.refugo.kg > 0) d.calidad = 'refugo'; }
+        let d = id ? await Pesadas.get(parseInt(id)) : { fecha: new Date().toISOString().split('T')[0], saca: maxS + 1, calidad: 'primera', tara: 0, pesoBruto: '' };
+        if (isEdit && d) { d.fecha = d.fecha.split('T')[0]; if (d.pesadasPorCalidad.primera.kg > 0) d.calidad = 'primera'; else if (d.pesadasPorCalidad.bornizo.kg > 0) d.calidad = 'bornizo'; else if (d.pesadasPorCalidad.refugo.kg > 0) d.calidad = 'refugo'; }
         if (zonas.length === 0) { main.innerHTML = `<div class="card text-center"><p>Primero crea una zona.</p><button class="btn btn-primary" onclick="location.hash='/zonas'">Ir a Zonas</button></div>`; return; }
 
         main.innerHTML = `
             <div class="card">
-                <h2>${isEdit ? 'Editar' : 'Nueva'} Pesada</h2>
+                <h2 style="text-align:center;">${isEdit ? 'Editar' : 'Nueva'} Pesada</h2>
                 <form id="form-pesada">
-                    <!-- 1. Bruto y Tara en la parte superior -->
-                    <div class="grid-2">
-                        <div class="form-group"><label>Bruto (kg)</label><input type="number" id="p-bruto" value="${d.pesoBruto || ''}" placeholder="0.0"></div>
-                        <div class="form-group"><label>Tara (kg)</label><input type="number" id="p-tara" value="${d.tara || 0}"></div>
+                    <!-- 1. Bruto Grande y Centrado -->
+                    <div class="form-group centered">
+                        <label>Bruto (KG)</label>
+                        <input type="number" step="0.1" id="p-bruto" value="${d.pesoBruto || ''}" placeholder="0.0" class="input-huge" autofocus>
                     </div>
 
-                    <!-- 2. Zona -->
-                    <div class="form-group">
+                    <!-- 2. Zona Centrada -->
+                    <div class="form-group centered">
                         <label>Zona / Parcela</label>
-                        <select id="p-zona">${zonas.map(z => `<option value="${z.id}" ${d.zonaId == z.id ? 'selected' : ''}>${z.nombre}</option>`).join('')}</select>
+                        <select id="p-zona" style="height:70px; font-size:1.3rem;">${zonas.map(z => `<option value="${z.id}" ${d.zonaId == z.id ? 'selected' : ''}>${z.nombre}</option>`).join('')}</select>
                     </div>
 
-                    <!-- 3. Selector de Calidad -->
-                    <div class="form-group">
+                    <!-- 3. Selector de Calidad Centrado -->
+                    <div class="form-group centered">
                         <label>Calidad del Corcho</label>
-                        <div class="quality-selector" style="display:flex; gap:10px;">
-                            <button type="button" class="quality-btn" data-quality="primera" style="flex:1;">⭐ 1ª</button>
-                            <button type="button" class="quality-btn" data-quality="bornizo" style="flex:1;">🟡 Bo</button>
-                            <button type="button" class="quality-btn" data-quality="refugo" style="flex:1;">🔴 Re</button>
+                        <div class="quality-selector-centered">
+                            <button type="button" class="quality-btn" data-quality="primera" style="flex:1;">⭐ 1ª Calidad</button>
+                            <button type="button" class="quality-btn" data-quality="bornizo" style="flex:1;">🟡 Bornizo</button>
+                            <button type="button" class="quality-btn" data-quality="refugo" style="flex:1;">🔴 Refugo</button>
                         </div>
                     </div>
 
-                    <!-- 4. Datos calculados: Neto y Quintales -->
+                    <!-- 4. Botón Guardar (Acción Rápida) -->
+                    <div style="margin-bottom: 30px;">
+                        <button type="submit" class="btn btn-primary" style="height:80px; font-size:1.4rem;">💾 GUARDAR PESADA</button>
+                    </div>
+
+                    <hr style="border:0; border-top:1px solid var(--border); margin:25px 0;">
+
+                    <!-- 5. Resto de datos -->
+                    <div class="grid-2">
+                        <div class="form-group"><label>Tara (kg)</label><input type="number" step="0.1" id="p-tara" value="${d.tara || 0}"></div>
+                        <div class="form-group"><label>Nº Saca</label><input type="number" id="p-saca" value="${d.saca}"></div>
+                    </div>
+
+                    <div class="form-group"><label>Fecha</label><input type="date" id="p-fecha" value="${d.fecha}"></div>
+
+                    <!-- Datos calculados -->
                     <div class="card stat-grid" style="display:flex; justify-content:space-around; background: rgba(255,255,255,0.03); margin: 15px 0;">
                         <div style="text-align:center;">
                             <div id="calc-neto" class="stat-value" style="font-size: 1.8rem; color: var(--accent);">0.0</div>
@@ -199,16 +219,9 @@ const App = {
                         </div>
                     </div>
 
-                    <!-- 5. Fecha y Nº Saca al final -->
-                    <div class="grid-2">
-                        <div class="form-group"><label>Fecha</label><input type="date" id="p-fecha" value="${d.fecha}"></div>
-                        <div class="form-group"><label>Nº Saca</label><input type="number" id="p-saca" value="${d.saca}"></div>
-                    </div>
-
-                    <div style="margin-top: 20px;">
-                        <button type="submit" class="btn btn-primary">💾 Guardar Pesada</button>
-                        ${isEdit ? `<button type="button" class="btn btn-danger mt-1" onclick="App._deletePesada(${id})">🗑️ Eliminar</button>` : ''}
-                        <button type="button" class="btn btn-outline mt-1" onclick="history.back()">Cancelar</button>
+                    <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+                        ${isEdit ? `<button type="button" class="btn btn-danger" onclick="App._deletePesada(${id})">🗑️ Eliminar Pesada</button>` : ''}
+                        <button type="button" class="btn btn-outline" onclick="history.back()">Cancelar</button>
                     </div>
                 </form>
             </div>`;
@@ -466,6 +479,7 @@ const App = {
                 <div class="form-group"><label>Empresa / Comprador</label><input type="text" id="adj-empresa" value="${comp.nombreEmpresa||''}"></div>
                 <div class="form-group"><label>CIF/NIF Comprador</label><input type="text" id="adj-cif" value="${comp.cifNif||''}"></div>
                 <div class="form-group"><label>Representante</label><input type="text" id="adj-representante" value="${comp.representante||''}"></div>
+                <div class="form-group"><label>Porcentaje de Oreo (%)</label><input type="number" step="0.1" id="adj-oreo" value="${finca.porcentajeOreo || 0}"></div>
                 <div class="form-group"><label>Teléfono</label><input type="tel" id="adj-tel" value="${comp.telefono||''}"></div>
                 <div class="form-group"><label>Correo Electrónico</label><input type="email" id="adj-email" value="${comp.email||''}"></div>
                 <div class="form-group"><label>Dirección Comercial</label><input type="text" id="adj-direccion" value="${comp.direccion||''}"></div>
@@ -623,6 +637,7 @@ const App = {
         const finca = await Fincas.getActive(); if (!finca) return;
         finca.propietario = document.getElementById('adj-prop').value;
         finca.telefono = document.getElementById('adj-prop-tel').value;
+        finca.porcentajeOreo = parseFloat(document.getElementById('adj-oreo').value) || 0;
         finca.comprador = {
             nombreEmpresa: document.getElementById('adj-empresa').value,
             cifNif: document.getElementById('adj-cif').value,
