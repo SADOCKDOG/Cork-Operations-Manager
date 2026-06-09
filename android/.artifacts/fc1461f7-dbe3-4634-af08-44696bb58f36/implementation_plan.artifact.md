@@ -1,31 +1,33 @@
-# Plan de Finalización: Sincronización, Limpieza y Subida a GitHub
+# Plan de Corrección: Duplicidad en Cabecera de Informes
 
-Este plan detalla los pasos para consolidar los cambios realizados en la versión de Android hacia el código fuente principal, organizar los archivos del repositorio y realizar la entrega final en GitHub.
+Este plan detalla la corrección para eliminar la duplicidad de los datos del Propietario (Vendedor) y Comprador que aparece al generar los informes en PDF.
 
-## Pasos del Plan
+## Problema Identificado
+Al exportar un informe a PDF, se están incluyendo dos cabeceras con la información del emisor y receptor:
+1.  La cabecera propia de la plantilla PDF (diseñada para impresión).
+2.  La cabecera de la vista de la aplicación (`.dual-entity-grid`), que se arrastra al contenido del PDF.
 
-### 1. Sincronización de Código Fuente (Source of Truth)
-Dado que los cambios (rediseño, modo pantalla completa, cambio de nombre) se aplicaron directamente en los assets de Android para pruebas rápidas, ahora se replicarán en el directorio raíz para que el código fuente principal esté actualizado.
+## Cambios Propuestos
 
-*   Copiar `android/app/src/main/assets/public/js/app.js` a `js/app.js`
-*   Copiar `android/app/src/main/assets/public/js/export.js` a `js/export.js`
-*   Copiar `android/app/src/main/assets/public/css/styles.css` a `css/styles.css`
-*   Copiar `android/app/src/main/assets/public/manual-zonas.html` a `manual-zonas.html`
+### 1. Eliminación de Cabecera en la Plantilla PDF
+Siguiendo las indicaciones de la captura, se eliminará el bloque de código HTML que genera la tabla de cabecera (Vendedor/Comprador) dentro de la constante `plantilla` en la función `exportarPDF`.
 
-### 2. Organización y Limpieza
-Se moverán los archivos temporales y capturas de pantalla a la carpeta de archivos privados para mantener el repositorio limpio y profesional.
+Esto permitirá que solo se visualice la cabecera que ya viene integrada en el contenido del informe (`.dual-entity-grid`), eliminando así la redundancia y manteniendo el diseño visual de la aplicación en el documento PDF.
 
-*   Mover `Pantalla Nueva pesada.jpg` a `_PRIVATE_/`
-*   Mover `Pantalla Ajustes, falta porcentaje Oreo.jpg` a `_PRIVATE_/`
+#### [MODIFY] [app.js](file:///C:/Users/yo/pesadas-corcho/android/app/src/main/assets/public/js/app.js)
+*   Eliminar el bloque `<div style="display:table; width:100%; ...">...</div>` de la variable `plantilla`.
 
-### 3. Entrega en GitHub
-Se procederá a preparar el commit con un mensaje descriptivo y se subirá a la rama principal.
+### 2. Ajustes de Formato y Alineación
+Se verificará que, tras eliminar la cabecera de la plantilla, el título (`h1`) y el contenido posterior queden correctamente espaciados y alineados.
 
-*   `git add .`
-*   `git commit -m "Refactor: Rediseño pantalla pesadas (Alta Visibilidad), Modo Pantalla Completa, Cambio de nombre a Cork Manager e integración de % Oreo"`
-*   `git push`
+#### [MODIFY] [app.js](file:///C:/Users/yo/pesadas-corcho/js/app.js)
+*   Aplicar la misma eliminación en el archivo de la raíz.
 
-## Verificación Final
-*   Confirmar que `js/app.js` contiene la lógica de pantalla completa.
-*   Confirmar que la raíz no tiene archivos `.jpg` sueltos.
-*   Verificar el estado del push en GitHub.
+## Plan de Verificación
+
+### Verificación Manual (en Android)
+1.  Navegar a la pantalla de **Informes**.
+2.  Generar un informe (ej. Balance Global).
+3.  Pulsar el botón **PDF**.
+4.  Confirmar que en el documento generado solo aparece una cabecera profesional en la parte superior y no la versión duplicada debajo del título.
+5.  Verificar que el alineamiento de las tablas y el resto del contenido se mantiene correcto.

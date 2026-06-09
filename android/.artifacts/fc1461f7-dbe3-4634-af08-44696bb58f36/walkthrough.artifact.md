@@ -22,6 +22,11 @@ Se ha transformado la pantalla para un flujo de trabajo "de arriba a abajo" más
 *   [app.js](file:///C:/Users/yo/pesadas-corcho/android/app/src/main/assets/public/js/app.js): Lógica de rediseño, modo pantalla completa y gestión de nuevos campos.
 *   [styles.css](file:///C:/Users/yo/pesadas-corcho/android/app/src/main/assets/public/css/styles.css): Nuevos estilos `.input-huge`, utilidades de centrado y clases para el modo pantalla completa.
 
+## Entrega y Repositorio
+*   **Sincronización:** Se han replicado todos los cambios realizados en el entorno de Android hacia el código fuente principal en la raíz del proyecto.
+*   **Limpieza:** Las capturas de pantalla han sido movidas a la carpeta `_PRIVATE_`.
+*   **GitHub:** Se ha realizado un commit consolidado y se han subido los cambios al repositorio remoto.
+
 ## Verificación Realizada
 *   Se ha verificado la correcta inicialización del valor "1ª Calidad".
 *   Se ha comprobado que el campo bruto acepta decimales (ej. 45.8).
