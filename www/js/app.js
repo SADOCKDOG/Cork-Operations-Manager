@@ -167,7 +167,7 @@ const App = {
         if (zonas.length === 0) { main.innerHTML = `<div class="card text-center"><p>Primero crea una zona.</p><button class="btn btn-primary" onclick="location.hash='/zonas'">Ir a Zonas</button></div>`; return; }
 
         main.innerHTML = `
-            <div class="card">
+            <div class="card card-fullscreen animate-in">
                 <h2 style="text-align:center;">${isEdit ? 'Editar' : 'Nueva'} Pesada</h2>
                 <form id="form-pesada">
                     <!-- 1. Bruto Grande y Centrado -->
