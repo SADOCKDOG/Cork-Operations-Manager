@@ -14,10 +14,14 @@ export interface BaseRecord {
 export interface Finca extends BaseRecord {
     nombre: string;
     propietario?: string;
+    cif?: string;
+    telefono?: string;
+    email?: string;
     direccion?: string;
     unidadMedida?: string;
     porcentajeOreo?: number;
     factorQuintal: number;
+    comprador?: any;
     precios: any;
     ultimaSaca: number;
     creadoEn: string;
@@ -26,9 +30,16 @@ export interface Finca extends BaseRecord {
 export interface Zona extends BaseRecord {
     fincaId: string;
     nombre: string;
+    paraje?: string;
+    municipio?: string;
+    provincia?: string;
     poligono?: string;
     parcela?: string;
     refCatastral?: string;
+    clase?: string;
+    usoPrincipal?: string;
+    superficieGrafica?: string;
+    cultivos?: any[];
     croquisBlob?: Blob;
 }
 

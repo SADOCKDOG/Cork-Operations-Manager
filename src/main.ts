@@ -1,6 +1,6 @@
 import './styles/styles.css';
 import { Auth } from './modules/auth';
-import { initDB, migrateLegacyData } from './modules/db';
+import { initDB, migrateLegacyData, db } from './modules/db';
 import { Fincas } from './modules/fincas';
 import { Zonas } from './modules/zonas';
 import { Pesadas } from './modules/pesadas';
@@ -9,7 +9,7 @@ import { Gastos } from './modules/gastos';
 import { Export } from './modules/export';
 import { Drive } from './modules/drive';
 import { Sync } from './modules/sync';
-import { PdfImport } from './modules/pdf-import';
+// import { PdfImport }
 import { Charts } from './modules/charts';
 import { Network } from '@capacitor/network';
 
@@ -22,6 +22,8 @@ declare global {
 }
 
 const App = {
+    _pendingFincaId: null as string | null,
+    _pendingFincaNombre: null as string | null,
     async init() {
         try {
             console.log("App: Iniciando v7.0.0 (Vite + TS)...");
@@ -110,6 +112,7 @@ const App = {
     },
 
     async updateHeader() {
+        // @ts-ignore
         const finca = await Fincas.getActive();
         const headerEl = document.getElementById('nombre-finca-header');
         if (headerEl) {
@@ -159,7 +162,7 @@ const App = {
             else if (path === '/fincas') await this.renderFincasManager();
             else if (path === '/gastos') await this.renderGastosManager();
             else if (path === '/informes') await this.renderReportesView();
-            else if (path === '/importar-pdf') await this.renderImportarPdf();
+            else if (path === '/importar-pdf') location.hash = '/zonas';
             else main.innerHTML = `<h2>Ruta ${path} en construcción</h2>`;
         } catch (error: any) {
             console.error(error);
@@ -332,7 +335,7 @@ const App = {
         if(elQR) elQR.textContent = t.refugo.quintales.toFixed(1);
         if(elKgT) elKgT.textContent = Math.round(t.primera.kg + t.bornizo.kg + t.refugo.kg).toString();
         if(elQT) elQT.textContent = (t.primera.quintales + t.bornizo.quintales + t.refugo.quintales).toFixed(1);
-        if(elCount) elCount.textContent = \`\${pesadas.length} sacas hoy.\`;
+        if(elCount) elCount.textContent = `${pesadas.length} sacas hoy.`;
     },
 
     async renderUltimasPesadas() {
@@ -357,21 +360,21 @@ const App = {
                 em = '🔴'; cal = 'Refugo'; col = '#ef4444'; 
             }
             
-            return \`
-                <div class="pesada-card" style="--card-color: \${col};" onclick="location.hash='/pesada/\${p.id}/editar'">
+            return `
+                <div class="pesada-card" style="--card-color: ${col};" onclick="location.hash='/pesada/${p.id}/editar'">
                     <div class="pesada-card-left">
-                        <small>\${fH}</small>
-                        <strong>\${z ? z.nombre : '?'}</strong>
-                        <div class="pesada-saca-badge">SACA #\${p.saca}</div>
+                        <small>${fH}</small>
+                        <strong>${z ? z.nombre : '?'}</strong>
+                        <div class="pesada-saca-badge">SACA #${p.saca}</div>
                     </div>
                     <div class="pesada-card-right">
                         <table class="pesada-data-table">
-                            <tr><td class="pesada-data-label">Calidad</td><td class="pesada-data-value">\${em} \${cal}</td></tr>
-                            <tr><td class="pesada-data-label">Bruto</td><td class="pesada-data-value highlight-kg">\${p.kg.toFixed(1)} kg</td></tr>
-                            <tr><td class="pesada-data-label">Neto</td><td class="pesada-data-value highlight-q">\${p.quintales.toFixed(2)} Q</td></tr>
+                            <tr><td class="pesada-data-label">Calidad</td><td class="pesada-data-value">${em} ${cal}</td></tr>
+                            <tr><td class="pesada-data-label">Bruto</td><td class="pesada-data-value highlight-kg">${p.kg.toFixed(1)} kg</td></tr>
+                            <tr><td class="pesada-data-label">Neto</td><td class="pesada-data-value highlight-q">${p.quintales.toFixed(2)} Q</td></tr>
                         </table>
                     </div>
-                </div>\`;
+                </div>`;
         }).join('');
     },
 
@@ -386,7 +389,7 @@ const App = {
         return t;
     },
 
-    async renderFormPesada() {
+    async renderFormPesada(id?: string) {
         const main = document.getElementById('app-content');
         if (!main) return;
         const zonas = await Zonas.list();
@@ -818,7 +821,7 @@ const App = {
             <button class="btn btn-outline mt-2" onclick="location.hash='/ajustes'" style="width:100%;">Volver a Ajustes</button>
         `;
         document.getElementById('btn-load-finca')?.addEventListener('click', () => { 
-            if (this._pendingFincaId) this._confirmSwitchFinca(this._pendingFincaId, this._pendingFincaNombre); 
+            if (this._pendingFincaId) this._confirmSwitchFinca(this._pendingFincaId, this._pendingFincaNombre!); 
         });
     },
 
@@ -1073,7 +1076,7 @@ const App = {
         if (!r || !finca) return;
         const totalG = await Gastos.getTotal();
         const repG = await Reportes.generarReporteEconomicoGlobal();
-        const bNetoT = repG.valorTotal - totalG;
+        const bNetoT = repG!.valorTotal - totalG;
         const comp = finca.comprador || {};
         let h = `<div class="reporte-container"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;"><h2 style="margin:0; color:var(--p-cork); font-weight:800;">⭐ Liq. ${r.nombreCalidad}</h2><button class="btn btn-outline" style="height:40px; padding:0 15px; border-radius:10px;" onclick="App.exportarPDF('calidad')">📄 PDF</button></div>${this._getDualHeaderHtml(finca.nombre, finca.propietario||'-', finca.cif||'-', comp.nombreEmpresa||'-', comp.cifNif||'-', comp.representante||'-')}<div class="card-finance" style="background:var(--surface-light); padding:20px;"><small class="text-muted">BENEFICIO NETO CAMP. (GLOBAL)</small><br><strong style="color:var(--accent); font-size:1.4rem;">${bNetoT.toFixed(2)}€</strong></div><div class="card"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;"><h4>Detalle por Zonas</h4><small class="text-muted">Precio: ${r.precioQuintal}€/Q</small></div><div class="table-responsive"><table class="reporte-table"><thead><tr><th>Zona</th><th>Sacas</th><th>Q.Neto</th><th style="text-align:right;">Valor</th></tr></thead><tbody>${Object.values(r.reportePorZona).filter((z:any) => z.sacas > 0).map((z:any) => `<tr><td><strong>${z.nombre}</strong></td><td>${z.sacas}</td><td><strong>${z.neto.toFixed(2)}</strong></td><td style="text-align:right; font-weight:700;">${z.valor.toFixed(2)}€</td></tr>`).join('')}</tbody><tfoot><tr><td>TOTAL</td><td>${r.totales.sacas}</td><td>${r.totales.neto.toFixed(2)}</td><td style="text-align:right; color:var(--p-cork);"><strong>${r.totales.valor.toFixed(2)}€</strong></td></tr></tfoot></table></div></div></div>`;
         const cont = document.getElementById('cont-rep');
@@ -1198,378 +1201,5 @@ const App = {
             this.toastError(e.message);
         }
     },
-
-    async renderAjustes() {
-        const main = document.getElementById('app-content');
-        const finca = await Fincas.getActive(); 
-        if (!finca || !main) return this.renderFincasManager();
-        const comp = finca.comprador || {};
-        const precios = finca.precios || {};
-
-        main.innerHTML = `
-            <div style="display:flex; align-items:center; gap:12px; margin-bottom:25px;"><div style="width:5px; height:30px; background:var(--p-cork); border-radius:3px;"></div><h2 style="margin:0; border:none; padding:0; color:var(--text-p); font-weight:800;">Ajustes de Finca</h2></div>
-
-            <div class="card" style="border: 2px solid var(--p-cork); border-left: 8px solid var(--p-cork);">
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;"><div style="width:4px; height:20px; background:var(--p-cork); border-radius:2px;"></div><h4 style="margin:0; font-size:0.9rem; text-transform:uppercase;">Datos Propietario</h4></div>
-                <div class="form-group"><label>Nombre Explotación</label><input type="text" value="${finca.nombre}" readonly style="opacity:0.6;"></div>
-                <div class="form-group"><label>Nombre Propietario</label><input type="text" id="adj-prop" value="${finca.propietario||''}"></div>
-                <div class="form-group"><label>Teléfono</label><input type="tel" id="adj-prop-tel" value="${finca.telefono||''}"></div>
-            </div>
-
-            <div class="card" style="border: 2px solid var(--accent); border-left: 8px solid var(--accent);">
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;"><div style="width:4px; height:20px; background:var(--accent); border-radius:2px;"></div><h4 style="margin:0; font-size:0.9rem; text-transform:uppercase;">Datos Comprador y Precios</h4></div>
-                <div class="form-group"><label>Empresa / Comprador</label><input type="text" id="adj-empresa" value="${comp.nombreEmpresa||''}"></div>
-                <div class="form-group"><label>CIF/NIF Comprador</label><input type="text" id="adj-cif" value="${comp.cifNif||''}"></div>
-                <div class="form-group"><label>Representante</label><input type="text" id="adj-representante" value="${comp.representante||''}"></div>
-                <div class="form-group"><label>Porcentaje de Oreo (%)</label><input type="number" step="0.1" id="adj-oreo" value="${finca.porcentajeOreo || 0}"></div>
-                <div class="form-group"><label>Teléfono</label><input type="tel" id="adj-tel" value="${comp.telefono||''}"></div>
-                <div class="form-group"><label>Correo Electrónico</label><input type="email" id="adj-email" value="${comp.email||''}"></div>
-                <div class="form-group"><label>Dirección Comercial</label><input type="text" id="adj-direccion" value="${comp.direccion||''}"></div>
-
-                <h5 style="margin: 15px 0 10px 0; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 5px;">Precios de Mercado (€/Q)</h5>
-                <div class="form-group"><label>Precio 1ª</label><input type="number" step="0.01" id="adj-p1" value="${precios.primera?.precioQuintal || ''}"></div>
-                <div class="form-group"><label>Precio Bornizo</label><input type="number" step="0.01" id="adj-pb" value="${precios.bornizo?.precioQuintal || ''}"></div>
-                <div class="form-group"><label>Precio Refugo</label><input type="number" step="0.01" id="adj-pr" value="${precios.refugo?.precioQuintal || ''}"></div>
-
-                <button class="btn btn-primary" style="width:100%; margin-top:20px;" onclick="App._saveActiveFincaSettings()">💾 Guardar Ajustes</button>
-            </div>
-
-            <div class="reportes-selector-grid" style="margin-top:20px;">
-                <button class="report-select-btn theme-zona" onclick="location.hash='/gastos'"><span class="btn-icon">💸</span><strong>Control Gastos</strong></button>
-                <button class="report-select-btn theme-global" onclick="location.hash='/fincas'"><span class="btn-icon">📍</span><strong>Gestor Fincas</strong></button>
-            </div>
-
-            <div class="card text-center" style="border-top: 2px solid var(--p-cork); margin-top:30px; padding:30px;">
-                <p style="font-size: 0.85rem; color: var(--text-s); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">Desarrollado por</p>
-                <img src="icons/Logo SDOGFARMCORE.png" style="width:160px; margin-bottom:15px; filter: drop-shadow(0 0 10px rgba(212,163,115,0.2));" onerror="this.style.display='none'">
-                <p style="font-weight:800; color:var(--p-cork); margin-bottom: 5px;">Ecosistema CORE de Gestión Inteligente</p>
-                <div style="width: 40px; height: 2px; background: var(--border); margin: 15px auto;"></div>
-                <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 5px; border:none; padding:0;">📄 Licencia y Soporte</h3>
-                <p style="font-size: 0.85rem; color: var(--text-s); line-height: 1.5;">
-                    © 2026 Cork Manager. Todos los derechos reservados.<br>
-                    Licencia de uso profesional v7.0.0
-                </p>
-                <p style="font-size: 0.85rem; color: var(--p-cork); margin-top: 15px; font-weight: 600;">
-                    📩 soporte.sdogfarm@gmail.com
-                </p>
-            </div>`;
-    },
-
-    async renderFincasManager() {
-        const main = document.getElementById('app-content');
-        if (!main) return;
-        const allFincas = await Fincas.list();
-        const activeId = await Fincas.getActiveId();
-        
-        main.innerHTML = `
-            <div style="display:flex; align-items:center; gap:12px; margin-bottom:25px;">
-                <div style="width:5px; height:30px; background:var(--accent); border-radius:3px;"></div>
-                <h2 style="margin:0; border:none; padding:0; font-weight:800;">Gestión de Fincas</h2>
-            </div>
-
-            <div class="reportes-selector-grid">
-                <button class="report-select-btn theme-calidad" onclick="App._showFincaForm()" style="background: linear-gradient(135deg, rgba(127,176,105,0.5) 0%, rgba(141,179,105,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(127,176,105,0.15); min-height: 80px; padding: 10px;">
-                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">➕</span>
-                    <strong style="font-size:0.85rem;">Nueva Finca</strong>
-                </button>
-                <button class="report-select-btn theme-global" onclick="document.getElementById('import-f-mgr')?.click()" style="background: linear-gradient(135deg, rgba(160,103,58,0.5) 0%, rgba(212,163,115,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(160,103,58,0.15); min-height: 80px; padding: 10px;">
-                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">📥</span>
-                    <strong style="font-size:0.85rem;">Importar</strong>
-                </button>
-                <button class="report-select-btn theme-econ" onclick="Export.exportBackup()" style="background: linear-gradient(135deg, rgba(44,62,80,0.5) 0%, rgba(76,161,175,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(44,62,80,0.15); min-height: 80px; padding: 10px;">
-                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">📄</span>
-                    <strong style="font-size:0.85rem;">Exportar Todo</strong>
-                </button>
-            </div>
-
-            <div id="fincas-list-container" style="margin-top:25px; display:flex; flex-direction:column; gap:15px;">
-                ${allFincas.map(f => {
-                    const isActive = Number(f.id) === Number(activeId);
-                    return `
-                    <div class="card finca-card ${isActive ? 'active-finca' : ''}"
-                         onclick="App._selectFincaForLoad('${f.id}', '${f.nombre.replace(/'/g, "\\'")}')"
-                         style="display:flex; align-items:center; padding:20px; border-left:8px solid ${isActive ? 'var(--accent)' : 'var(--border)'}; transition: transform 0.2s;">
-
-                        <div style="flex:1;">
-                            <strong style="font-size:1.2rem; color:white;">${f.nombre}</strong><br>
-                            <small class="text-muted">Prop: ${f.propietario || '-'}</small>
-                        </div>
-
-                        <div style="display:flex; gap:12px; align-items:center;">
-                            <button class="btn-modern-action" onclick="event.stopPropagation(); Export.exportBackup(['${f.id}'])" title="Exportar" style="background: rgba(255,255,255,0.05); border-radius:12px; width:45px; height:45px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.1); cursor:pointer;">
-                                <span style="font-size:1.4rem;">💾</span>
-                            </button>
-                            <button class="btn-modern-action" onclick="event.stopPropagation(); App._showFincaForm('${f.id}')" title="Editar" style="background: rgba(255,255,255,0.05); border-radius:12px; width:45px; height:45px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.1); cursor:pointer;">
-                                <span style="font-size:1.4rem;">✏️</span>
-                            </button>
-                            <button class="btn-modern-action" onclick="event.stopPropagation(); App._deleteFinca('${f.id}', '${f.nombre.replace(/'/g, "\\'")}')" title="Borrar" style="background: rgba(255,77,77,0.1); border-radius:12px; width:45px; height:45px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,77,77,0.2); cursor:pointer; color:#ff4d4d;">
-                                <span style="font-size:1.4rem;">🗑️</span>
-                            </button>
-                        </div>
-                    </div>`;
-                }).join('')}
-            </div>
-
-            <div id="load-finca-footer" style="display:none; margin-top:20px;">
-                <button id="btn-load-finca" class="btn btn-primary" style="height:65px; font-weight:900; font-size:1.1rem; border-radius:15px; box-shadow:0 10px 30px rgba(127,176,105,0.3); width:100%;">
-                    🚀 CARGAR FINCA SELECCIONADA
-                </button>
-            </div>
-
-            <button class="btn btn-outline mt-2" onclick="location.hash='/ajustes'" style="width:100%;">Volver a Ajustes</button>
-            <input type="file" id="import-f-mgr" accept=".json" style="display:none">
-        `;
-        
-        const inputImport = document.getElementById('import-f-mgr') as HTMLInputElement;
-        if (inputImport) {
-            inputImport.onchange = async (e: any) => { 
-                if (e.target.files[0]) await this._handleImportFile(e.target.files[0]); 
-            };
-        }
-        
-        const btnLoad = document.getElementById('btn-load-finca');
-        if (btnLoad) {
-            btnLoad.onclick = () => { 
-                const pId = (this as any)._pendingFincaId;
-                const pNombre = (this as any)._pendingFincaNombre;
-                if (pId) this._confirmSwitchFinca(pId, pNombre); 
-            };
-        }
-    },
-
-    _selectFincaForLoad(id: string, nombre: string) {
-        document.querySelectorAll('.finca-card').forEach(el => el.classList.remove('selected-finca'));
-        (this as any)._pendingFincaId = id; 
-        (this as any)._pendingFincaNombre = nombre;
-        const footer = document.getElementById('load-finca-footer');
-        if (footer) footer.style.display = 'block';
-    },
-
-    async _confirmSwitchFinca(newId: string, nombre: string) { 
-        if (confirm(`¿Cargar finca "${nombre}"?`)) { 
-            await Fincas.setActiveId(newId); 
-            location.reload(); 
-        } 
-    },
-
-    async _deleteFinca(id: string, nombre: string) { 
-        if (confirm(`¿Borrar permanentemente ${nombre}?`)) { 
-            await Fincas.delete(id); 
-            location.reload(); 
-        } 
-    },
-
-    async _showFincaForm(id: string | null = null) {
-        let f: any = id ? await Fincas.get(id) : { nombre: '', propietario: '', cif: '', direccion: '', telefono: '', email: '' };
-        if (!f) f = { nombre: '', propietario: '', cif: '', direccion: '', telefono: '', email: '' };
-        
-        const main = document.getElementById('app-content');
-        if (!main) return;
-        main.innerHTML = `
-            <div class="card">
-                <h3>${id ? 'Editar' : 'Nueva'} Finca</h3>
-                <form id="form-finca">
-                    <div class="form-group"><label>Nombre de la Finca*</label><input type="text" id="f-nom" value="${f.nombre}" required></div>
-                    <div class="form-group"><label>Titular / Propietario*</label><input type="text" id="f-prop" value="${f.propietario}" required></div>
-                    <div class="form-group"><label>DNI / CIF</label><input type="text" id="f-cif" value="${f.cif || ''}"></div>
-                    <div class="form-group"><label>Dirección</label><input type="text" id="f-dir" value="${f.direccion || ''}"></div>
-                    <div class="grid-2">
-                        <div class="form-group"><label>Teléfono</label><input type="tel" id="f-tel" value="${f.telefono || ''}"></div>
-                        <div class="form-group"><label>Correo Electrónico</label><input type="email" id="f-email" value="${f.email || ''}"></div>
-                    </div>
-                    <button type="submit" class="btn btn-primary mt-1">💾 Guardar Finca</button>
-                    <button type="button" class="btn btn-outline mt-1" onclick="App.renderFincasManager()">Cancelar</button>
-                </form>
-            </div>`;
-            
-        const form = document.getElementById('form-finca');
-        if (form) {
-            form.onsubmit = async (e) => {
-                e.preventDefault();
-                const dS = {
-                    ...f,
-                    nombre: (document.getElementById('f-nom') as HTMLInputElement).value.trim(),
-                    propietario: (document.getElementById('f-prop') as HTMLInputElement).value.trim(),
-                    cif: (document.getElementById('f-cif') as HTMLInputElement).value.trim(),
-                    direccion: (document.getElementById('f-dir') as HTMLInputElement).value.trim(),
-                    telefono: (document.getElementById('f-tel') as HTMLInputElement).value.trim(),
-                    email: (document.getElementById('f-email') as HTMLInputElement).value.trim()
-                };
-                await Fincas.save(dS); 
-                this.toast("✅ Éxito"); 
-                await this.renderFincasManager();
-            };
-        }
-    },
-
-    async _saveActiveFincaSettings() {
-        const finca = await Fincas.getActive(); 
-        if (!finca) return;
-        finca.propietario = (document.getElementById('adj-prop') as HTMLInputElement).value;
-        finca.telefono = (document.getElementById('adj-prop-tel') as HTMLInputElement).value;
-        finca.porcentajeOreo = parseFloat((document.getElementById('adj-oreo') as HTMLInputElement).value) || 0;
-        finca.comprador = {
-            nombreEmpresa: (document.getElementById('adj-empresa') as HTMLInputElement).value,
-            cifNif: (document.getElementById('adj-cif') as HTMLInputElement).value,
-            representante: (document.getElementById('adj-representante') as HTMLInputElement).value,
-            direccion: (document.getElementById('adj-direccion') as HTMLInputElement).value,
-            telefono: (document.getElementById('adj-tel') as HTMLInputElement).value,
-            email: (document.getElementById('adj-email') as HTMLInputElement).value
-        };
-
-        finca.precios = {
-            primera: { precioQuintal: parseFloat((document.getElementById('adj-p1') as HTMLInputElement).value) || 0 },
-            bornizo: { precioQuintal: parseFloat((document.getElementById('adj-pb') as HTMLInputElement).value) || 0 },
-            refugo: { precioQuintal: parseFloat((document.getElementById('adj-pr') as HTMLInputElement).value) || 0 }
-        };
-
-        await Fincas.save(finca); 
-        this.toast("✅ Ajustes guardados");
-    },
-
-    openManualZonas() { 
-        window.open('manual-zonas.html', 'Manual', 'width=900,height=800'); 
-    },
-
-    async renderGastosManager() {
-        const main = document.getElementById('app-content');
-        if (!main) return;
-        const gastos = await Gastos.list();
-        const total = await Gastos.getTotal();
-        main.innerHTML = `
-            <div class="card">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h3>Control Gastos</h3>
-                    <div style="font-weight:800; color:#ff4d4d; font-size:1.2rem;">Total: ${total.toFixed(2)}€</div>
-                </div>
-                <button class="btn btn-primary mt-1" onclick="App._showGastoForm()">➕ Añadir Gasto</button>
-            </div>
-            <div class="lista-detallada">
-                ${gastos.length ? gastos.map(g => `
-                <div class="list-item-detallado" onclick="App._showGastoForm('${g.id}')">
-                    <div>
-                        <strong>${g.concepto || 'Sin concepto'}</strong><br>
-                        <small class="text-muted">${g.categoria} | ${new Date(g.fecha).toLocaleDateString()}</small>
-                    </div>
-                    <div style="text-align:right;">
-                        <strong style="color:#ff4d4d;">-${parseFloat(g.monto.toString()).toFixed(2)}€</strong>
-                    </div>
-                </div>`).join('') : '<p class="text-center text-muted">No hay gastos registrados.</p>'}
-            </div>
-            <button class="btn btn-outline" onclick="location.hash='/ajustes'">Volver a Ajustes</button>`;
-    },
-
-    async _showGastoForm(id: string | null = null) {
-        const categories = Gastos.getCategories(); 
-        let d: any = id ? await Gastos.get(id) : { concepto:'', monto:'', categoria:'Otros', fecha:new Date().toISOString().split('T')[0] };
-        if (!d) d = { concepto:'', monto:'', categoria:'Otros', fecha:new Date().toISOString().split('T')[0] };
-        
-        const main = document.getElementById('app-content');
-        if (!main) return;
-        
-        main.innerHTML = `
-            <div class="card">
-                <h3>${id ? 'Editar' : 'Nuevo'} Gasto</h3>
-                <form id="form-gasto">
-                    <div class="form-group">
-                        <label>Concepto</label>
-                        <input type="text" id="g-con" value="${d.concepto}" required>
-                    </div>
-                    <div class="grid-2">
-                        <div class="form-group">
-                            <label>Monto (€)</label>
-                            <input type="number" step="0.01" id="g-mon" value="${d.monto}" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Fecha</label>
-                            <input type="date" id="g-fec" value="${d.fecha}" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Categoría</label>
-                        <select id="g-cat">${categories.map(c => `<option value="${c}" ${d.categoria===c ? 'selected' : ''}>${c}</option>`).join('')}</select>
-                    </div>
-                    <div class="form-actions mt-1">
-                        <button type="submit" class="btn btn-primary">💾 Guardar Gasto</button>
-                        ${id ? `<button type="button" class="btn btn-danger mt-1" onclick="App._deleteGasto('${id}')">🗑️ Eliminar</button>` : ''}
-                        <button type="button" class="btn btn-outline mt-1" onclick="App.renderGastosManager()">Cancelar</button>
-                    </div>
-                </form>
-            </div>`;
-            
-        const form = document.getElementById('form-gasto');
-        if (form) {
-            form.onsubmit = (e) => this._handleGastoSubmit(e, id);
-        }
-    },
-
-    async _handleGastoSubmit(e: any, id: string | null) { 
-        e.preventDefault(); 
-        try { 
-            const dS = { 
-                id: id ? id : undefined, 
-                concepto: (document.getElementById('g-con') as HTMLInputElement).value.trim(), 
-                monto: parseFloat((document.getElementById('g-mon') as HTMLInputElement).value), 
-                categoria: (document.getElementById('g-cat') as HTMLSelectElement).value, 
-                fecha: (document.getElementById('g-fec') as HTMLInputElement).value 
-            }; 
-            await Gastos.save(dS); 
-            this.toast('✅ Gasto guardado'); 
-            await this.renderGastosManager(); 
-        } catch(err: any){ 
-            this.toastError(err.message); 
-        } 
-    },
-
-    async _deleteGasto(id: string) { 
-        if (confirm("¿Eliminar gasto?")) { 
-            await Gastos.delete(id); 
-            this.toast('✅ Eliminado'); 
-            this.renderGastosManager(); 
-        } 
-    },
-
-    async renderImportarPdf() {
-        const main = document.getElementById('app-content');
-        if (!main) return;
-
-        main.innerHTML = `
-            <div class="card animate-in">
-                <h2>📥 Importar Zonas (PDF)</h2>
-                <p style="font-size:0.85rem; color:var(--text-s);">Selecciona PDFs del Catastro para extraer datos automáticamente.</p>
-                <input type="file" id="pdf-input" accept=".pdf" multiple style="margin-top:10px;">
-                <div id="pdf-status" class="mt-2"></div>
-            </div>
-            <button class="btn btn-outline mt-2" onclick="location.hash='/zonas'">Volver</button>
-        `;
-
-        document.getElementById('pdf-input')?.addEventListener('change', async (e: any) => {
-            const files = e.target.files;
-            if (!files.length) return;
-
-            const status = document.getElementById('pdf-status')!;
-            status.innerHTML = '<div class="loader">Procesando...</div>';
-
-            for (const file of files) {
-                try {
-                    const data = await PdfImport.parsePdfCatastro(file);
-                    data.nombre = file.name.replace('.pdf', '');
-                    await Zonas.save(data);
-                    this.toast(`Importado: ${data.nombre}`);
-                } catch (err) {
-                    this.toastError(`Error en ${file.name}`);
-                }
-            }
-            status.innerHTML = '✅ Importación finalizada';
-        });
-    },
-
-    async switchFinca(id: string) {
-        if (confirm("¿Cambiar a esta finca?")) { await Fincas.setActiveId(id); location.reload(); }
-    },
-
-    async logout() { await Auth.logout(); location.reload(); }
 };
-
-(window as any).App = App;
-document.addEventListener('DOMContentLoaded', () => App.init());
+App.init();
