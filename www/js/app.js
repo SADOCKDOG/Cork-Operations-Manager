@@ -50,6 +50,11 @@ const App = {
         let path = hash, id = null, action = null;
         if (hash.startsWith('/zona/')) { const parts = hash.split('/'); path = '/zona'; id = parts[2]; if (parts[3] === 'editar') action = 'editar'; }
         else if (hash.startsWith('/pesada/')) { const parts = hash.split('/'); path = '/pesada'; id = parts[2]; if (parts[3] === 'editar') action = 'editar'; }
+
+        // Modo Pantalla Completa para Pesadas
+        const isFullScreenForm = path === '/nueva' || (path === '/pesada' && action === 'editar');
+        document.body.classList.toggle('full-screen-mode', isFullScreenForm);
+
         document.querySelectorAll('.nav-item').forEach(el => { const base = (path === '/zona' || path === '/importar-pdf') ? '/zonas' : path; el.classList.toggle('active', el.getAttribute('href') === `#${base}`); });
         const main = document.getElementById('app-content');
         const allFincas = await Fincas.list();
@@ -157,37 +162,52 @@ const App = {
     async renderFormPesada(id = null) {
         const main = document.getElementById('app-content'), finca = await Fincas.getActive(), listPesadas = await Pesadas.list(), zonas = await Zonas.list();
         let isEdit = id !== null, maxS = listPesadas.length > 0 ? Math.max(...listPesadas.map(p => p.saca || 0)) : 0;
-        let d = id ? await Pesadas.get(parseInt(id)) : { fecha: new Date().toISOString().split('T')[0], saca: maxS + 1, calidad: 'bornizo', tara: 0, pesoBruto: '' };
-        if (isEdit && d) { d.fecha = d.fecha.split('T')[0]; if (d.pesadasPorCalidad.primera.kg > 0) d.calidad = 'primera'; else if (d.pesadasPorCalidad.refugo.kg > 0) d.calidad = 'refugo'; }
+        let d = id ? await Pesadas.get(parseInt(id)) : { fecha: new Date().toISOString().split('T')[0], saca: maxS + 1, calidad: 'primera', tara: 0, pesoBruto: '' };
+        if (isEdit && d) { d.fecha = d.fecha.split('T')[0]; if (d.pesadasPorCalidad.primera.kg > 0) d.calidad = 'primera'; else if (d.pesadasPorCalidad.bornizo.kg > 0) d.calidad = 'bornizo'; else if (d.pesadasPorCalidad.refugo.kg > 0) d.calidad = 'refugo'; }
         if (zonas.length === 0) { main.innerHTML = `<div class="card text-center"><p>Primero crea una zona.</p><button class="btn btn-primary" onclick="location.hash='/zonas'">Ir a Zonas</button></div>`; return; }
 
         main.innerHTML = `
             <div class="card">
-                <h2>${isEdit ? 'Editar' : 'Nueva'} Pesada</h2>
+                <h2 style="text-align:center;">${isEdit ? 'Editar' : 'Nueva'} Pesada</h2>
                 <form id="form-pesada">
-                    <!-- 1. Bruto y Tara en la parte superior -->
-                    <div class="grid-2">
-                        <div class="form-group"><label>Bruto (kg)</label><input type="number" id="p-bruto" value="${d.pesoBruto || ''}" placeholder="0.0"></div>
-                        <div class="form-group"><label>Tara (kg)</label><input type="number" id="p-tara" value="${d.tara || 0}"></div>
+                    <!-- 1. Bruto Grande y Centrado -->
+                    <div class="form-group centered">
+                        <label>Bruto (KG)</label>
+                        <input type="number" step="0.1" id="p-bruto" value="${d.pesoBruto || ''}" placeholder="0.0" class="input-huge" autofocus>
                     </div>
 
-                    <!-- 2. Zona -->
-                    <div class="form-group">
+                    <!-- 2. Zona Centrada -->
+                    <div class="form-group centered">
                         <label>Zona / Parcela</label>
-                        <select id="p-zona">${zonas.map(z => `<option value="${z.id}" ${d.zonaId == z.id ? 'selected' : ''}>${z.nombre}</option>`).join('')}</select>
+                        <select id="p-zona" style="height:70px; font-size:1.3rem;">${zonas.map(z => `<option value="${z.id}" ${d.zonaId == z.id ? 'selected' : ''}>${z.nombre}</option>`).join('')}</select>
                     </div>
 
-                    <!-- 3. Selector de Calidad -->
-                    <div class="form-group">
+                    <!-- 3. Selector de Calidad Centrado -->
+                    <div class="form-group centered">
                         <label>Calidad del Corcho</label>
-                        <div class="quality-selector" style="display:flex; gap:10px;">
-                            <button type="button" class="quality-btn" data-quality="primera" style="flex:1;">⭐ 1ª</button>
-                            <button type="button" class="quality-btn" data-quality="bornizo" style="flex:1;">🟡 Bo</button>
-                            <button type="button" class="quality-btn" data-quality="refugo" style="flex:1;">🔴 Re</button>
+                        <div class="quality-selector-centered">
+                            <button type="button" class="quality-btn" data-quality="primera" style="flex:1;">⭐ 1ª Calidad</button>
+                            <button type="button" class="quality-btn" data-quality="bornizo" style="flex:1;">🟡 Bornizo</button>
+                            <button type="button" class="quality-btn" data-quality="refugo" style="flex:1;">🔴 Refugo</button>
                         </div>
                     </div>
 
-                    <!-- 4. Datos calculados: Neto y Quintales -->
+                    <!-- 4. Botón Guardar (Acción Rápida) -->
+                    <div style="margin-bottom: 30px;">
+                        <button type="submit" class="btn btn-primary" style="height:80px; font-size:1.4rem;">💾 GUARDAR PESADA</button>
+                    </div>
+
+                    <hr style="border:0; border-top:1px solid var(--border); margin:25px 0;">
+
+                    <!-- 5. Resto de datos -->
+                    <div class="grid-2">
+                        <div class="form-group"><label>Tara (kg)</label><input type="number" step="0.1" id="p-tara" value="${d.tara || 0}"></div>
+                        <div class="form-group"><label>Nº Saca</label><input type="number" id="p-saca" value="${d.saca}"></div>
+                    </div>
+
+                    <div class="form-group"><label>Fecha</label><input type="date" id="p-fecha" value="${d.fecha}"></div>
+
+                    <!-- Datos calculados -->
                     <div class="card stat-grid" style="display:flex; justify-content:space-around; background: rgba(255,255,255,0.03); margin: 15px 0;">
                         <div style="text-align:center;">
                             <div id="calc-neto" class="stat-value" style="font-size: 1.8rem; color: var(--accent);">0.0</div>
@@ -199,16 +219,9 @@ const App = {
                         </div>
                     </div>
 
-                    <!-- 5. Fecha y Nº Saca al final -->
-                    <div class="grid-2">
-                        <div class="form-group"><label>Fecha</label><input type="date" id="p-fecha" value="${d.fecha}"></div>
-                        <div class="form-group"><label>Nº Saca</label><input type="number" id="p-saca" value="${d.saca}"></div>
-                    </div>
-
-                    <div style="margin-top: 20px;">
-                        <button type="submit" class="btn btn-primary">💾 Guardar Pesada</button>
-                        ${isEdit ? `<button type="button" class="btn btn-danger mt-1" onclick="App._deletePesada(${id})">🗑️ Eliminar</button>` : ''}
-                        <button type="button" class="btn btn-outline mt-1" onclick="history.back()">Cancelar</button>
+                    <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+                        ${isEdit ? `<button type="button" class="btn btn-danger" onclick="App._deletePesada(${id})">🗑️ Eliminar Pesada</button>` : ''}
+                        <button type="button" class="btn btn-outline" onclick="history.back()">Cancelar</button>
                     </div>
                 </form>
             </div>`;
@@ -466,6 +479,7 @@ const App = {
                 <div class="form-group"><label>Empresa / Comprador</label><input type="text" id="adj-empresa" value="${comp.nombreEmpresa||''}"></div>
                 <div class="form-group"><label>CIF/NIF Comprador</label><input type="text" id="adj-cif" value="${comp.cifNif||''}"></div>
                 <div class="form-group"><label>Representante</label><input type="text" id="adj-representante" value="${comp.representante||''}"></div>
+                <div class="form-group"><label>Porcentaje de Oreo (%)</label><input type="number" step="0.1" id="adj-oreo" value="${finca.porcentajeOreo || 0}"></div>
                 <div class="form-group"><label>Teléfono</label><input type="tel" id="adj-tel" value="${comp.telefono||''}"></div>
                 <div class="form-group"><label>Correo Electrónico</label><input type="email" id="adj-email" value="${comp.email||''}"></div>
                 <div class="form-group"><label>Dirección Comercial</label><input type="text" id="adj-direccion" value="${comp.direccion||''}"></div>
@@ -623,6 +637,7 @@ const App = {
         const finca = await Fincas.getActive(); if (!finca) return;
         finca.propietario = document.getElementById('adj-prop').value;
         finca.telefono = document.getElementById('adj-prop-tel').value;
+        finca.porcentajeOreo = parseFloat(document.getElementById('adj-oreo').value) || 0;
         finca.comprador = {
             nombreEmpresa: document.getElementById('adj-empresa').value,
             cifNif: document.getElementById('adj-cif').value,
@@ -666,7 +681,7 @@ const App = {
         printContainer.querySelectorAll('.card-finance, .card, .entity-card').forEach(el => { el.style.background = 'white'; el.style.color = '#333'; el.style.border = '0.5pt solid #eee'; el.style.boxShadow = 'none'; });
 
         const comp = finca.comprador || {};
-        const plantilla = `<div class="pdf-export-container" style="font-family:Helvetica,Arial; padding:10mm; background:#fff; color:#333; width:800px;"><div style="text-align:center; margin-bottom:8mm;"><img src="icons/logo-header.png" style="width:55mm; margin:0 auto;"></div><div style="display:table; width:100%; border-bottom:0.5pt solid #eee; padding-bottom:8mm; margin-bottom:10mm;"><div style="display:table-row;"><div style="display:table-cell; width:48%; vertical-align:top;"><div style="font-size:7pt; color:#a0673a; font-weight:bold; text-transform:uppercase;">Emisor / Vendedor</div><div style="font-size:12pt; font-weight:bold;">${finca.nombre.toUpperCase()}</div><div style="font-size:9pt;">Titular: ${finca.propietario||'-'}<br>CIF/NIF: ${finca.cif||'-'}<br>${finca.direccion||'-'}</div></div><div style="display:table-cell; width:4%;"></div><div style="display:table-cell; width:48%; vertical-align:top;"><div style="font-size:7pt; color:#a0673a; font-weight:bold; text-transform:uppercase;">Receptor / Comprador</div><div style="font-size:12pt; font-weight:bold;">${comp.nombreEmpresa?.toUpperCase()||'-'}</div><div style="font-size:9pt;">CIF: ${comp.cifNif||'-'}<br>Ref: ${comp.representante||'-'}<br>${comp.direccion||'-'}</div></div></div></div><div style="text-align:center; margin-bottom:10mm;"><h1 style="font-size:18pt; border-bottom:2pt solid #a0673a; display:inline-block; padding:0 10mm 2mm 10mm;">${titulo.toUpperCase()}</h1><div style="font-size:8pt; color:#999; margin-top:3mm;">Documento Oficial • Generado el ${ahora}</div></div><div class="pdf-content" style="padding-bottom:20mm;">${printContainer.innerHTML}</div><div style="margin-top:10mm; border-top:0.5pt solid #eee; padding-top:5mm; text-align:center; font-size:7pt; color:#bbb;">Cork Manager v6.3.1 • Liquidación Oficial • Sdog Farm Software Factory</div></div><style>.pdf-export-container * { background-color:transparent !important; color:#333 !important; box-shadow:none !important; } .pdf-export-container table { width:100%; border-collapse:collapse; margin:5mm 0; border:0.1pt solid #eee; page-break-inside:auto; } .pdf-export-container tr { page-break-inside:avoid; } .pdf-export-container th { background-color:#fafafa !important; border-bottom:0.8pt solid #a0673a !important; text-align:left; padding:3mm 2mm; font-size:8pt; font-weight:bold; text-transform:uppercase; color:#a0673a !important; } .pdf-export-container td { border-bottom:0.1pt solid #f0f0f0 !important; padding:3mm 2mm; font-size:9pt; } .pdf-export-container .card, .pdf-export-container .card-finance, .pdf-export-container .entity-card { background:#fff !important; border:0.5pt solid #eee !important; padding:6mm; margin-bottom:8mm; border-radius:2mm; page-break-inside:avoid; } .pdf-export-container h3, .pdf-export-container h4 { color:#000 !important; font-size:10pt; margin-bottom:5mm; text-transform:uppercase; border-left:4pt solid #a0673a; padding-left:3mm; } .pdf-export-container .total-neto { font-size:15pt !important; color:#4a7c2c !important; font-weight:900 !important; } .pdf-export-container .q-pill { display:inline-block; padding:1mm 2mm; border:0.2pt solid #ccc !important; border-radius:1mm; font-size:8pt; font-weight:bold; } .pdf-export-container img { max-width:100%; height:auto; display:block; margin:5mm auto; }</style>`;
+        const plantilla = `<div class="pdf-export-container" style="font-family:Helvetica,Arial; padding:10mm; background:#fff; color:#333; width:800px;"><div style="text-align:center; margin-bottom:8mm;"><img src="icons/logo-header.png" style="width:55mm; margin:0 auto;"></div><div style="text-align:center; margin-bottom:10mm;"><h1 style="font-size:18pt; border-bottom:2pt solid #a0673a; display:inline-block; padding:0 10mm 2mm 10mm;">${titulo.toUpperCase()}</h1><div style="font-size:8pt; color:#999; margin-top:3mm;">Documento Oficial • Generado el ${ahora}</div></div><div class="pdf-content" style="padding-bottom:20mm;">${printContainer.innerHTML}</div><div style="margin-top:10mm; border-top:0.5pt solid #eee; padding-top:5mm; text-align:center; font-size:7pt; color:#bbb;">Cork Manager v6.3.1 • Liquidación Oficial • Sdog Farm Software Factory</div></div><style>.pdf-export-container * { background-color:transparent !important; color:#333 !important; box-shadow:none !important; } .pdf-export-container table { width:100%; border-collapse:collapse; margin:5mm 0; border:0.1pt solid #eee; page-break-inside:auto; } .pdf-export-container tr { page-break-inside:avoid; } .pdf-export-container th { background-color:#fafafa !important; border-bottom:0.8pt solid #a0673a !important; text-align:left; padding:3mm 2mm; font-size:8pt; font-weight:bold; text-transform:uppercase; color:#a0673a !important; } .pdf-export-container td { border-bottom:0.1pt solid #f0f0f0 !important; padding:3mm 2mm; font-size:9pt; } .pdf-export-container .card, .pdf-export-container .card-finance, .pdf-export-container .entity-card { background:#fff !important; border:0.5pt solid #eee !important; padding:6mm; margin-bottom:8mm; border-radius:2mm; page-break-inside:avoid; } .pdf-export-container h3, .pdf-export-container h4 { color:#000 !important; font-size:10pt; margin-bottom:5mm; text-transform:uppercase; border-left:4pt solid #a0673a; padding-left:3mm; } .pdf-export-container .total-neto { font-size:15pt !important; color:#4a7c2c !important; font-weight:900 !important; } .pdf-export-container .q-pill { display:inline-block; padding:1mm 2mm; border:0.2pt solid #ccc !important; border-radius:1mm; font-size:8pt; font-weight:bold; } .pdf-export-container img { max-width:100%; height:auto; display:block; margin:5mm auto; }</style>`;
         const opt = { margin:[15,10,20,10], filename:'Cork_'+tipo+'_'+finca.nombre.replace(/\s/g,'_')+'.pdf', image:{type:'jpeg',quality:1}, html2canvas:{scale:2, logging:false, useCORS:true, width:800}, jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}, pagebreak:{mode:['avoid-all','css','legacy']} };
         try { if (window.isNative) await App._exportNativePDF(tipo, plantilla); else await html2pdf().set(opt).from(plantilla).toPdf().get('pdf').then(() => document.body.removeChild(printContainer)).save(); } catch (e) { App.toastError("Error al generar PDF"); }
     },

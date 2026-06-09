@@ -8,10 +8,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:9.2.1'
-        classpath 'com.google.gms:google-services:4.3.15'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath 'com.google.gms:google-services:4.4.0'
     }
 }
 
@@ -24,36 +21,19 @@ allprojects {
     }
 }
 
+subprojects {
+    afterEvaluate { project ->
+        if (project.hasProperty('android')) {
+            project.android {
+                compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_17
+                    targetCompatibility JavaVersion.VERSION_17
+                }
+            }
+        }
+    }
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
-}
-// Forzar el cambio de ProGuard en todos los módulos de Capacitor antes de su evaluación
-subprojects { project ->
-    project.beforeEvaluate {
-        if (project.hasProperty('android') || project.name.contains('capacitor') || project.name.contains('picker')) {
-            project.ext."getAndCheckProguardFiles" = { -> [] }
-        }
-    }
-    project.afterEvaluate {
-        if (project.hasProperty('android')) {
-            project.android.compileOptions {
-                sourceCompatibility JavaVersion.VERSION_17
-                targetCompatibility JavaVersion.VERSION_17
-            }
-            project.android.buildTypes.each { bType ->
-                def files = bType.proguardFiles
-                def newFiles = []
-                files.each { f ->
-                    if (f instanceof String && f.contains('proguard-android.txt')) {
-                        newFiles.add(f.replace('proguard-android.txt', 'proguard-android-optimize.txt'))
-                    } else if (f instanceof File && f.name.contains('proguard-android.txt')) {
-                        newFiles.add(new File(f.parent, 'proguard-android-optimize.txt'))
-                    } else {
-                        newFiles.add(f)
-                    }
-                }
-                bType.setProguardFiles(newFiles)
-            }
-        }
-    }
 }

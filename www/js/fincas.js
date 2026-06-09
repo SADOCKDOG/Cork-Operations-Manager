@@ -48,8 +48,16 @@ const Fincas = {
     },
 
     async delete(id) {
-        // Opcional: Validar si tiene zonas/pesadas antes de borrar
-        return db.delete('fincas', Number(id));
+        const numId = Number(id);
+        // Validar si tiene dependencias antes de borrar
+        const zonas = await db.getAllFromIndex('zonas', 'fincaId', numId);
+        const pesadas = await db.getAllFromIndex('pesadas', 'fincaId', numId);
+        const gastos = await db.getAllFromIndex('gastos', 'fincaId', numId);
+        
+        if (zonas.length > 0 || pesadas.length > 0 || gastos.length > 0) {
+            throw new Error('No se puede eliminar la finca porque tiene zonas, pesadas o gastos asociados.');
+        }
+        return db.delete('fincas', numId);
     }
 };
 

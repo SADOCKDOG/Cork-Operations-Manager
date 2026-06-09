@@ -1,34 +1,32 @@
-/**
- * Export.js - Motor de Backup y Restauración (Version 6.1.9 - Enhanced Robustness)
- */
+import { db } from './db';
+import { Fincas } from './fincas';
+import { Capacitor } from '@capacitor/core';
 
-const Export = {
-    async exportBackup(fincasIds = null) {
+class ExportManager {
+    async exportBackup(fincasIds: string[] | null = null) {
         try {
-            App.toast('Generando backup...');
             const allFincas = await Fincas.list();
-            const fincasToExport = fincasIds 
+            const fincasToExport = fincasIds
                 ? allFincas.filter(f => fincasIds.includes(f.id))
                 : allFincas;
 
             if (fincasToExport.length === 0) {
-                App.toastError("No hay fincas para exportar");
-                return;
+                throw new Error("No hay fincas para exportar");
             }
 
             const exportData = {
-                version: '6.1.9',
+                version: '7.0.0',
                 app: "Cork Manager",
                 exportedAt: new Date().toISOString(),
-                fincas: []
+                fincas: [] as any[]
             };
 
             for (const finca of fincasToExport) {
                 const zonas = await db.getAllFromIndex('zonas', 'fincaId', finca.id);
                 const pesadas = await db.getAllFromIndex('pesadas', 'fincaId', finca.id);
                 const gastos = await db.getAllFromIndex('gastos', 'fincaId', finca.id);
-                
-                const serializableZonas = await Promise.all(zonas.map(async z => {
+
+                const serializableZonas = await Promise.all(zonas.map(async (z: any) => {
                     const zCopy = { ...z };
                     if (zCopy.croquisBlob instanceof Blob) {
                         zCopy.croquisBase64 = await this._blobToBase64(zCopy.croquisBlob);
@@ -48,8 +46,9 @@ const Export = {
             const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
             const prefix = (fincasToExport.length === 1) ? `Backup_${fincasToExport[0].nombre.replace(/\s+/g, '_')}` : "Backup_Total";
             const fileName = `${prefix}_${new Date().toISOString().slice(0, 10)}.json`;
-            
-            if (window.isNative && window.Capacitor) {
+
+            const isNative = Capacitor.isNativePlatform();
+            if (isNative) {
                 await this._exportNative(blob, fileName);
             } else {
                 const url = URL.createObjectURL(blob);
@@ -57,25 +56,29 @@ const Export = {
                 a.href = url; a.download = fileName;
                 document.body.appendChild(a); a.click(); document.body.removeChild(a);
             }
-            App.toast('✅ Backup exportado');
-        } catch (error) { console.error(error); App.toastError('Fallo al exportar'); }
-    },
+            return true;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
 
-    async parseBackupFile(file) {
+    async parseBackupFile(file: File) {
         try {
             const content = await file.text();
             const data = JSON.parse(content);
 
-            // Normalización: Asegurar que siempre devolvemos un objeto con .fincas[]
+            // Caso 1: Formato v7.x (Nuevo)
             if (data.fincas && Array.isArray(data.fincas)) {
                 return data;
             }
 
-            // Si es un formato legacy (data: { config, zonas, pesadas })
+            // Caso 2: Formato v6.x (Legacy)
+            // Estructura: { data: { config: { nombreFinca... }, zonas: [], pesadas: [] } }
             if (data.data) {
                 const legacy = data.data;
                 return {
-                    version: 'legacy-normalized',
+                    version: '6.x-normalized',
                     fincas: [{
                         info: {
                             nombre: legacy.config?.nombreFinca || "Finca Importada",
@@ -92,86 +95,68 @@ const Export = {
             }
 
             throw new Error("El archivo no tiene un formato reconocido.");
-        } catch (error) {
-            console.error(error);
+        } catch (error: any) {
             throw new Error("Error al leer el archivo: " + error.message);
         }
-    },
+    }
 
-    async saveImportedFincaData(fincaData) {
-        try {
-            const zones = fincaData.zonas;
-            const weighings = fincaData.pesadas;
-            const expenses = fincaData.gastos;
-
-            const fincaToSave = { ...fincaData.info };
-            delete fincaToSave.id;
-
-            const fincaId = await Fincas.save(fincaToSave);
-
-            if (zones) {
-                for (const z of zones) {
-                    z.fincaId = fincaId;
-                    if (z.croquisBase64 && !z.croquisBlob) {
-                        z.croquisBlob = this._base64ToBlob(z.croquisBase64);
-                    }
-                    delete z.id;
-                    await db.add('zonas', z);
+    async saveImportedFincaData(fincaData: any) {
+        const fincaId = await Fincas.save({ ...fincaData.info, id: undefined });
+        if (fincaData.zonas) {
+            for (const z of fincaData.zonas) {
+                if (z.croquisBase64) {
+                    z.croquisBlob = this._base64ToBlob(z.croquisBase64);
+                    delete z.croquisBase64;
                 }
+                await db.add('zonas', { ...z, id: undefined, fincaId });
             }
-            if (weighings) {
-                for (const p of weighings) {
-                    p.fincaId = fincaId;
-                    delete p.id;
-                    await db.add('pesadas', p);
-                }
-            }
-            if (expenses) {
-                for (const g of expenses) {
-                    g.fincaId = fincaId;
-                    delete g.id;
-                    await db.add('gastos', g);
-                }
-            }
-
-            return fincaId;
-        } catch (error) {
-            console.error("Error guardando finca importada:", error);
-            throw error;
         }
-    },
+        if (fincaData.pesadas) {
+            for (const p of fincaData.pesadas) {
+                await db.add('pesadas', { ...p, id: undefined, fincaId });
+            }
+        }
+        if (fincaData.gastos) {
+            for (const g of fincaData.gastos) {
+                await db.add('gastos', { ...g, id: undefined, fincaId });
+            }
+        }
+        return fincaId;
+    }
 
-    _blobToBase64(blob) {
+    private _blobToBase64(blob: Blob): Promise<string> {
         return new Promise((resolve) => {
             const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result);
+            reader.onloadend = () => resolve(reader.result as string);
             reader.readAsDataURL(blob);
         });
-    },
+    }
 
-    _base64ToBlob(base64) {
+    private _base64ToBlob(base64: string) {
         try {
             const [header, data] = base64.split(',');
-            const type = header.match(/:(.*?);/)[1];
+            const type = header.match(/:(.*?);/)![1];
             const binStr = atob(data);
             const arr = new Uint8Array(binStr.length);
             for (let i = 0; i < binStr.length; i++) arr[i] = binStr.charCodeAt(i);
             return new Blob([arr], { type });
-        } catch (e) { return null; }
-    },
+        } catch (e) { return undefined; }
+    }
 
-    async _exportNative(blob, fileName) {
+    private async _exportNative(blob: Blob, fileName: string) {
         const reader = new FileReader();
         reader.readAsDataURL(blob);
         reader.onloadend = async () => {
-            const base64Data = reader.result.split(',')[1];
-            const savedFile = await Capacitor.Plugins.Filesystem.writeFile({
+            const base64Data = (reader.result as string).split(',')[1];
+            const savedFile = await (Capacitor.Plugins as any).Filesystem.writeFile({
                 path: fileName,
                 data: base64Data,
                 directory: 'CACHE'
             });
-            await Capacitor.Plugins.Share.share({ url: savedFile.uri });
+            await (Capacitor.Plugins as any).Share.share({ url: savedFile.uri });
         };
     }
-};
-window.Export = Export;
+}
+
+export const Export = new ExportManager();
+export default Export;
