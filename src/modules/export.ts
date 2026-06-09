@@ -156,6 +156,92 @@ class ExportManager {
             await (Capacitor.Plugins as any).Share.share({ url: savedFile.uri });
         };
     }
+
+    async exportGlobalToExcel() {
+        try {
+            const { Reportes } = await import('./reportes');
+            const r = await Reportes.generarReporteGlobalCampaña();
+            if (!r) throw new Error("No se pudo generar el reporte");
+            
+            const wb = (window as any).XLSX.utils.book_new();
+            
+            // Hoja 1: Resumen Global
+            const wsResumen = (window as any).XLSX.utils.json_to_sheet([
+                { Calidad: "1ª Calidad", Quintales: r.totalesGlobales.primera.quintales.toFixed(2), Sacas: r.totalesGlobales.primera.sacas },
+                { Calidad: "Bornizo", Quintales: r.totalesGlobales.bornizo.quintales.toFixed(2), Sacas: r.totalesGlobales.bornizo.sacas },
+                { Calidad: "Refugo", Quintales: r.totalesGlobales.refugo.quintales.toFixed(2), Sacas: r.totalesGlobales.refugo.sacas },
+                { Calidad: "TOTAL GENERAL", 
+                  Quintales: (r.totalesGlobales.primera.quintales + r.totalesGlobales.bornizo.quintales + r.totalesGlobales.refugo.quintales).toFixed(2), 
+                  Sacas: r.totalesGlobales.primera.sacas + r.totalesGlobales.bornizo.sacas + r.totalesGlobales.refugo.sacas 
+                }
+            ]);
+            (window as any).XLSX.utils.book_append_sheet(wb, wsResumen, "Resumen Global");
+
+            // Hoja 2: Desglose por Zona
+            const desgloseZonas = Object.values(r.reportePorZona).map((z: any) => ({
+                Zona: z.nombre,
+                "1ª (kg)": Math.round(z.totales.primera.kg),
+                "Bo (kg)": Math.round(z.totales.bornizo.kg),
+                "Re (kg)": Math.round(z.totales.refugo.kg)
+            }));
+            const wsZonas = (window as any).XLSX.utils.json_to_sheet(desgloseZonas);
+            (window as any).XLSX.utils.book_append_sheet(wb, wsZonas, "Por Zonas");
+
+            const fileName = `Balance_Global_${new Date().toISOString().slice(0, 10)}.xlsx`;
+            
+            if (Capacitor.isNativePlatform()) {
+                const base64 = (window as any).XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
+                const savedFile = await (Capacitor.Plugins as any).Filesystem.writeFile({
+                    path: fileName,
+                    data: base64,
+                    directory: 'CACHE'
+                });
+                await (Capacitor.Plugins as any).Share.share({ url: savedFile.uri });
+            } else {
+                (window as any).XLSX.writeFile(wb, fileName);
+            }
+        } catch (e: any) {
+            console.error(e);
+            throw new Error("Error al exportar a Excel: " + e.message);
+        }
+    }
+
+    async exportEconomicoToExcel() {
+        try {
+            const { Reportes } = await import('./reportes');
+            const r = await Reportes.generarReporteEconomicoGlobal();
+            if (!r) throw new Error("No se pudo generar el reporte");
+            
+            const wb = (window as any).XLSX.utils.book_new();
+            
+            const datosEcon = [
+                { Calidad: "1ª Calidad", Precio: r.precios.primera?.precioQuintal || 0, "Q. Bruto": r.totales.primera.bruto.toFixed(2), Oreo: r.totales.primera.merma.toFixed(2), "Q. Neto": r.totales.primera.neto.toFixed(2), Total: r.totales.primera.valor.toFixed(2) },
+                { Calidad: "Bornizo", Precio: r.precios.bornizo?.precioQuintal || 0, "Q. Bruto": r.totales.bornizo.bruto.toFixed(2), Oreo: r.totales.bornizo.merma.toFixed(2), "Q. Neto": r.totales.bornizo.neto.toFixed(2), Total: r.totales.bornizo.valor.toFixed(2) },
+                { Calidad: "Refugo", Precio: r.precios.refugo?.precioQuintal || 0, "Q. Bruto": r.totales.refugo.bruto.toFixed(2), Oreo: r.totales.refugo.merma.toFixed(2), "Q. Neto": r.totales.refugo.neto.toFixed(2), Total: r.totales.refugo.valor.toFixed(2) },
+                { Calidad: "SUBTOTALES", Precio: "", "Q. Bruto": r.brutoTotal.toFixed(2), Oreo: (r.brutoTotal - r.netoTotal).toFixed(2), "Q. Neto": r.netoTotal.toFixed(2), Total: r.valorTotal.toFixed(2) }
+            ];
+
+            const ws = (window as any).XLSX.utils.json_to_sheet(datosEcon);
+            (window as any).XLSX.utils.book_append_sheet(wb, ws, "Liquidación Económica");
+
+            const fileName = `Liquidacion_Economica_${new Date().toISOString().slice(0, 10)}.xlsx`;
+
+            if (Capacitor.isNativePlatform()) {
+                const base64 = (window as any).XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
+                const savedFile = await (Capacitor.Plugins as any).Filesystem.writeFile({
+                    path: fileName,
+                    data: base64,
+                    directory: 'CACHE'
+                });
+                await (Capacitor.Plugins as any).Share.share({ url: savedFile.uri });
+            } else {
+                (window as any).XLSX.writeFile(wb, fileName);
+            }
+        } catch(e: any) {
+            console.error(e);
+            throw new Error("Error al exportar a Excel: " + e.message);
+        }
+    }
 }
 
 export const Export = new ExportManager();

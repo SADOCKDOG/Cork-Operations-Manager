@@ -677,7 +677,7 @@ const App = {
         const printContainer = document.createElement('div');
         printContainer.style.position = 'absolute'; printContainer.style.left = '-9999px'; printContainer.style.width = '800px';
         printContainer.innerHTML = contenidoHtml; document.body.appendChild(printContainer);
-        printContainer.querySelectorAll('button, select, .reporte-header, h2').forEach(el => el.remove());
+        printContainer.querySelectorAll('button, select, .reporte-header, h2, .dual-entity-grid').forEach(el => el.remove());
         printContainer.querySelectorAll('.card-finance, .card, .entity-card').forEach(el => { el.style.background = 'white'; el.style.color = '#333'; el.style.border = '0.5pt solid #eee'; el.style.boxShadow = 'none'; });
 
         const comp = finca.comprador || {};

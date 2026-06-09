@@ -1,38 +1,15 @@
-# Tareas de Implementación: Cork Manager v7.0
+# Migración de v6 a v7.0 (TypeScript)
 
-## Fase 1: Infraestructura y Preparación
-- [x] Configurar entorno **Vite** con soporte para TypeScript.
-- [x] Migrar archivos estáticos (`css`, `icons`, `assets`) a la nueva estructura.
-- [x] Refactorizar `index.html` para el uso de módulos.
-- [x] Instalar dependencias necesarias (`uuid`, `capacitor plugins`, etc.).
-
-## Fase 2: Refactorización de Arquitectura (ESM & Database)
-- [x] Convertir módulos JS globales a **ES Modules** (import/export).
-- [x] Implementar generación de **UUIDs** para nuevos registros.
-- [x] Crear script de migración para convertir IDs numéricos existentes a UUIDs (Preservación de datos).
-- [x] Adaptar `db.ts` para manejar múltiples bases de datos por usuario.
-
-## Fase 3: Sistema Multi-Sesión y Seguridad
-- [x] Refactorizar `auth.ts` para soportar login local offline.
-- [x] Implementar pantalla de selección de usuario (Login).
-- [x] Asegurar que el "Welcome Wizard" funcione correctamente con el nuevo sistema.
-- [ ] Integrar protección biométrica en el acceso.
-
-## Fase 4: Sincronización Cloud (Google Drive)
-- [x] Configurar cliente de Google Drive API.
-- [x] Implementar lógica de subida/bajada incremental (Diferencial).
-- [x] Sistema de resolución de conflictos por timestamp.
-- [ ] Test de integridad de datos tras sincronización.
-
-## Fase 5: Mejoras de UI e Informes
-- [x] Implementar **Modo Sol Directo** (Alto contraste).
-- [ ] Integrar mapas interactivos con Leaflet en la sección de Zonas.
-- [x] Añadir comparativas históricas en el panel de Informes.
-- [x] Migrar gestión de Gastos.
-- [x] Migrar Importación de PDF.
-- [x] Migrar Central de Informes completa.
-
-## Fase 6: Verificación y Despliegue
-- [ ] Pruebas completas de flujo offline/online.
-- [ ] Build final con Vite y sincronización con Capacitor (Android).
-- [ ] Walkthrough final para el usuario.
+- `[x]` 1. Migrar Campos de Configuración (Ajustes y Fincas)
+  - `[x]` 1.1. Añadir "% Oreo" y "Datos del Comprador" a `renderAjustes`.
+  - `[x]` 1.2. Añadir formulario de "Precios por Calidad" a `renderFincasManager` (Añadido a Ajustes y restaurado _showFincaForm en FincasManager).
+- `[x]` 2. Migrar CRUD de Gastos y Zonas
+  - `[x]` 2.1. Implementar edición y borrado de gastos (`_handleGastoSubmit`, `_deleteGasto`).
+  - `[x]` 2.2. Implementar `renderFichaZona` y `renderFormZona`.
+- `[x]` 3. Migrar Dashboard y Gráficos
+  - `[x]` 3.1. Implementar `actualizarResumenHoy()`.
+  - `[x]` 3.2. Implementar `renderGraficos()` (renderUltimasPesadas implementado como en v6).
+- `[x]` 4. Migrar Reportes y Exportaciones
+  - `[x]` 4.1. Migrar menús y vistas (`renderMenuZonasReport`, `renderReportePorZona`, `renderMenuCalidadesReport`, `renderReporteEconomicoPorCalidad`).
+  - `[x]` 4.2. Implementar `exportarPDF` (con el fix de la cabecera dual).
+  - `[x]` 4.3. Implementar exportaciones Excel (`exportGlobalToExcel`, `exportEconomicoToExcel`) en el módulo `Export`.

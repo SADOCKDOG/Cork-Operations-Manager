@@ -1,38 +1,52 @@
-# Plan de Implementación: Importación en Pantalla de Bienvenida
+# Plan Maestro de Migración a v7.0 (TypeScript)
 
-Este plan detalla la adición de funcionalidades de importación (JSON local y Cloud Sync) a la pantalla de bienvenida que aparece cuando un usuario registrado no tiene fincas creadas.
+Este plan tiene como objetivo asegurar que **absolutamente ninguna funcionalidad, pantalla, vista, formulario o herramienta** de la versión Legacy (v6.3.1) se pierda durante la migración a la versión v7.0 (TypeScript).
 
-## Cambios Propuestos
-
-### 1. Interfaz de Usuario (Welcome Wizard)
-Añadiremos dos nuevas opciones al "Welcome Wizard" en `src/main.ts`:
-*   **Botón "📥 Importar Backup (.json)":** Para usuarios que tienen un archivo de respaldo manual.
-*   **Botón "🔄 Sincronizar desde la Nube":** Para usuarios que ya tienen datos en Google Drive y quieren descargarlos en este dispositivo.
-
-### 2. Lógica de Importación JSON
-*   Implementar un input de tipo `file` oculto.
-*   Al seleccionar un archivo, usar `Export.parseBackupFile` y `Export.saveImportedFincaData` para restaurar las fincas, zonas y pesadas.
-*   Verificar duplicados y solicitar confirmación si la finca ya existe.
-
-### 3. Lógica de Sincronización Cloud
-*   Permitir iniciar el proceso de `Sync.sync()` directamente desde la bienvenida.
-*   Si el usuario no ha iniciado sesión en Google, se le solicitará en ese momento.
+He realizado un mapeo exhaustivo entre el archivo `js/app.js` (Legacy) y `src/main.ts` (Nueva versión). A continuación se detallan las tareas requeridas para completar la migración de forma íntegra.
 
 ---
 
-## Archivos a Modificar
+## 1. Módulos y Lógica Core a Migrar
 
-#### [MODIFY] [main.ts](file:///C:/Users/yo/pesadas-corcho/src/main.ts)
-*   Actualizar `renderWelcomeWizard()` con los nuevos botones y listeners.
-*   Añadir el método privado `_handleImportFile(file: File)` para procesar el JSON.
-
-#### [MODIFY] [export.ts](file:///C:/Users/yo/pesadas-corcho/src/modules/export.ts)
-*   Mejorar `parseBackupFile` para que reconozca y normalice formatos de respaldo antiguos (v6.x).
+- **Exportación a PDF:** 
+  - [ ] Implementar `App.exportarPDF(tipo)` y `App._exportNativePDF(tipo, html)` en `main.ts` (o en un módulo `pdf.ts`).
+  - [ ] **Fix Crítico:** Asegurar que `_getDualHeaderHtml` se utiliza correctamente para evitar la duplicidad de cabeceras en los informes (el fix introducido en v6.3.1).
+- **Exportación a Excel:** 
+  - [ ] Añadir `Export.exportGlobalToExcel()` y `Export.exportEconomicoToExcel()` al módulo `src/modules/export.ts` (actualmente sólo soporta Backup JSON).
+- **Widgets del Dashboard:**
+  - [ ] Migrar `actualizarResumenHoy()` para que el Dashboard muestre tanto el "Total Acumulado" como el "Total (Hoy)" (número de sacas y kg del día).
+- **Gestión de Gastos:**
+  - [ ] Añadir la lógica de edición/borrado de gastos (`_handleGastoSubmit` y `_deleteGasto`). En v7 sólo existe el botón básico de añadir, pero no se pueden editar/eliminar.
 
 ---
 
-## Verificación Plan
+## 2. Pantallas y Vistas Faltantes en `src/main.ts`
 
-1.  **Registro de nuevo usuario:** Entrar con una cuenta nueva.
-2.  **Importar JSON:** Seleccionar un backup previo y verificar que las fincas aparecen y el dashboard se actualiza.
-3.  **Sincronizar Cloud:** Pulsar el botón de la nube en un dispositivo vacío y verificar que descarga los datos existentes en Drive.
+Estas pantallas existen en v6.3.1 pero aún no tienen su equivalente en v7.0:
+
+### Gestión de Zonas
+- [ ] `renderFichaZona(id)`: Vista de detalles de una zona específica (croquis, datos catastrales, historial de sacas).
+- [ ] `renderFormZona(id)`: Formulario para crear/editar los datos detallados de la zona.
+
+### Central de Informes (Reportes)
+- [ ] `renderMenuZonasReport()` y `renderReportePorZona(zonaId)`: Selección de zona y generación del informe detallado por zona.
+- [ ] `renderMenuCalidadesReport()` y `renderReporteEconomicoPorCalidad(calidad)`: Pantallas de informe de liquidación filtradas por calidad (1ª, Bornizo, Refugo).
+- [ ] `renderGraficos()`: Panel de Análisis Gráfico (Evolución, Distribución, Valor Económico) con `Chart.js`.
+
+---
+
+## 3. Formularios y Campos a Actualizar
+
+- **Pantalla de Ajustes (`renderAjustes`):**
+  - [ ] Añadir sección de "Datos Comprador": Empresa, CIF/NIF, Representante, Dirección.
+  - [ ] Añadir el campo **"Porcentaje de Oreo (%)"** (Crítico para el cálculo de la merma).
+- **Gestor de Fincas (`renderFincasManager`):**
+  - [ ] Añadir el formulario de edición de finca donde se establecen los precios por quintal (`precio-1a`, `precio-bo`, `precio-re`) y el factor de conversión (kg por quintal).
+
+---
+
+> [!IMPORTANT]
+> **Aprobación de la Migración Completa**
+> He revisado línea por línea la versión v6.3.1. Esta es la lista definitiva de todo lo que falta en la v7.0 para garantizar que sea un calco exacto de la versión funcional. 
+> 
+> ¿Apruebas este plan exhaustivo para proceder a implementarlo en la v7?
