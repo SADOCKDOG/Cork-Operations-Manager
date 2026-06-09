@@ -15,8 +15,15 @@
         "uuid": "^14.0.0"
     },
     "dependencies": {
+        "@capacitor/device": "^5.0.0",
         "@capacitor/filesystem": "^5.2.2",
+        "@capacitor/network": "^5.0.0",
         "@capacitor/share": "^5.0.8",
-        "@capawesome/capacitor-file-picker": "^5.3.0"
+        "@capawesome/capacitor-file-picker": "^5.3.0",
+        "@codetrix-studio/capacitor-google-auth": "^3.3.0",
+        "chart.js": "^4.5.1",
+        "idb": "^8.0.3",
+        "pdfjs-dist": "^6.0.227",
+        "xlsx": "^0.18.5"
     }
 }
