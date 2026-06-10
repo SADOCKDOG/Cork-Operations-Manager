@@ -79,16 +79,10 @@ var e=(e,t)=>()=>(t||(e((t={exports:{}}).exports,t),e=null),t.exports);(function
             <div class="card" style="border-top: 5px solid ${t?`#eab308`:`var(--p-cork)`}; padding: 25px;">
                 <h2 style="color:#fff; margin-bottom:20px; font-size:1.5rem; border:none; padding:0; text-align:center;">${t?`Editar`:`Nueva`} Pesada</h2>
                 <form id="form-pesada">
-                    <!-- 1. Bruto y Tara en la parte superior -->
-                    <div class="grid-2">
-                        <div class="form-group">
-                            <label>Bruto (kg)</label>
-                            <input type="number" id="p-bruto" value="${a.bruto||a.pesoBruto||``}" placeholder="0.0" step="0.1" required style="font-size:2.5rem; height:80px; font-weight:bold; color:var(--p-cork); text-align:center;">
-                        </div>
-                        <div class="form-group">
-                            <label>Tara (kg)</label>
-                            <input type="number" id="p-tara" value="${a.tara||0}" step="0.1" required style="font-size:2.5rem; height:80px; text-align:center;">
-                        </div>
+                    <!-- 1. Bruto a pantalla completa -->
+                    <div class="form-group" style="text-align:center;">
+                        <label style="font-size:1.3rem;">Peso Neto Directo (kg)</label>
+                        <input type="number" id="p-bruto" value="${a.bruto||a.pesoBruto||``}" placeholder="0.0" step="0.1" required style="font-size:4rem; height:100px; font-weight:900; color:#fff; background-color:rgba(0,0,0,0.4); border: 2px solid var(--p-cork); text-align:center; width:100%;">
                     </div>
                     
                     <div id="p-validation-msg" style="text-align:center; font-weight:bold; margin-top:5px; margin-bottom:15px;">&nbsp;</div>
@@ -111,14 +105,10 @@ var e=(e,t)=>()=>(t||(e((t={exports:{}}).exports,t),e=null),t.exports);(function
                         </div>
                     </div>
 
-                    <!-- 4. Datos calculados: Neto y Quintales -->
-                    <div class="card stat-grid" style="display:flex; justify-content:space-around; background: rgba(255,255,255,0.03); margin: 15px 0;">
+                    <!-- 4. Datos calculados: Quintales -->
+                    <div class="card stat-grid" style="display:flex; justify-content:center; background: rgba(255,255,255,0.03); margin: 15px 0;">
                         <div style="text-align:center;">
-                            <div id="calc-neto" class="stat-value" style="font-size: 1.8rem; color: var(--accent); font-weight:900;">0.0</div>
-                            <div class="stat-label" style="color:var(--text-s);">Neto (kg)</div>
-                        </div>
-                        <div style="text-align:center;">
-                            <div id="calc-q" class="stat-value" style="font-size: 1.8rem; color: var(--p-cork); font-weight:900;">0.00</div>
+                            <div id="calc-q" class="stat-value" style="font-size: 2.5rem; color: var(--p-cork); font-weight:900;">0.00</div>
                             <div class="stat-label" style="color:var(--text-s);">Quintales</div>
                         </div>
                     </div>
@@ -136,7 +126,7 @@ var e=(e,t)=>()=>(t||(e((t={exports:{}}).exports,t),e=null),t.exports);(function
                     </div>
                 </form>
             </div>
-        `;let c=document.getElementById(`p-bruto`),f=document.getElementById(`p-tara`),p=document.getElementById(`p-validation-msg`),m=async()=>{let e=parseFloat(c.value)||0,t=parseFloat(f.value)||0,n=l._activeCache||await l.getActive(),r=n?n.factorQuintal:46,i=e-t,a=document.getElementById(`calc-neto`),o=document.getElementById(`calc-q`);e>0&&t>e?(a.textContent=`0.0`,o.textContent=`0.00`,a.style.color=`#ef4444`,o.style.color=`#ef4444`,p.textContent=`⚠️ La tara es mayor que el peso bruto`,p.style.color=`#ef4444`):(a.textContent=Math.max(0,i).toFixed(1),o.textContent=Math.max(0,i/r).toFixed(2),e>1500?(a.style.color=`#eab308`,o.style.color=`#eab308`,p.textContent=`⚠️ Peso inusualmente alto (>1500kg)`,p.style.color=`#eab308`):(a.style.color=`var(--accent)`,o.style.color=`var(--p-cork)`,p.innerHTML=`&nbsp;`))};c.addEventListener(`input`,m),f.addEventListener(`input`,m),m();let h=a.calidad||`bornizo`,g=()=>document.querySelectorAll(`.quality-btn`).forEach(e=>{e.dataset.quality===h?e.classList.add(`selected`):e.classList.remove(`selected`)});document.querySelectorAll(`.quality-btn`).forEach(e=>e.onclick=()=>{h=e.dataset.quality,g()}),g(),document.getElementById(`form-pesada`).onsubmit=async n=>{n.preventDefault();let r=document.getElementById(`p-fecha`).value,i=new Date().getTime();if(r){let e=r.split(`-`);i=new Date(e[0],e[1]-1,e[2],12,0,0).getTime()}let a=parseFloat(c.value)||0,o=parseFloat(f.value)||0,s=a-o,p=l._activeCache||await l.getActive(),m=s/(p?p.factorQuintal:46),g={id:t?parseInt(e):void 0,zonaId:parseInt(document.getElementById(`p-zona`).value),fecha:i,saca:parseInt(document.getElementById(`p-saca`).value),bruto:a,tara:o,kg:s,quintales:m,calidad:h};g.pesadasPorCalidad={primera:{kg:0,quintales:0},bornizo:{kg:0,quintales:0},refugo:{kg:0,quintales:0}},g.pesadasPorCalidad[h]={kg:s,quintales:m},await d.save(g),u.toast(`✅ Guardada correctamente`),A.route(`/lista`)}},async renderLista(){let e=await d.list(),t=await v.list(),n=document.getElementById(`app-content`);if(e.length===0){n.innerHTML=`<div class="card text-center" style="padding: 40px 20px;">
+        `;let c=document.getElementById(`p-bruto`),f=document.getElementById(`p-validation-msg`),p=async()=>{let e=parseFloat(c.value)||0,t=l._activeCache||await l.getActive(),n=t?t.factorQuintal:46,r=e-0,i=document.getElementById(`calc-q`);i.textContent=Math.max(0,r/n).toFixed(2),e>1500?(i.style.color=`#eab308`,f.textContent=`⚠️ Peso inusualmente alto (>1500kg)`,f.style.color=`#eab308`):(i.style.color=`var(--p-cork)`,f.innerHTML=`&nbsp;`)};c.addEventListener(`input`,p),p();let m=a.calidad||`bornizo`,h=()=>document.querySelectorAll(`.quality-btn`).forEach(e=>{e.dataset.quality===m?e.classList.add(`selected`):e.classList.remove(`selected`)});document.querySelectorAll(`.quality-btn`).forEach(e=>e.onclick=()=>{m=e.dataset.quality,h()}),h(),document.getElementById(`form-pesada`).onsubmit=async n=>{n.preventDefault();let r=document.getElementById(`p-fecha`).value,i=new Date().getTime();if(r){let e=r.split(`-`);i=new Date(e[0],e[1]-1,e[2],12,0,0).getTime()}let a=parseFloat(c.value)||0,o=a-0,s=l._activeCache||await l.getActive(),f=o/(s?s.factorQuintal:46),p={id:t?parseInt(e):void 0,zonaId:parseInt(document.getElementById(`p-zona`).value),fecha:i,saca:parseInt(document.getElementById(`p-saca`).value),bruto:a,tara:0,kg:o,quintales:f,calidad:m};p.pesadasPorCalidad={primera:{kg:0,quintales:0},bornizo:{kg:0,quintales:0},refugo:{kg:0,quintales:0}},p.pesadasPorCalidad[m]={kg:o,quintales:f},await d.save(p),u.toast(`✅ Guardada correctamente`),A.route(`/lista`)}},async renderLista(){let e=await d.list(),t=await v.list(),n=document.getElementById(`app-content`);if(e.length===0){n.innerHTML=`<div class="card text-center" style="padding: 40px 20px;">
                 <h3 style="color:#fff;">No hay pesadas registradas</h3>
                 <button class="btn btn-primary mt-2" data-route="/nueva">➕ Crear la primera pesada</button>
             </div>`;return}this._todas=e.sort((e,t)=>t.fecha-e.fecha),this._zonas=t,this._page=1;let r=A._calculateQualityTotals(e),i=(r.primera.quintales+r.bornizo.quintales+r.refugo.quintales).toFixed(2);n.innerHTML=`<div class="card" style="border-top: 5px solid var(--p-cork); padding: 25px;">

@@ -47,16 +47,10 @@ export const PesadasUI = {
             <div class="card" style="border-top: 5px solid ${isEdit ? '#eab308' : 'var(--p-cork)'}; padding: 25px;">
                 <h2 style="color:#fff; margin-bottom:20px; font-size:1.5rem; border:none; padding:0; text-align:center;">${isEdit ? 'Editar' : 'Nueva'} Pesada</h2>
                 <form id="form-pesada">
-                    <!-- 1. Bruto y Tara en la parte superior -->
-                    <div class="grid-2">
-                        <div class="form-group">
-                            <label>Bruto (kg)</label>
-                            <input type="number" id="p-bruto" value="${d.bruto || d.pesoBruto || ''}" placeholder="0.0" step="0.1" required style="font-size:2.5rem; height:80px; font-weight:bold; color:var(--p-cork); text-align:center;">
-                        </div>
-                        <div class="form-group">
-                            <label>Tara (kg)</label>
-                            <input type="number" id="p-tara" value="${d.tara || 0}" step="0.1" required style="font-size:2.5rem; height:80px; text-align:center;">
-                        </div>
+                    <!-- 1. Bruto a pantalla completa -->
+                    <div class="form-group" style="text-align:center;">
+                        <label style="font-size:1.3rem;">Peso Neto Directo (kg)</label>
+                        <input type="number" id="p-bruto" value="${d.bruto || d.pesoBruto || ''}" placeholder="0.0" step="0.1" required style="font-size:4rem; height:100px; font-weight:900; color:#fff; background-color:rgba(0,0,0,0.4); border: 2px solid var(--p-cork); text-align:center; width:100%;">
                     </div>
                     
                     <div id="p-validation-msg" style="text-align:center; font-weight:bold; margin-top:5px; margin-bottom:15px;">&nbsp;</div>
@@ -79,14 +73,10 @@ export const PesadasUI = {
                         </div>
                     </div>
 
-                    <!-- 4. Datos calculados: Neto y Quintales -->
-                    <div class="card stat-grid" style="display:flex; justify-content:space-around; background: rgba(255,255,255,0.03); margin: 15px 0;">
+                    <!-- 4. Datos calculados: Quintales -->
+                    <div class="card stat-grid" style="display:flex; justify-content:center; background: rgba(255,255,255,0.03); margin: 15px 0;">
                         <div style="text-align:center;">
-                            <div id="calc-neto" class="stat-value" style="font-size: 1.8rem; color: var(--accent); font-weight:900;">0.0</div>
-                            <div class="stat-label" style="color:var(--text-s);">Neto (kg)</div>
-                        </div>
-                        <div style="text-align:center;">
-                            <div id="calc-q" class="stat-value" style="font-size: 1.8rem; color: var(--p-cork); font-weight:900;">0.00</div>
+                            <div id="calc-q" class="stat-value" style="font-size: 2.5rem; color: var(--p-cork); font-weight:900;">0.00</div>
                             <div class="stat-label" style="color:var(--text-s);">Quintales</div>
                         </div>
                     </div>
@@ -106,42 +96,28 @@ export const PesadasUI = {
             </div>
         `;
 
-        const inB = document.getElementById('p-bruto'), inT = document.getElementById('p-tara');
+        const inB = document.getElementById('p-bruto');
         const valMsg = document.getElementById('p-validation-msg');
         
         const up = async () => {
             const b = parseFloat(inB.value) || 0;
-            const t = parseFloat(inT.value) || 0;
+            const t = 0; // Tara removed
             const config = Fincas._activeCache || await Fincas.getActive();
             const factor = config ? config.factorQuintal : 46;
             const n = b - t;
-            const netoEl = document.getElementById('calc-neto');
             const qEl = document.getElementById('calc-q');
             
-            if (b > 0 && t > b) {
-                netoEl.textContent = "0.0";
-                qEl.textContent = "0.00";
-                netoEl.style.color = "#ef4444";
-                qEl.style.color = "#ef4444";
-                valMsg.textContent = "⚠️ La tara es mayor que el peso bruto";
-                valMsg.style.color = "#ef4444";
+            qEl.textContent = Math.max(0, n / factor).toFixed(2);
+            if (b > 1500) {
+                qEl.style.color = "#eab308";
+                valMsg.textContent = "⚠️ Peso inusualmente alto (>1500kg)";
+                valMsg.style.color = "#eab308";
             } else {
-                netoEl.textContent = Math.max(0, n).toFixed(1);
-                qEl.textContent = Math.max(0, n / factor).toFixed(2);
-                if (b > 1500) {
-                    netoEl.style.color = "#eab308";
-                    qEl.style.color = "#eab308";
-                    valMsg.textContent = "⚠️ Peso inusualmente alto (>1500kg)";
-                    valMsg.style.color = "#eab308";
-                } else {
-                    netoEl.style.color = "var(--accent)";
-                    qEl.style.color = "var(--p-cork)";
-                    valMsg.innerHTML = "&nbsp;";
-                }
+                qEl.style.color = "var(--p-cork)";
+                valMsg.innerHTML = "&nbsp;";
             }
         };
         inB.addEventListener('input', up);
-        inT.addEventListener('input', up);
         up();
 
         let selQ = d.calidad || 'bornizo';
@@ -162,7 +138,7 @@ export const PesadasUI = {
             }
             
             const b = parseFloat(inB.value) || 0;
-            const t = parseFloat(inT.value) || 0;
+            const t = 0;
             const kg = b - t;
             const config = Fincas._activeCache || await Fincas.getActive();
             const factor = config ? config.factorQuintal : 46;
