@@ -35,5 +35,21 @@ export const Utils = {
     hideLoading() {
         const loader = document.getElementById('global-loader');
         if (loader) loader.style.display = 'none';
+    },
+
+    _getDualHeaderHtml(t1, s1, c1, t2, s2, c2) {
+        return `
+            <div class="reporte-header">
+                <div class="entity-card">
+                    <div class="entity-title">${this.escapeHtml(t1)}</div>
+                    <div class="entity-sub">${this.escapeHtml(s1)}</div>
+                    <div class="entity-meta">CIF/NIF: ${this.escapeHtml(c1)}</div>
+                </div>
+                <div class="entity-card">
+                    <div class="entity-title">${this.escapeHtml(t2)}</div>
+                    <div class="entity-sub">${this.escapeHtml(s2)}</div>
+                    <div class="entity-meta">CIF/NIF: ${this.escapeHtml(c2)}</div>
+                </div>
+            </div>`;
     }
 };
