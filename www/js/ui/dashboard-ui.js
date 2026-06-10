@@ -72,6 +72,10 @@ export const DashboardUI = {
         `;
         await App.actualizarResumenHoy();
         await App.renderUltimasPesadas();
+        
+        if (!localStorage.getItem('cork_tour_completed')) {
+            this._renderTourModal();
+        }
     },
 
     async actualizarResumenHoy() {
@@ -105,5 +109,62 @@ export const DashboardUI = {
         }
         h += `</div><div class="text-center mt-2"><button class="btn btn-outline" style="font-size:0.9rem;" data-route="/lista">Ver Todo</button></div></div>`;
         container.innerHTML = h;
+    },
+
+    _renderTourModal() {
+        if (document.getElementById('tour-overlay')) return;
+        
+        const steps = [
+            { title: "👋 ¡Bienvenido a Cork Manager!", text: "Esta aplicación te ayudará a gestionar tus pesadas de corcho de forma rápida y sin conexión a internet." },
+            { title: "⚙️ 1. Crea tu Finca", text: "Antes de empezar a pesar, ve a la sección <strong>FINCAS</strong> para registrar los datos de tu explotación y compradores." },
+            { title: "➕ 2. Registra Pesadas", text: "Usa el botón <strong>NUEVA PESADA</strong> en el campo. La app calculará automáticamente la merma y los quintales." },
+            { title: "📊 3. Saca Informes", text: "Cuando termines, ve a <strong>INFORMES</strong> para exportar el balance en PDF o Excel y enviarlo por WhatsApp." }
+        ];
+        
+        let currentStep = 0;
+        
+        const overlay = document.createElement('div');
+        overlay.id = 'tour-overlay';
+        overlay.className = 'tour-overlay';
+        
+        const renderStep = () => {
+            const step = steps[currentStep];
+            const isLast = currentStep === steps.length - 1;
+            
+            overlay.innerHTML = `
+                <div class="tour-modal">
+                    <h3>${step.title}</h3>
+                    <p>${step.text}</p>
+                    <div class="tour-dots">
+                        ${steps.map((_, i) => `<div class="tour-dot ${i === currentStep ? 'active' : ''}"></div>`).join('')}
+                    </div>
+                    <div style="display:flex; gap:10px; margin-top:20px;">
+                        ${currentStep > 0 ? `<button class="btn btn-secondary" id="btn-tour-prev" style="flex:1;">Atrás</button>` : ''}
+                        <button class="btn btn-primary" id="btn-tour-next" style="flex:2;">${isLast ? '¡Empezar!' : 'Siguiente'}</button>
+                    </div>
+                    <button class="btn btn-outline mt-2" id="btn-tour-skip" style="width:100%; border:none; margin-top:15px;">Saltar tour</button>
+                </div>
+            `;
+            
+            document.body.appendChild(overlay);
+            
+            if (currentStep > 0) {
+                document.getElementById('btn-tour-prev').onclick = () => { currentStep--; renderStep(); };
+            }
+            
+            document.getElementById('btn-tour-next').onclick = () => {
+                if (isLast) finishTour();
+                else { currentStep++; renderStep(); }
+            };
+            
+            document.getElementById('btn-tour-skip').onclick = finishTour;
+        };
+        
+        const finishTour = () => {
+            localStorage.setItem('cork_tour_completed', 'true');
+            overlay.remove();
+        };
+        
+        renderStep();
     }
 };

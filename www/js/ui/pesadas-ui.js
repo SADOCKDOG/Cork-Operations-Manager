@@ -86,7 +86,8 @@ export const PesadasUI = {
                         </div>
                         <div class="resultado-neto" style="margin-top:20px; text-align:center; padding-top:20px; border-top:1px dashed rgba(255,255,255,0.2);">
                             <span style="font-size:1.2rem; color:var(--text-s);">NETO ESTIMADO</span><br>
-                            <span id="p-neto-calc" style="font-size: 3rem; font-weight: 900; color: #10b981;">0.00</span> <span style="font-size:1.5rem; color:#10b981;">Quintales</span>
+                            <span id="p-neto-calc" style="font-size: 3rem; font-weight: 900; color: #10b981;">0.00</span> <span id="p-neto-lbl" style="font-size:1.5rem; color:#10b981;">Quintales</span>
+                            <div id="p-validation-msg" style="margin-top:10px; font-weight:bold; min-height:24px;"></div>
                         </div>
                     </div>
 
@@ -107,12 +108,37 @@ export const PesadasUI = {
         const bruto = document.getElementById('p-bruto');
         const tara = document.getElementById('p-tara');
         const calcNeto = () => {
-            const b = parseFloat(bruto.value) || 0; const t = parseFloat(tara.value) || 0;
-            const config = Fincas._activeCache; const factor = config ? config.factorQuintal : 46;
-            const n = Math.max(0, b - t);
-            document.getElementById('p-neto-calc').textContent = (n / factor).toFixed(2);
+            const b = parseFloat(bruto.value) || 0; 
+            const t = parseFloat(tara.value) || 0;
+            const config = Fincas._activeCache; 
+            const factor = config ? config.factorQuintal : 46;
+            const n = b - t;
+            const netoEl = document.getElementById('p-neto-calc');
+            const netoLbl = document.getElementById('p-neto-lbl');
+            const valMsg = document.getElementById('p-validation-msg');
+            
+            if (b > 0 && t > b) {
+                netoEl.textContent = "0.00";
+                netoEl.style.color = "#ef4444";
+                netoLbl.style.color = "#ef4444";
+                valMsg.textContent = "⚠️ La tara es mayor que el peso bruto";
+                valMsg.style.color = "#ef4444";
+            } else {
+                netoEl.textContent = Math.max(0, n / factor).toFixed(2);
+                if (b > 1500) {
+                    netoEl.style.color = "#eab308";
+                    netoLbl.style.color = "#eab308";
+                    valMsg.textContent = "⚠️ Peso inusualmente alto (>1500kg)";
+                    valMsg.style.color = "#eab308";
+                } else {
+                    netoEl.style.color = "#10b981";
+                    netoLbl.style.color = "#10b981";
+                    valMsg.textContent = "";
+                }
+            }
         };
-        bruto.addEventListener('input', calcNeto); tara.addEventListener('input', calcNeto);
+        bruto.addEventListener('input', calcNeto); 
+        tara.addEventListener('input', calcNeto);
         if (isEdit) calcNeto();
         
         form.onsubmit = async (e) => {

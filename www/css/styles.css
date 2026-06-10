@@ -235,6 +235,10 @@ nav.bottom-nav {
     position: relative;
     overflow: hidden;
 }
+.btn:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: 3px solid var(--p-cork);
+    outline-offset: 2px;
+}
 
 .btn-primary { background: linear-gradient(135deg, var(--p-cork) 0%, #c29a6b 100%); color: #000; box-shadow: 0 8px 16px rgba(212, 163, 115, 0.3); }
 .btn-primary:active { transform: scale(0.95) translateY(2px); box-shadow: 0 4px 8px rgba(212, 163, 115, 0.4); }
@@ -696,3 +700,31 @@ input:focus::placeholder { color: rgba(160, 160, 160, 0.3); }
     transform: scale(1.2);
     opacity: 0.8;
 }
+
+/* Tour Modal Styles */
+.tour-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 10000;
+    display: flex; justify-content: center; align-items: center;
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease;
+}
+.tour-modal {
+    background: var(--bg-card);
+    padding: 30px;
+    border-radius: 20px;
+    width: 90%; max-width: 400px;
+    text-align: center;
+    border-top: 5px solid var(--p-cork);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    animation: slideUp 0.4s ease;
+}
+.tour-modal h3 { color: #fff; font-size: 1.5rem; margin-bottom: 15px; border:none; padding:0; }
+.tour-modal p { color: var(--text-s); font-size: 1.1rem; line-height: 1.5; margin-bottom: 25px; }
+.tour-dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
+.tour-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.2); }
+.tour-dot.active { background: var(--p-cork); }
+@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
