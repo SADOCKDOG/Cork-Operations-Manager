@@ -18,7 +18,7 @@ export const PesadasUI = {
         let d = { 
             fecha: new Date().toISOString().split('T')[0], 
             saca: maxS + 1, 
-            calidad: 'bornizo', 
+            calidad: 'primera', 
             tara: 0, 
             bruto: '' 
         };
@@ -76,7 +76,7 @@ export const PesadasUI = {
                     <!-- 4. Datos calculados: Quintales -->
                     <div class="card stat-grid" style="display:flex; justify-content:center; background: rgba(255,255,255,0.03); margin: 15px 0;">
                         <div style="text-align:center;">
-                            <div id="calc-q" class="stat-value" style="font-size: 2.5rem; color: var(--p-cork); font-weight:900;">0.00</div>
+                            <div id="calc-q" class="stat-value" style="font-size: 2.5rem; color: #10b981; font-weight:900;">0.00</div>
                             <div class="stat-label" style="color:var(--text-s);">Quintales</div>
                         </div>
                     </div>
@@ -113,14 +113,14 @@ export const PesadasUI = {
                 valMsg.textContent = "⚠️ Peso inusualmente alto (>1500kg)";
                 valMsg.style.color = "#eab308";
             } else {
-                qEl.style.color = "var(--p-cork)";
+                qEl.style.color = "#10b981";
                 valMsg.innerHTML = "&nbsp;";
             }
         };
         inB.addEventListener('input', up);
         up();
 
-        let selQ = d.calidad || 'bornizo';
+        let selQ = d.calidad || 'primera';
         const upQ = () => document.querySelectorAll('.quality-btn').forEach(b => {
             if(b.dataset.quality === selQ) b.classList.add('selected');
             else b.classList.remove('selected');
