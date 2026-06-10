@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="icons/Logo para PDF y cabecera de la aplicación.png" width="400" alt="Cork Manager Logo">
+  <img src="docs/logo-app.png" width="400" alt="Cork Manager Logo">
 </p>
 
 <p align="center"><strong>Built with:</strong> TypeScript · HTML5 · CSS3 · Capacitor (PWA-ready)</p>
@@ -98,7 +98,7 @@ Descripción funcional:
 Imágenes relacionadas:
 
 <p align="center">
-  <img src="docs/Pantalla%20Gesti%C3%B3n%20e%20Importaci%C3%B3n%20SigPac%20de%20Zonas.jpg" width="220" alt="Importación SIGPAC" />
+  <img src="docs/pantalla-sigpac-zonas.jpg" width="220" alt="Importación SIGPAC" />
 </p>
 <p align="center"><strong>Figura:</strong> Importación y restauración de fichas SIGPAC.</p>
 
@@ -195,7 +195,7 @@ Requisitos básicos: Node.js, npm, Capacitor. Pasos resumidos:
 
 <div align="center">
   <p><strong>Desarrollado por</strong></p>
-  <img src="icons/Logo SDOGFARMCORE.png" width="180" alt="Logo SDOGFARMCORE">
+  <img src="docs/logo-sdogfarmcore.png" width="180" alt="Logo SDOGFARMCORE">
   <p><em>Ecosistema CORE de Gestión Inteligente</em></p>
 
   <h3>📄 Licencia y Soporte</h3>
