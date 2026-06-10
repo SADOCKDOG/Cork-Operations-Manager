@@ -155,6 +155,20 @@ export const FincasUI = {
         };
     },
 
+    _selectFincaForLoad(id, nombre) {
+        this._pendingFincaId = id;
+        this._pendingFincaNombre = nombre;
+        document.querySelectorAll('.finca-card').forEach(c => {
+            if (c.dataset.id == id) {
+                c.style.borderLeft = '8px solid var(--accent)';
+            } else if (!c.classList.contains('active-finca')) {
+                c.style.borderLeft = '8px solid var(--border)';
+            }
+        });
+        const footer = document.getElementById('load-finca-footer');
+        if (footer) footer.style.display = 'block';
+    },
+
     async _confirmSwitchFinca(newId, nombre) { if (confirm(`¿Cargar finca "${nombre}"?`)) { await Fincas.setActiveId(newId); location.reload(); } },
 
     async _deleteFinca(id, nombre) { if (confirm(`¿Borrar permanentemente ${nombre}?`)) { await Fincas.delete(id); location.reload(); } },
