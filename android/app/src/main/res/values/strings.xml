@@ -4,4 +4,5 @@
     <string name="title_activity_main">Cork Manager</string>
     <string name="package_name">com.elchamorro.pesadascorcho</string>
     <string name="custom_url_scheme">com.elchamorro.pesadascorcho</string>
+    <string name="server_client_id">186318731165-2vbt730ihgdejrgq19ut71gom7lucvc6.apps.googleusercontent.com</string>
 </resources>

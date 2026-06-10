@@ -1,4 +1,5 @@
 import { db, dbPromise } from './db.js';
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 
 /**
  * Auth.js - Sistema de Autenticación Multi-Usuario (v5.9.3)
@@ -90,6 +91,63 @@ export const Auth = {
             return usuario;
         } catch (error) {
             console.error('[Auth] Error en registro:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Iniciar sesión con Google Auth
+     */
+    async signInWithGoogle() {
+        try {
+            if (!window.isNative) {
+                GoogleAuth.initialize();
+            }
+            const googleUser = await GoogleAuth.signIn();
+            console.log("[Auth] Google SignIn exitoso:", googleUser.email);
+            
+            // Buscar o crear usuario
+            let usuarios = await db.getAll('usuarios') || [];
+            let usuario = usuarios.find(u => u.email === googleUser.email);
+            
+            if (!usuario) {
+                // El primer usuario es admin
+                const isFirst = usuarios.length === 0;
+                usuario = {
+                    id: googleUser.id,
+                    nombre: googleUser.name || googleUser.email.split('@')[0],
+                    email: googleUser.email,
+                    passwordHash: 'GOOGLE_AUTH',
+                    rol: isFirst ? 'admin' : 'operario',
+                    creadoEn: new Date().toISOString(),
+                    activo: true,
+                    ultimoAcceso: new Date().toISOString(),
+                    metadata: { intentosFallidos: 0, bloqueado: false }
+                };
+                await db.add('usuarios', usuario);
+                await this._auditLog('USUARIO_CREADO', `Usuario Google: ${usuario.email}`, usuario.id);
+            }
+            
+            this._sessionToken = googleUser.authentication.accessToken;
+            this._currentUser = {
+                id: usuario.id,
+                nombre: usuario.nombre,
+                email: usuario.email,
+                rol: usuario.rol,
+                accessToken: googleUser.authentication.accessToken, // Token de Drive
+                loginTime: new Date().toISOString()
+            };
+            
+            usuario.ultimoAcceso = new Date().toISOString();
+            await db.put('usuarios', usuario);
+            
+            sessionStorage.setItem('auth_token', this._sessionToken);
+            localStorage.setItem('auth_user_data', JSON.stringify(this._currentUser));
+            
+            await this._auditLog('LOGIN_EXITOSO', `Google Login: ${usuario.email}`, usuario.id);
+            return this._currentUser;
+        } catch(error) {
+            console.error("[Auth] Error en Google SignIn:", error);
             throw error;
         }
     },

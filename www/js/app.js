@@ -14,6 +14,9 @@ import { ZonasUI } from './ui/zonas-ui.js';
 import { FincasUI } from './ui/fincas-ui.js';
 import { GastosUI } from './ui/gastos-ui.js';
 import { ReportesUI } from './ui/reportes-ui.js';
+import { LoginUI } from './ui/login-ui.js';
+import { Auth } from './auth.js';
+import { CloudSync } from './cloudsync.js';
 
 export const App = {
     ...Utils,
@@ -25,6 +28,7 @@ export const App = {
     ...FincasUI,
     ...GastosUI,
     ...ReportesUI,
+    ...LoginUI,
 
     _activeObjectUrls: [],
     
@@ -71,14 +75,33 @@ export const App = {
 
     async init() {
         try {
-            console.log("App: Iniciando v6.2.4 (Modular UI Core)...");
+            console.log("App: Iniciando v6.2.5 (Multi-User & Cloud Sync)...");
             window.addEventListener('hashchange', () => App.route());
             window.addEventListener('fincaChanged', () => { App.updateHeader().then(() => App.route()); });
             
             App.initEvents();
+            App.initLogin(); // Asignar listeners del botón de login
             await dbPromise;
-            await App.updateHeader();
-            await App.route();
+
+            // Verificar si hay sesión iniciada
+            const isLogged = await Auth.init();
+            
+            if (!isLogged) {
+                App.showLoginHideApp();
+            } else {
+                App.hideLoginShowApp();
+                await CloudSync.init();
+                await App.updateHeader();
+                await App.route();
+            }
+            
+            // Listener para cuando cambia la auth
+            window.addEventListener('auth_changed', async () => {
+                await CloudSync.init();
+                await App.updateHeader();
+                await App.route();
+            });
+
         } catch (error) {
             console.error(error);
             const content = document.getElementById('app-content');

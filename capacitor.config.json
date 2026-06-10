@@ -5,5 +5,12 @@
   "bundledWebRuntime": false,
   "server": {
     "androidScheme": "https"
+  },
+  "plugins": {
+    "GoogleAuth": {
+      "scopes": ["profile", "email", "https://www.googleapis.com/auth/drive.file"],
+      "serverClientId": "186318731165-2vbt730ihgdejrgq19ut71gom7lucvc6.apps.googleusercontent.com",
+      "forceCodeForRefreshToken": true
+    }
   }
 }

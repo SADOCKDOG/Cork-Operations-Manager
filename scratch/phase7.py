@@ -1,4 +1,7 @@
-import { db, dbPromise } from './db.js';
+import os
+
+cloudsync_path = "www/js/cloudsync.js"
+new_content = """import { db, dbPromise } from './db.js';
 import { Fincas } from './fincas.js';
 import { Pesadas } from './pesadas.js';
 import { Zonas } from './zonas.js';
@@ -203,3 +206,7 @@ export const CloudSync = {
         };
     }
 };
+"""
+
+with open(cloudsync_path, "w", encoding="utf-8") as f:
+    f.write(new_content)
