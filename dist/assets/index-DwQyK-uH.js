@@ -75,73 +75,68 @@ var e=(e,t)=>()=>(t||(e((t={exports:{}}).exports,t),e=null),t.exports);(function
                     </div>
                     <button class="btn btn-outline mt-2" id="btn-tour-skip" style="width:100%; border:none; margin-top:15px;">Saltar tour</button>
                 </div>
-            `,document.body.appendChild(n),t>0&&(document.getElementById(`btn-tour-prev`).onclick=()=>{t--,r()}),document.getElementById(`btn-tour-next`).onclick=()=>{o?i():(t++,r())},document.getElementById(`btn-tour-skip`).onclick=i},i=()=>{localStorage.setItem(`cork_tour_completed`,`true`),n.remove()};r()}},w={_todas:[],_page:1,_perPage:20,_zonas:[],async renderFormPesada(e=null){let t=e!=null,n={bruto:``,tara:``,calidad:`primera`,saca:``,kg:0,quintales:0,observacion:``,fotoUrl:null},r=await l.getActive(),i=r&&r.compradores||[],a=null,o=null;if(t){if(n=await d.get(parseInt(e)),!n)return A.toastError(`No se encontró la pesada`),A.route();n.pesadasPorCalidad?n.pesadasPorCalidad.primera.kg>0?n.calidad=`primera`:n.pesadasPorCalidad.bornizo.kg>0?n.calidad=`bornizo`:n.pesadasPorCalidad.refugo.kg>0&&(n.calidad=`refugo`):n.calidad=`primera`,a=n.compradorId,o=n.zonaId}else{n.saca=(await d.list()).length+1;let e=await l.getActive();e&&e.comprador&&(a=e.comprador.id)}let s=i.map(e=>`<option value="${e.id}" ${a==e.id?`selected`:``}>${u.escapeHtml(e.nombreEmpresa)}</option>`).join(``),c=await v.list(),f=document.getElementById(`app-content`);f.innerHTML=`
+            `,document.body.appendChild(n),t>0&&(document.getElementById(`btn-tour-prev`).onclick=()=>{t--,r()}),document.getElementById(`btn-tour-next`).onclick=()=>{o?i():(t++,r())},document.getElementById(`btn-tour-skip`).onclick=i},i=()=>{localStorage.setItem(`cork_tour_completed`,`true`),n.remove()};r()}},w={_todas:[],_page:1,_perPage:20,_zonas:[],async renderFormPesada(e=null){let t=e!=null,n=await d.list(),r=await v.list(),i=n.length>0?Math.max(...n.map(e=>e.saca||0)):0,a={fecha:new Date().toISOString().split(`T`)[0],saca:i+1,calidad:`bornizo`,tara:0,bruto:``},o=null;if(t){let t=await d.get(parseInt(e));if(!t)return A.toastError(`No se encontró la pesada`),A.route();a=t,a.fecha&&=new Date(a.fecha).toISOString().split(`T`)[0],a.pesadasPorCalidad&&(a.pesadasPorCalidad.primera&&a.pesadasPorCalidad.primera.kg>0?a.calidad=`primera`:a.pesadasPorCalidad.refugo&&a.pesadasPorCalidad.refugo.kg>0?a.calidad=`refugo`:a.calidad=`bornizo`),o=a.zonaId}let s=document.getElementById(`app-content`);if(r.length===0){s.innerHTML=`<div class="card text-center"><p>Primero crea una zona.</p><button class="btn btn-primary" data-route="/zonas">Ir a Zonas</button></div>`;return}s.innerHTML=`
             <div class="card" style="border-top: 5px solid ${t?`#eab308`:`var(--p-cork)`}; padding: 25px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h3 style="margin: 0; color: #fff; border:none; padding:0; font-size: 1.5rem;">${t?`✏️ Editar Pesada #`+n.saca:`➕ Nueva Pesada`}</h3>
-                    <button class="btn btn-outline" style="padding: 5px 15px;" data-action="back">❌ Cancelar</button>
-                </div>
+                <h2 style="color:#fff; margin-bottom:20px; font-size:1.5rem; border:none; padding:0; text-align:center;">${t?`Editar`:`Nueva`} Pesada</h2>
                 <form id="form-pesada">
+                    <!-- 1. Bruto y Tara en la parte superior -->
                     <div class="grid-2">
                         <div class="form-group">
-                            <label>Comprador / Lote</label>
-                            <select id="p-comprador" style="height:70px; font-size:1.3rem;">
-                                ${s||`<option value="">Sin comprador registrado</option>`}
-                            </select>
+                            <label>Bruto (kg)</label>
+                            <input type="number" id="p-bruto" value="${a.bruto||a.pesoBruto||``}" placeholder="0.0" step="0.1" required style="font-size:2.5rem; height:80px; font-weight:bold; color:var(--p-cork); text-align:center;">
                         </div>
                         <div class="form-group">
-                            <label>Zona / Parcela</label>
-                            <select id="p-zona" style="height:70px; font-size:1.3rem;">
-                                ${c.map(e=>`<option value="${e.id}" ${o==e.id?`selected`:``}>${u.escapeHtml(e.nombre)}</option>`).join(``)}
-                            </select>
+                            <label>Tara (kg)</label>
+                            <input type="number" id="p-tara" value="${a.tara||0}" step="0.1" required style="font-size:2.5rem; height:80px; text-align:center;">
                         </div>
                     </div>
                     
-                    <div class="grid-3" style="gap:15px;">
-                        <div class="form-group">
-                            <label>Nº Saca</label>
-                            <input type="number" id="p-saca" value="${n.saca}" required style="font-size:2rem; height:80px; text-align:center;">
-                        </div>
-                        <div class="form-group">
-                            <label>Calidad</label>
-                            <select id="p-calidad" style="font-size:1.5rem; height:80px; text-align:center;">
-                                <option value="primera" ${n.calidad===`primera`?`selected`:``}>⭐ 1ª Calidad</option>
-                                <option value="bornizo" ${n.calidad===`bornizo`?`selected`:``}>🟡 Bornizo</option>
-                                <option value="refugo" ${n.calidad===`refugo`?`selected`:``}>🔴 Refugo</option>
-                            </select>
-                        </div>
-                    </div>
+                    <div id="p-validation-msg" style="text-align:center; font-weight:bold; margin-top:5px; margin-bottom:15px;">&nbsp;</div>
 
-                    <div class="peso-container card" style="background: rgba(0,0,0,0.2); padding: 25px; margin-top: 10px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1);">
-                        <div class="grid-2">
-                            <div class="form-group">
-                                <label style="font-size:1.2rem;">Peso BRUTO (kg)</label>
-                                <input type="number" id="p-bruto" step="0.1" value="${n.bruto}" required style="font-size: 2.5rem; height: 90px; color: var(--p-cork); font-weight:800; background:#fff; text-align:right; padding-right:20px;">
-                            </div>
-                            <div class="form-group">
-                                <label style="font-size:1.2rem;">Tara Palet/Saca (kg)</label>
-                                <input type="number" id="p-tara" step="0.1" value="${n.tara}" required style="font-size: 2.5rem; height: 90px; text-align:right; padding-right:20px;">
-                            </div>
-                        </div>
-                        <div class="resultado-neto" style="margin-top:20px; text-align:center; padding-top:20px; border-top:1px dashed rgba(255,255,255,0.2);">
-                            <span style="font-size:1.2rem; color:var(--text-s);">NETO ESTIMADO</span><br>
-                            <span id="p-neto-calc" style="font-size: 3rem; font-weight: 900; color: #10b981;">0.00</span> <span id="p-neto-lbl" style="font-size:1.5rem; color:#10b981;">Quintales</span>
-                            <div id="p-validation-msg" style="margin-top:10px; font-weight:bold;">&nbsp;</div>
-                        </div>
-                    </div>
-
+                    <!-- 2. Zona -->
                     <div class="form-group">
-                        <label>Notas / Observaciones</label>
-                        <textarea id="p-obs" rows="2">${u.escapeHtml(n.observacion||``)}</textarea>
+                        <label>Zona / Parcela</label>
+                        <select id="p-zona" style="height:60px; font-size:1.2rem;">
+                            ${r.map(e=>`<option value="${e.id}" ${o==e.id?`selected`:``}>${u.escapeHtml(e.nombre)}</option>`).join(``)}
+                        </select>
                     </div>
 
-                    <div style="display: flex; gap: 10px; margin-top: 30px;">
-                        <button type="submit" class="btn btn-primary" style="flex: 2; height: 70px; font-size: 1.3rem;">💾 GUARDAR PESADA</button>
-                        ${t?`<button type="button" class="btn btn-danger" data-action="App._deletePesada" data-id="${e}">🗑️ Eliminar Pesada</button>`:``}
+                    <!-- 3. Selector de Calidad -->
+                    <div class="form-group">
+                        <label>Calidad del Corcho</label>
+                        <div class="quality-selector" style="display:flex; gap:10px;">
+                            <button type="button" class="quality-btn ${a.calidad===`primera`?`selected`:``}" data-quality="primera" style="flex:1; height:60px; font-size:1.2rem;">⭐ 1ª</button>
+                            <button type="button" class="quality-btn ${a.calidad===`bornizo`?`selected`:``}" data-quality="bornizo" style="flex:1; height:60px; font-size:1.2rem;">🟡 Bo</button>
+                            <button type="button" class="quality-btn ${a.calidad===`refugo`?`selected`:``}" data-quality="refugo" style="flex:1; height:60px; font-size:1.2rem;">🔴 Re</button>
+                        </div>
+                    </div>
+
+                    <!-- 4. Datos calculados: Neto y Quintales -->
+                    <div class="card stat-grid" style="display:flex; justify-content:space-around; background: rgba(255,255,255,0.03); margin: 15px 0;">
+                        <div style="text-align:center;">
+                            <div id="calc-neto" class="stat-value" style="font-size: 1.8rem; color: var(--accent); font-weight:900;">0.0</div>
+                            <div class="stat-label" style="color:var(--text-s);">Neto (kg)</div>
+                        </div>
+                        <div style="text-align:center;">
+                            <div id="calc-q" class="stat-value" style="font-size: 1.8rem; color: var(--p-cork); font-weight:900;">0.00</div>
+                            <div class="stat-label" style="color:var(--text-s);">Quintales</div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Fecha y Nº Saca al final -->
+                    <div class="grid-2">
+                        <div class="form-group"><label>Fecha</label><input type="date" id="p-fecha" value="${a.fecha}"></div>
+                        <div class="form-group"><label>Nº Saca</label><input type="number" id="p-saca" value="${a.saca}"></div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button type="submit" class="btn btn-primary" style="width:100%; height:70px; font-size:1.3rem;">💾 Guardar Pesada</button>
+                        ${t?`<button type="button" class="btn btn-danger mt-1" data-action="App._deletePesada" data-id="${e}" style="width:100%; height:60px;">🗑️ Eliminar</button>`:``}
+                        <button type="button" class="btn btn-outline mt-1" data-action="back" style="width:100%; height:60px;">Cancelar</button>
                     </div>
                 </form>
             </div>
-        `;let p=document.getElementById(`form-pesada`),m=document.getElementById(`p-bruto`),h=document.getElementById(`p-tara`),g=()=>{let e=parseFloat(m.value)||0,t=parseFloat(h.value)||0,n=l._activeCache,r=n?n.factorQuintal:46,i=e-t,a=document.getElementById(`p-neto-calc`),o=document.getElementById(`p-neto-lbl`),s=document.getElementById(`p-validation-msg`);e>0&&t>e?(a.textContent=`0.00`,a.style.color=`#ef4444`,o.style.color=`#ef4444`,s.textContent=`⚠️ La tara es mayor que el peso bruto`,s.style.color=`#ef4444`):(a.textContent=Math.max(0,i/r).toFixed(2),e>1500?(a.style.color=`#eab308`,o.style.color=`#eab308`,s.textContent=`⚠️ Peso inusualmente alto (>1500kg)`,s.style.color=`#eab308`):(a.style.color=`#10b981`,o.style.color=`#10b981`,s.innerHTML=`&nbsp;`))};m.addEventListener(`input`,g),h.addEventListener(`input`,g),t&&g(),p.onsubmit=async r=>{r.preventDefault();let i=parseFloat(m.value),a=parseFloat(h.value);if(i<=a){u.toastError(`Bruto debe ser mayor que tara`);return}let o=await l.getActive(),s=o?o.factorQuintal:46,c=i-a,f=c/s,p={saca:parseInt(document.getElementById(`p-saca`).value),bruto:i,tara:a,kg:c,quintales:f,calidad:document.getElementById(`p-calidad`).value,observacion:document.getElementById(`p-obs`).value,compradorId:document.getElementById(`p-comprador`).value,zonaId:parseInt(document.getElementById(`p-zona`).value),fecha:t?n.fecha:Date.now()};p.pesadasPorCalidad={primera:{kg:0,quintales:0},bornizo:{kg:0,quintales:0},refugo:{kg:0,quintales:0}},p.pesadasPorCalidad[p.calidad]={kg:c,quintales:f},t&&(p.id=parseInt(e)),await d.save(p),u.toast(`✅ Guardada correctamente`),A.route()}},async renderLista(){let e=await d.list(),t=await v.list(),n=document.getElementById(`app-content`);if(e.length===0){n.innerHTML=`<div class="card text-center" style="padding: 40px 20px;">
+        `;let c=document.getElementById(`p-bruto`),f=document.getElementById(`p-tara`),p=document.getElementById(`p-validation-msg`),m=async()=>{let e=parseFloat(c.value)||0,t=parseFloat(f.value)||0,n=l._activeCache||await l.getActive(),r=n?n.factorQuintal:46,i=e-t,a=document.getElementById(`calc-neto`),o=document.getElementById(`calc-q`);e>0&&t>e?(a.textContent=`0.0`,o.textContent=`0.00`,a.style.color=`#ef4444`,o.style.color=`#ef4444`,p.textContent=`⚠️ La tara es mayor que el peso bruto`,p.style.color=`#ef4444`):(a.textContent=Math.max(0,i).toFixed(1),o.textContent=Math.max(0,i/r).toFixed(2),e>1500?(a.style.color=`#eab308`,o.style.color=`#eab308`,p.textContent=`⚠️ Peso inusualmente alto (>1500kg)`,p.style.color=`#eab308`):(a.style.color=`var(--accent)`,o.style.color=`var(--p-cork)`,p.innerHTML=`&nbsp;`))};c.addEventListener(`input`,m),f.addEventListener(`input`,m),m();let h=a.calidad||`bornizo`,g=()=>document.querySelectorAll(`.quality-btn`).forEach(e=>{e.dataset.quality===h?e.classList.add(`selected`):e.classList.remove(`selected`)});document.querySelectorAll(`.quality-btn`).forEach(e=>e.onclick=()=>{h=e.dataset.quality,g()}),g(),document.getElementById(`form-pesada`).onsubmit=async n=>{n.preventDefault();let r=document.getElementById(`p-fecha`).value,i=new Date().getTime();if(r){let e=r.split(`-`);i=new Date(e[0],e[1]-1,e[2],12,0,0).getTime()}let a=parseFloat(c.value)||0,o=parseFloat(f.value)||0,s=a-o,p=l._activeCache||await l.getActive(),m=s/(p?p.factorQuintal:46),g={id:t?parseInt(e):void 0,zonaId:parseInt(document.getElementById(`p-zona`).value),fecha:i,saca:parseInt(document.getElementById(`p-saca`).value),bruto:a,tara:o,kg:s,quintales:m,calidad:h};g.pesadasPorCalidad={primera:{kg:0,quintales:0},bornizo:{kg:0,quintales:0},refugo:{kg:0,quintales:0}},g.pesadasPorCalidad[h]={kg:s,quintales:m},await d.save(g),u.toast(`✅ Guardada correctamente`),A.route(`/lista`)}},async renderLista(){let e=await d.list(),t=await v.list(),n=document.getElementById(`app-content`);if(e.length===0){n.innerHTML=`<div class="card text-center" style="padding: 40px 20px;">
                 <h3 style="color:#fff;">No hay pesadas registradas</h3>
                 <button class="btn btn-primary mt-2" data-route="/nueva">➕ Crear la primera pesada</button>
             </div>`;return}this._todas=e.sort((e,t)=>t.fecha-e.fecha),this._zonas=t,this._page=1;let r=A._calculateQualityTotals(e),i=(r.primera.quintales+r.bornizo.quintales+r.refugo.quintales).toFixed(2);n.innerHTML=`<div class="card" style="border-top: 5px solid var(--p-cork); padding: 25px;">

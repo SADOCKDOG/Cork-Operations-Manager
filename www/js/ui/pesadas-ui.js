@@ -12,163 +12,180 @@ export const PesadasUI = {
 
     async renderFormPesada(id = null) {
         const isEdit = id != null;
-        let p = { bruto: '', tara: '', calidad: 'primera', saca: '', kg: 0, quintales: 0, observacion: '', fotoUrl: null };
-        let finca = await Fincas.getActive();
-        let comps = finca ? finca.compradores || [] : [];
-        let curComp = null, curZona = null;
+        const listPesadas = await Pesadas.list();
+        const zonas = await Zonas.list();
+        let maxS = listPesadas.length > 0 ? Math.max(...listPesadas.map(p => p.saca || 0)) : 0;
+        let d = { 
+            fecha: new Date().toISOString().split('T')[0], 
+            saca: maxS + 1, 
+            calidad: 'bornizo', 
+            tara: 0, 
+            bruto: '' 
+        };
+        let curZona = null;
+        
         if (isEdit) {
-            p = await Pesadas.get(parseInt(id));
+            const p = await Pesadas.get(parseInt(id));
             if (!p) { App.toastError("No se encontró la pesada"); return App.route(); }
-            if (p.pesadasPorCalidad) {
-                if (p.pesadasPorCalidad.primera.kg > 0) p.calidad = 'primera';
-                else if (p.pesadasPorCalidad.bornizo.kg > 0) p.calidad = 'bornizo';
-                else if (p.pesadasPorCalidad.refugo.kg > 0) p.calidad = 'refugo';
-            } else p.calidad = 'primera';
-            curComp = p.compradorId;
-            curZona = p.zonaId;
-        } else {
-            p.saca = (await Pesadas.list()).length + 1;
-            const config = await Fincas.getActive();
-            if (config && config.comprador) curComp = config.comprador.id;
+            d = p;
+            if (d.fecha) d.fecha = new Date(d.fecha).toISOString().split('T')[0];
+            if (d.pesadasPorCalidad) {
+                if (d.pesadasPorCalidad.primera && d.pesadasPorCalidad.primera.kg > 0) d.calidad = 'primera';
+                else if (d.pesadasPorCalidad.refugo && d.pesadasPorCalidad.refugo.kg > 0) d.calidad = 'refugo';
+                else d.calidad = 'bornizo';
+            }
+            curZona = d.zonaId;
         }
 
-        const compOpts = comps.map(c => `<option value="${c.id}" ${curComp == c.id ? 'selected' : ''}>${Utils.escapeHtml(c.nombreEmpresa)}</option>`).join('');
-        const zonas = await Zonas.list();
-
         const main = document.getElementById('app-content');
+        if (zonas.length === 0) {
+            main.innerHTML = `<div class="card text-center"><p>Primero crea una zona.</p><button class="btn btn-primary" data-route="/zonas">Ir a Zonas</button></div>`;
+            return;
+        }
+
         main.innerHTML = `
             <div class="card" style="border-top: 5px solid ${isEdit ? '#eab308' : 'var(--p-cork)'}; padding: 25px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h3 style="margin: 0; color: #fff; border:none; padding:0; font-size: 1.5rem;">${isEdit ? '✏️ Editar Pesada #' + p.saca : '➕ Nueva Pesada'}</h3>
-                    <button class="btn btn-outline" style="padding: 5px 15px;" data-action="back">❌ Cancelar</button>
-                </div>
+                <h2 style="color:#fff; margin-bottom:20px; font-size:1.5rem; border:none; padding:0; text-align:center;">${isEdit ? 'Editar' : 'Nueva'} Pesada</h2>
                 <form id="form-pesada">
+                    <!-- 1. Bruto y Tara en la parte superior -->
                     <div class="grid-2">
                         <div class="form-group">
-                            <label>Comprador / Lote</label>
-                            <select id="p-comprador" style="height:70px; font-size:1.3rem;">
-                                ${compOpts || '<option value="">Sin comprador registrado</option>'}
-                            </select>
+                            <label>Bruto (kg)</label>
+                            <input type="number" id="p-bruto" value="${d.bruto || d.pesoBruto || ''}" placeholder="0.0" step="0.1" required style="font-size:2.5rem; height:80px; font-weight:bold; color:var(--p-cork); text-align:center;">
                         </div>
                         <div class="form-group">
-                            <label>Zona / Parcela</label>
-                            <select id="p-zona" style="height:70px; font-size:1.3rem;">
-                                ${zonas.map(z => `<option value="${z.id}" ${curZona == z.id ? 'selected' : ''}>${Utils.escapeHtml(z.nombre)}</option>`).join('')}
-                            </select>
+                            <label>Tara (kg)</label>
+                            <input type="number" id="p-tara" value="${d.tara || 0}" step="0.1" required style="font-size:2.5rem; height:80px; text-align:center;">
                         </div>
                     </div>
                     
-                    <div class="grid-3" style="gap:15px;">
-                        <div class="form-group">
-                            <label>Nº Saca</label>
-                            <input type="number" id="p-saca" value="${p.saca}" required style="font-size:2rem; height:80px; text-align:center;">
-                        </div>
-                        <div class="form-group">
-                            <label>Calidad</label>
-                            <select id="p-calidad" style="font-size:1.5rem; height:80px; text-align:center;">
-                                <option value="primera" ${p.calidad === 'primera' ? 'selected' : ''}>⭐ 1ª Calidad</option>
-                                <option value="bornizo" ${p.calidad === 'bornizo' ? 'selected' : ''}>🟡 Bornizo</option>
-                                <option value="refugo" ${p.calidad === 'refugo' ? 'selected' : ''}>🔴 Refugo</option>
-                            </select>
-                        </div>
-                    </div>
+                    <div id="p-validation-msg" style="text-align:center; font-weight:bold; margin-top:5px; margin-bottom:15px;">&nbsp;</div>
 
-                    <div class="peso-container card" style="background: rgba(0,0,0,0.2); padding: 25px; margin-top: 10px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1);">
-                        <div class="grid-2">
-                            <div class="form-group">
-                                <label style="font-size:1.2rem;">Peso BRUTO (kg)</label>
-                                <input type="number" id="p-bruto" step="0.1" value="${p.bruto}" required style="font-size: 2.5rem; height: 90px; color: var(--p-cork); font-weight:800; background:#fff; text-align:right; padding-right:20px;">
-                            </div>
-                            <div class="form-group">
-                                <label style="font-size:1.2rem;">Tara Palet/Saca (kg)</label>
-                                <input type="number" id="p-tara" step="0.1" value="${p.tara}" required style="font-size: 2.5rem; height: 90px; text-align:right; padding-right:20px;">
-                            </div>
-                        </div>
-                        <div class="resultado-neto" style="margin-top:20px; text-align:center; padding-top:20px; border-top:1px dashed rgba(255,255,255,0.2);">
-                            <span style="font-size:1.2rem; color:var(--text-s);">NETO ESTIMADO</span><br>
-                            <span id="p-neto-calc" style="font-size: 3rem; font-weight: 900; color: #10b981;">0.00</span> <span id="p-neto-lbl" style="font-size:1.5rem; color:#10b981;">Quintales</span>
-                            <div id="p-validation-msg" style="margin-top:10px; font-weight:bold;">&nbsp;</div>
-                        </div>
-                    </div>
-
+                    <!-- 2. Zona -->
                     <div class="form-group">
-                        <label>Notas / Observaciones</label>
-                        <textarea id="p-obs" rows="2">${Utils.escapeHtml(p.observacion || '')}</textarea>
+                        <label>Zona / Parcela</label>
+                        <select id="p-zona" style="height:60px; font-size:1.2rem;">
+                            ${zonas.map(z => `<option value="${z.id}" ${curZona == z.id ? 'selected' : ''}>${Utils.escapeHtml(z.nombre)}</option>`).join('')}
+                        </select>
                     </div>
 
-                    <div style="display: flex; gap: 10px; margin-top: 30px;">
-                        <button type="submit" class="btn btn-primary" style="flex: 2; height: 70px; font-size: 1.3rem;">💾 GUARDAR PESADA</button>
-                        ${isEdit ? `<button type="button" class="btn btn-danger" data-action="App._deletePesada" data-id="${id}">🗑️ Eliminar Pesada</button>` : ''}
+                    <!-- 3. Selector de Calidad -->
+                    <div class="form-group">
+                        <label>Calidad del Corcho</label>
+                        <div class="quality-selector" style="display:flex; gap:10px;">
+                            <button type="button" class="quality-btn ${d.calidad === 'primera' ? 'selected' : ''}" data-quality="primera" style="flex:1; height:60px; font-size:1.2rem;">⭐ 1ª</button>
+                            <button type="button" class="quality-btn ${d.calidad === 'bornizo' ? 'selected' : ''}" data-quality="bornizo" style="flex:1; height:60px; font-size:1.2rem;">🟡 Bo</button>
+                            <button type="button" class="quality-btn ${d.calidad === 'refugo' ? 'selected' : ''}" data-quality="refugo" style="flex:1; height:60px; font-size:1.2rem;">🔴 Re</button>
+                        </div>
+                    </div>
+
+                    <!-- 4. Datos calculados: Neto y Quintales -->
+                    <div class="card stat-grid" style="display:flex; justify-content:space-around; background: rgba(255,255,255,0.03); margin: 15px 0;">
+                        <div style="text-align:center;">
+                            <div id="calc-neto" class="stat-value" style="font-size: 1.8rem; color: var(--accent); font-weight:900;">0.0</div>
+                            <div class="stat-label" style="color:var(--text-s);">Neto (kg)</div>
+                        </div>
+                        <div style="text-align:center;">
+                            <div id="calc-q" class="stat-value" style="font-size: 1.8rem; color: var(--p-cork); font-weight:900;">0.00</div>
+                            <div class="stat-label" style="color:var(--text-s);">Quintales</div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Fecha y Nº Saca al final -->
+                    <div class="grid-2">
+                        <div class="form-group"><label>Fecha</label><input type="date" id="p-fecha" value="${d.fecha}"></div>
+                        <div class="form-group"><label>Nº Saca</label><input type="number" id="p-saca" value="${d.saca}"></div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button type="submit" class="btn btn-primary" style="width:100%; height:70px; font-size:1.3rem;">💾 Guardar Pesada</button>
+                        ${isEdit ? `<button type="button" class="btn btn-danger mt-1" data-action="App._deletePesada" data-id="${id}" style="width:100%; height:60px;">🗑️ Eliminar</button>` : ''}
+                        <button type="button" class="btn btn-outline mt-1" data-action="back" style="width:100%; height:60px;">Cancelar</button>
                     </div>
                 </form>
             </div>
         `;
 
-        const form = document.getElementById('form-pesada');
-        const bruto = document.getElementById('p-bruto');
-        const tara = document.getElementById('p-tara');
-        const calcNeto = () => {
-            const b = parseFloat(bruto.value) || 0; 
-            const t = parseFloat(tara.value) || 0;
-            const config = Fincas._activeCache; 
+        const inB = document.getElementById('p-bruto'), inT = document.getElementById('p-tara');
+        const valMsg = document.getElementById('p-validation-msg');
+        
+        const up = async () => {
+            const b = parseFloat(inB.value) || 0;
+            const t = parseFloat(inT.value) || 0;
+            const config = Fincas._activeCache || await Fincas.getActive();
             const factor = config ? config.factorQuintal : 46;
             const n = b - t;
-            const netoEl = document.getElementById('p-neto-calc');
-            const netoLbl = document.getElementById('p-neto-lbl');
-            const valMsg = document.getElementById('p-validation-msg');
+            const netoEl = document.getElementById('calc-neto');
+            const qEl = document.getElementById('calc-q');
             
             if (b > 0 && t > b) {
-                netoEl.textContent = "0.00";
+                netoEl.textContent = "0.0";
+                qEl.textContent = "0.00";
                 netoEl.style.color = "#ef4444";
-                netoLbl.style.color = "#ef4444";
+                qEl.style.color = "#ef4444";
                 valMsg.textContent = "⚠️ La tara es mayor que el peso bruto";
                 valMsg.style.color = "#ef4444";
             } else {
-                netoEl.textContent = Math.max(0, n / factor).toFixed(2);
+                netoEl.textContent = Math.max(0, n).toFixed(1);
+                qEl.textContent = Math.max(0, n / factor).toFixed(2);
                 if (b > 1500) {
                     netoEl.style.color = "#eab308";
-                    netoLbl.style.color = "#eab308";
+                    qEl.style.color = "#eab308";
                     valMsg.textContent = "⚠️ Peso inusualmente alto (>1500kg)";
                     valMsg.style.color = "#eab308";
                 } else {
-                    netoEl.style.color = "#10b981";
-                    netoLbl.style.color = "#10b981";
+                    netoEl.style.color = "var(--accent)";
+                    qEl.style.color = "var(--p-cork)";
                     valMsg.innerHTML = "&nbsp;";
                 }
             }
         };
-        bruto.addEventListener('input', calcNeto); 
-        tara.addEventListener('input', calcNeto);
-        if (isEdit) calcNeto();
-        
-        form.onsubmit = async (e) => {
+        inB.addEventListener('input', up);
+        inT.addEventListener('input', up);
+        up();
+
+        let selQ = d.calidad || 'bornizo';
+        const upQ = () => document.querySelectorAll('.quality-btn').forEach(b => {
+            if(b.dataset.quality === selQ) b.classList.add('selected');
+            else b.classList.remove('selected');
+        });
+        document.querySelectorAll('.quality-btn').forEach(b => b.onclick = () => { selQ = b.dataset.quality; upQ(); });
+        upQ();
+
+        document.getElementById('form-pesada').onsubmit = async (e) => {
             e.preventDefault();
-            const b = parseFloat(bruto.value), t = parseFloat(tara.value);
-            if (b <= t) { Utils.toastError("Bruto debe ser mayor que tara"); return; }
+            const dt = document.getElementById('p-fecha').value;
+            let finalDate = new Date().getTime();
+            if (dt) {
+                const parts = dt.split('-');
+                finalDate = new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0).getTime();
+            }
             
-            const config = await Fincas.getActive();
-            const factor = config ? config.factorQuintal : 46;
+            const b = parseFloat(inB.value) || 0;
+            const t = parseFloat(inT.value) || 0;
             const kg = b - t;
+            const config = Fincas._activeCache || await Fincas.getActive();
+            const factor = config ? config.factorQuintal : 46;
             const q = kg / factor;
             
             const dp = {
-                saca: parseInt(document.getElementById('p-saca').value),
-                bruto: b, tara: t, kg: kg, quintales: q,
-                calidad: document.getElementById('p-calidad').value,
-                observacion: document.getElementById('p-obs').value,
-                compradorId: document.getElementById('p-comprador').value,
+                id: isEdit ? parseInt(id) : undefined,
                 zonaId: parseInt(document.getElementById('p-zona').value),
-                fecha: isEdit ? p.fecha : Date.now()
+                fecha: finalDate,
+                saca: parseInt(document.getElementById('p-saca').value),
+                bruto: b,
+                tara: t,
+                kg: kg,
+                quintales: q,
+                calidad: selQ
             };
             
             dp.pesadasPorCalidad = { primera: {kg:0, quintales:0}, bornizo: {kg:0, quintales:0}, refugo: {kg:0, quintales:0} };
-            dp.pesadasPorCalidad[dp.calidad] = { kg: kg, quintales: q };
+            dp.pesadasPorCalidad[selQ] = { kg: kg, quintales: q };
 
-            if (isEdit) { dp.id = parseInt(id); await Pesadas.save(dp); }
-            else await Pesadas.save(dp);
-            
+            await Pesadas.save(dp);
             Utils.toast('✅ Guardada correctamente');
-            App.route();
+            App.route('/lista');
         };
     },
 
