@@ -101,7 +101,11 @@ export const Auth = {
     async signInWithGoogle() {
         try {
             if (!window.isNative) {
-                GoogleAuth.initialize();
+                GoogleAuth.initialize({
+                    clientId: '186318731165-2vbt730ihgdejrgq19ut71gom7lucvc6.apps.googleusercontent.com',
+                    scopes: ['profile', 'email', 'https://www.googleapis.com/auth/drive.file'],
+                    grantOfflineAccess: true
+                });
             }
             const googleUser = await GoogleAuth.signIn();
             console.log("[Auth] Google SignIn exitoso:", googleUser.email);

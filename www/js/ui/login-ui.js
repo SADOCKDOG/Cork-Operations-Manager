@@ -12,14 +12,14 @@ export const LoginUI = {
                     
                     const user = await Auth.signInWithGoogle();
                     
-                    Utils.showToast(`Bienvenido, ${user.nombre}`, 'success');
+                    Utils.toast(`Bienvenido, ${user.nombre}`);
                     LoginUI.hideLoginShowApp();
                     
                     // Dispatch event so app can re-render if needed
                     window.dispatchEvent(new CustomEvent('auth_changed'));
                 } catch (error) {
                     console.error('Error en Login UI:', error);
-                    Utils.showToast('Error al iniciar sesión: ' + error.message, 'error');
+                    Utils.toastError(error.message || 'Error al iniciar sesión');
                     btnLogin.disabled = false;
                     btnLogin.innerHTML = 'Ingresar con Google';
                 }
