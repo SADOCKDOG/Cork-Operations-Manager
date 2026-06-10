@@ -1,4 +1,6 @@
-const Fincas = {
+import { db, dbPromise } from './db.js';
+
+export const Fincas = {
     async list() {
         return db.getAll('fincas');
     },
@@ -61,4 +63,3 @@ const Fincas = {
     }
 };
 
-window.Fincas = Fincas;

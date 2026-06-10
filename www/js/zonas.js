@@ -1,4 +1,8 @@
-const Zonas = {
+import { db, dbPromise } from './db.js';
+import { Fincas } from './fincas.js';
+import { parsePdfCatastro } from './pdf-import.js';
+
+export const Zonas = {
     async list() {
         const activeFincaId = await Fincas.getActiveId();
         if (!activeFincaId) return [];
@@ -111,7 +115,7 @@ const Zonas = {
                 }
                 const buffer = await response.arrayBuffer();
                 const file = new File([buffer], filename, { type: 'application/pdf' });
-                const zonaData = await window.parsePdfCatastro(file);
+                const zonaData = await parsePdfCatastro(file);
                 
                 if (!zonaData || !zonaData.refCatastral) {
                     console.warn(`Datos inválidos en: ${filename}`);
@@ -150,4 +154,3 @@ const Zonas = {
     }
 };
 
-window.Zonas = Zonas;

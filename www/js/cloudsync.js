@@ -1,10 +1,15 @@
+import { db, dbPromise } from './db.js';
+import { Fincas } from './fincas.js';
+import { Pesadas } from './pesadas.js';
+import { Zonas } from './zonas.js';
+
 /**
  * CloudSync.js - Sincronización con servidor remoto (v5.9.3)
  * Mantiene datos sincronizados entre dispositivos usando un backend remoto
  * NOTA: Requiere backend. Incluye simulación para desarrollo.
  */
 
-const CloudSync = {
+export const CloudSync = {
     _config: {
         backendUrl: localStorage.getItem('cloudSync_backendUrl') || 'https://api.pesadas-corcho.app',
         userId: localStorage.getItem('cloudSync_userId') || null,
@@ -351,4 +356,3 @@ const CloudSync = {
     }
 };
 
-window.CloudSync = CloudSync;

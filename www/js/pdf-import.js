@@ -176,7 +176,7 @@ async function renderPageToBlob(pdf, pageNum = 1) {
   }
 }
 
-async function parsePdfCatastro(file) {
+export async function parsePdfCatastro(file) {
   const buf = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
   const lines = await extractLines(pdf);
@@ -206,4 +206,3 @@ async function parsePdfCatastro(file) {
     croquisBlob: data.croquisBlob
   };
 }
-window.parsePdfCatastro = parsePdfCatastro;

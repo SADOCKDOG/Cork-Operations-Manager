@@ -206,4 +206,14 @@ Requisitos básicos: Node.js, npm, Capacitor. Pasos resumidos:
   📩 <a href="mailto:soporte.sdogfarm@gmail.com">soporte.sdogfarm@gmail.com</a></p>
 </div>
 
-<p align="center"><em>Documento actualizado con estructura funcional: descripción detallada de módulos seguida de las imágenes relacionadas.</em></p>
+---
+
+## 🆕 Novedades en la versión 6.3.1 (Refactorización Modular)
+
+* **Arquitectura Modular (ES6)**: Se han eliminado las dependencias del ámbito global (`window.*`), dividiendo la lógica en módulos importables para mayor seguridad, rendimiento y mantenibilidad.
+* **Empaquetador Vite**: Integración completa con Vite para la compilación, unificando dependencias, minificando el código fuente y optimizando el tamaño del proyecto.
+* **Resolución de Assets**: Reestructuración del directorio de imágenes (`public/icons`) para garantizar su correcta resolución en la aplicación final compilada con Capacitor.
+* **Exportación PDF**: Corrección de estilos CSS en los reportes (eliminación de fondos oscuros degradados en las listas) y restauración de la cabecera verde de "Propietario / Comprador".
+* **Exportación Excel Nativa**: Se han reprogramado las exportaciones a Excel (Balance y Liquidación). En Android nativo, ahora se genera el archivo de forma interna en caché y se invoca directamente el menú de "Compartir" (Share API) garantizando su accesibilidad en todos los dispositivos móviles.
+
+<p align="center"><em>Documento actualizado con estructura funcional y listado de novedades técnicas.</em></p>

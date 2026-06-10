@@ -1,9 +1,11 @@
+import { db, dbPromise } from './db.js';
+
 /**
  * Auth.js - Sistema de Autenticación Multi-Usuario (v5.9.3)
  * Gestión de usuarios, roles y permisos con auditoría
  */
 
-const Auth = {
+export const Auth = {
     _currentUser: null,
     _sessionToken: null,
 
@@ -353,4 +355,3 @@ const Auth = {
     }
 };
 
-window.Auth = Auth;

@@ -1,9 +1,12 @@
+import { db, dbPromise } from './db.js';
+import { Fincas } from './fincas.js';
+
 /**
  * Gastos.js - Gestión de Gastos de Explotación (v5.9.5)
  * Control de costes de campaña: Mano de obra, transporte, etc.
  */
 
-const Gastos = {
+export const Gastos = {
     /**
      * Listar todos los gastos de la finca activa
      */
@@ -77,4 +80,3 @@ const Gastos = {
     }
 };
 
-window.Gastos = Gastos;

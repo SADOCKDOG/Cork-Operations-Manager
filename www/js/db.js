@@ -1,4 +1,4 @@
-const { openDB } = self.idb;
+import { openDB } from './idb-local.js';
 
 const DB_NAME = 'CorchoDB';
 const DB_VERSION = 7;
@@ -189,19 +189,19 @@ async function migrateToMultiFinca(database) {
     console.log("[Migration] Migración finalizada con éxito.");
 }
 
-window.dbPromise = initDB();
+export const dbPromise = initDB();
 
-const db = {
-    async get(store, key) { const d = await window.dbPromise; return d.get(store, key); },
-    async getAll(store) { const d = await window.dbPromise; return d.getAll(store); },
-    async getAllFromIndex(store, index, query) { const d = await window.dbPromise; return d.getAllFromIndex(store, index, query); },
-    async add(store, val) { const d = await window.dbPromise; return d.add(store, val); },
-    async put(store, val) { const d = await window.dbPromise; return d.put(store, val); },
-    async delete(store, key) { const d = await window.dbPromise; return d.delete(store, key); },
-    async clear(store) { const d = await window.dbPromise; return d.clear(store); },
-    async count(store) { const d = await window.dbPromise; return d.count(store); },
+export const db = {
+    async get(store, key) { const d = await dbPromise; return d.get(store, key); },
+    async getAll(store) { const d = await dbPromise; return d.getAll(store); },
+    async getAllFromIndex(store, index, query) { const d = await dbPromise; return d.getAllFromIndex(store, index, query); },
+    async add(store, val) { const d = await dbPromise; return d.add(store, val); },
+    async put(store, val) { const d = await dbPromise; return d.put(store, val); },
+    async delete(store, key) { const d = await dbPromise; return d.delete(store, key); },
+    async clear(store) { const d = await dbPromise; return d.clear(store); },
+    async count(store) { const d = await dbPromise; return d.count(store); },
     async clearAllData() {
-        const d = await window.dbPromise;
+        const d = await dbPromise;
         await d.clear('pesadas');
         await d.clear('zonas');
         await d.clear('fincas');
@@ -212,4 +212,3 @@ const db = {
     }
 };
 
-window.db = db;

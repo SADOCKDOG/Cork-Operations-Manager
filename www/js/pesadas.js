@@ -1,4 +1,7 @@
-const Pesadas = {
+import { db, dbPromise } from './db.js';
+import { Fincas } from './fincas.js';
+
+export const Pesadas = {
     async list() {
         const fincaId = await Fincas.getActiveId();
         if (!fincaId) return [];
@@ -71,4 +74,3 @@ const Pesadas = {
     }
 };
 
-window.Pesadas = Pesadas;

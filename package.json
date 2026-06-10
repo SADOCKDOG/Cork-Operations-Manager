@@ -4,13 +4,17 @@
     "private": true,
     "description": "PWA para la gestión de pesadas de corcho.",
     "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
         "cap:sync": "npx cap sync android",
         "cap:open": "npx cap open android"
     },
     "devDependencies": {
         "@capacitor/android": "^5.0.0",
         "@capacitor/cli": "^5.0.0",
-        "@capacitor/core": "^5.0.0"
+        "@capacitor/core": "^5.0.0",
+        "vite": "^8.0.16"
     },
     "dependencies": {
         "@capacitor/device": "^5.0.0",

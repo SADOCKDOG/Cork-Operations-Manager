@@ -1,9 +1,13 @@
+import { Pesadas } from './pesadas.js';
+import { Reportes } from './reportes.js';
+import { Zonas } from './zonas.js';
+
 /**
  * Charts.js - Visualización de datos con Chart.js (v5.9.3)
  * Gráficos para reportes: tendencias, calidades, zonas, económicos
  */
 
-const Charts = {
+export const Charts = {
     // Referencias a instancias de Chart para destruirlas al cambiar de vista
     _instances: {},
 
@@ -307,4 +311,3 @@ const Charts = {
     }
 };
 
-window.Charts = Charts;

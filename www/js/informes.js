@@ -1,4 +1,6 @@
-const Informes = {
+import { Pesadas } from './pesadas.js';
+
+export const Informes = {
     async getDailyData(rango = 30) {
         const pesadas = await Pesadas.list();
         const hoy = new Date();
@@ -30,4 +32,3 @@ const Informes = {
         });
     }
 };
-window.Informes = Informes;

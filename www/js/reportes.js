@@ -1,4 +1,9 @@
-class Reportes {
+import { Fincas } from './fincas.js';
+import { Gastos } from './gastos.js';
+import { Pesadas } from './pesadas.js';
+import { Zonas } from './zonas.js';
+
+export class Reportes {
   static async generarReporteGlobalCampaña() {
     const pesadas = await Pesadas.list();
     const zonas = await Zonas.list();
@@ -169,4 +174,3 @@ class Reportes {
   }
 }
 
-window.Reportes = Reportes;

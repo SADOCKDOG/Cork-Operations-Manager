@@ -1,9 +1,11 @@
+import { db, dbPromise } from './db.js';
+
 /**
  * Precios.js - Sistema de Precios de Mercado (v5.9.3)
  * Gestión de precios con actualización automática y caché
  */
 
-const Precios = {
+export const Precios = {
     // Fuentes oficiales de referencia (Lonjas y Observatorios)
     _apiSources: {
         'andalucia': 'https://www.juntadeandalucia.es/agriculturaypesca/observatorio/servlet/frontController?ec=forestales',
@@ -323,4 +325,3 @@ const Precios = {
     }
 };
 
-window.Precios = Precios;
