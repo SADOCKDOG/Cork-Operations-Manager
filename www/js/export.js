@@ -4,6 +4,7 @@ import { Fincas } from './fincas.js';
 import { Pesadas } from './pesadas.js';
 import { App } from './app.js';
 import { Reportes } from './reportes.js';
+import { Crypto } from './core/crypto.js';
 
 /**
  * Export.js - Motor de Backup y Restauración (Version 6.1.9 - Enhanced Robustness)
@@ -12,7 +13,6 @@ import { Reportes } from './reportes.js';
 export const Export = {
     async exportBackup(fincasIds = null) {
         try {
-            Utils.toast('Generando backup...');
             const allFincas = await Fincas.list();
             const fincasToExport = fincasIds 
                 ? allFincas.filter(f => fincasIds.includes(f.id))
@@ -22,6 +22,11 @@ export const Export = {
                 Utils.toastError("No hay fincas para exportar");
                 return;
             }
+
+            const pwd = prompt("Introduce una contraseña para proteger la copia (Déjalo en blanco para no cifrar):", "");
+            if (pwd === null) return; // Canceló
+
+            Utils.toast('Generando backup...');
 
             const exportData = {
                 version: '6.1.9',
@@ -52,9 +57,22 @@ export const Export = {
                 });
             }
 
-            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            let finalDataString = JSON.stringify(exportData, null, 2);
+
+            if (pwd.trim().length > 0) {
+                const encryptedPayload = await Crypto.encrypt(finalDataString, pwd.trim());
+                const secureWrapper = {
+                    encrypted: true,
+                    app: "Cork Manager",
+                    data: encryptedPayload
+                };
+                finalDataString = JSON.stringify(secureWrapper, null, 2);
+            }
+
+            const blob = new Blob([finalDataString], { type: 'application/json' });
             const prefix = (fincasToExport.length === 1) ? `Backup_${fincasToExport[0].nombre.replace(/\s+/g, '_')}` : "Backup_Total";
-            const fileName = `${prefix}_${new Date().toISOString().slice(0, 10)}.json`;
+            const sufix = pwd.trim().length > 0 ? "_Protegido" : "";
+            const fileName = `${prefix}_${new Date().toISOString().slice(0, 10)}${sufix}.json`;
             
             if (window.isNative && window.Capacitor) {
                 await this._exportNative(blob, fileName);
@@ -71,7 +89,19 @@ export const Export = {
     async parseBackupFile(file) {
         try {
             const content = await file.text();
-            const data = JSON.parse(content);
+            let data = JSON.parse(content);
+
+            if (data.encrypted === true && data.data) {
+                const pwd = prompt("Esta copia de seguridad está encriptada. Por favor, introduce la contraseña:", "");
+                if (pwd === null || pwd.trim() === "") throw new Error("Contraseña vacía o cancelada.");
+                
+                try {
+                    const decryptedStr = await Crypto.decrypt(data.data, pwd.trim());
+                    data = JSON.parse(decryptedStr);
+                } catch (e) {
+                    throw new Error("Contraseña incorrecta o archivo corrupto.");
+                }
+            }
 
             // Normalización: Asegurar que siempre devolvemos un objeto con .fincas[]
             if (data.fincas && Array.isArray(data.fincas)) {

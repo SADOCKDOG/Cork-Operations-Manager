@@ -35,11 +35,12 @@ export const Zonas = {
     },
 
     async delete(id) {
-        const pesadas = await db.getAllFromIndex('pesadas', 'zonaId', id);
+        const numId = Number(id);
+        const pesadas = await db.getAllFromIndex('pesadas', 'zonaId', numId);
         if (pesadas.length > 0) {
             throw new Error('No se puede borrar la zona porque tiene pesadas asociadas.');
         }
-        return db.delete('zonas', id);
+        return db.delete('zonas', numId);
     },
 
     async getStats() {

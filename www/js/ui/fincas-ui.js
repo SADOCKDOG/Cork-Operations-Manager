@@ -22,7 +22,7 @@ export const FincasUI = {
                 </button>
                 <button class="report-select-btn theme-econ" data-action="Export.exportBackup" style="background: linear-gradient(135deg, rgba(44,62,80,0.5) 0%, rgba(76,161,175,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(44,62,80,0.15); min-height: 80px; padding: 10px;">
                     <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">📄</span>
-                    <strong style="font-size:0.85rem;">Exportar Todo</strong>
+                    <strong style="font-size:0.85rem;">Exportar Todo 🔒</strong>
                 </button>
             </div>
 
