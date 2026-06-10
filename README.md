@@ -200,13 +200,20 @@ Requisitos básicos: Node.js, npm, Capacitor. Pasos resumidos:
 
   <h3>📄 Licencia y Soporte</h3>
   <p>© 2026 Cork Manager. Todos los derechos reservados.<br>
-  Licencia de uso profesional v6.3.1</p>
+  Licencia de uso profesional v6.3.2</p>
 
   <p>Para soporte técnico o consultas comerciales:<br>
   📩 <a href="mailto:soporte.sdogfarm@gmail.com">soporte.sdogfarm@gmail.com</a></p>
 </div>
 
 ---
+
+## 🆕 Novedades en la versión 6.3.2 (Optimización de Rendimiento)
+
+* **Paginación Inteligente**: Mejora drástica de los tiempos de carga en el listado de pesadas, renderizando bloques progresivos para evitar cuelgues en explotaciones con grandes volúmenes de datos.
+* **Caché Matemático (Memoización)**: El motor interno de cálculo del Dashboard ahora memoriza y almacena en caché el sumatorio total de quintales, evitando la iteración profunda del historial completo si no han existido cambios recientes.
+* **Spinners y Feedback Visual**: Integración de indicadores de carga en exportaciones complejas (Excel/PDF) y procesado de archivos catastrales SIGPAC.
+* **Mejoras en Tablas y Reportes**: Las tablas de los informes ahora son responsivas (`scroll horizontal`) adaptándose al 100% en pantallas móviles pequeñas sin recortar datos. El PDF del panel de gráficos exporta el lienzo limpio en color blanco.
 
 ## 🆕 Novedades en la versión 6.3.1 (Refactorización Modular)
 
