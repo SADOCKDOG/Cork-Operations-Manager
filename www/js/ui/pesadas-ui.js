@@ -155,6 +155,14 @@ export const PesadasUI = {
         };
     },
 
+    async _deletePesada(id) {
+        if(confirm('¿Estás seguro de que deseas eliminar esta pesada?')) {
+            await Pesadas.delete(id);
+            Utils.toast('🗑️ Pesada eliminada');
+            window.location.hash = '#/lista';
+        }
+    },
+
     async renderLista() {
         const pesadas = await Pesadas.list();
         const zonas = await Zonas.list();
