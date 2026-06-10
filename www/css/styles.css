@@ -421,10 +421,12 @@ input:focus::placeholder { color: rgba(160, 160, 160, 0.3); }
 /* TABLAS DE INFORMES (RESPONSIVAS) */
 .reporte-table { 
     width: 100%; 
+    min-width: max-content;
     border-collapse: collapse; 
     color: var(--text-p); 
     font-size: 0.95rem;
     table-layout: auto;
+    white-space: nowrap;
 }
 .reporte-table th { 
     text-align: left; 
@@ -462,6 +464,7 @@ input:focus::placeholder { color: rgba(160, 160, 160, 0.3); }
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     margin-bottom: 15px;
+    display: block;
 }
 
 /* DUAL ENTITY GRID PARA INFORMES */
