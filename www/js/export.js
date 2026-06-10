@@ -1,3 +1,4 @@
+import { Utils } from './core/utils.js';
 import { db, dbPromise } from './db.js';
 import { Fincas } from './fincas.js';
 import { Pesadas } from './pesadas.js';
@@ -11,14 +12,14 @@ import { Reportes } from './reportes.js';
 export const Export = {
     async exportBackup(fincasIds = null) {
         try {
-            App.toast('Generando backup...');
+            Utils.toast('Generando backup...');
             const allFincas = await Fincas.list();
             const fincasToExport = fincasIds 
                 ? allFincas.filter(f => fincasIds.includes(f.id))
                 : allFincas;
 
             if (fincasToExport.length === 0) {
-                App.toastError("No hay fincas para exportar");
+                Utils.toastError("No hay fincas para exportar");
                 return;
             }
 
@@ -63,8 +64,8 @@ export const Export = {
                 a.href = url; a.download = fileName;
                 document.body.appendChild(a); a.click(); document.body.removeChild(a);
             }
-            App.toast('✅ Backup exportado');
-        } catch (error) { console.error(error); App.toastError('Fallo al exportar'); }
+            Utils.toast('✅ Backup exportado');
+        } catch (error) { console.error(error); Utils.toastError('Fallo al exportar'); }
     },
 
     async parseBackupFile(file) {
@@ -195,7 +196,7 @@ export const Export = {
                 contenidoHtml = clone.innerHTML;
             }
         } else { const contRep = document.getElementById('cont-rep'); contenidoHtml = contRep ? contRep.innerHTML : ""; }
-        if (!contenidoHtml) { App.toastError("No hay contenido"); return; }
+        if (!contenidoHtml) { Utils.toastError("No hay contenido"); return; }
         const printContainer = document.createElement('div');
         printContainer.style.position = 'absolute'; printContainer.style.left = '-9999px'; printContainer.style.width = '800px';
         printContainer.innerHTML = contenidoHtml; document.body.appendChild(printContainer);
@@ -205,7 +206,7 @@ export const Export = {
         const comp = finca.comprador || {};
         const plantilla = `<div class="pdf-export-container" style="font-family:Helvetica,Arial; padding:10mm; background:#fff; color:#333; width:800px;"><div style="text-align:center; margin-bottom:8mm;"><img src="icons/logo-header.png" style="width:55mm; margin:0 auto;"></div><div style="text-align:center; margin-bottom:10mm;"><h1 style="font-size:18pt; border-bottom:2pt solid #a0673a; display:inline-block; padding:0 10mm 2mm 10mm;">${titulo.toUpperCase()}</h1><div style="font-size:8pt; color:#999; margin-top:3mm;">Documento Oficial • Generado el ${ahora}</div></div><div class="pdf-content" style="padding-bottom:20mm;">${printContainer.innerHTML}</div><div style="margin-top:10mm; border-top:0.5pt solid #eee; padding-top:5mm; text-align:center; font-size:7pt; color:#bbb;">Cork Manager v6.3.1 • Liquidación Oficial • Sdog Farm Software Factory</div></div><style>.pdf-export-container * { background:transparent !important; color:#333 !important; box-shadow:none !important; } .pdf-export-container table { width:100%; border-collapse:collapse; margin:5mm 0; border:0.1pt solid #eee; page-break-inside:auto; } .pdf-export-container tr { page-break-inside:avoid; } .pdf-export-container th { background:#fafafa !important; border-bottom:0.8pt solid #a0673a !important; text-align:left; padding:3mm 2mm; font-size:8pt; font-weight:bold; text-transform:uppercase; color:#a0673a !important; } .pdf-export-container td { border-bottom:0.1pt solid #f0f0f0 !important; padding:3mm 2mm; font-size:9pt; } .pdf-export-container .card, .pdf-export-container .card-finance, .pdf-export-container .entity-card { background:#fff !important; border:0.5pt solid #eee !important; padding:6mm; margin-bottom:8mm; border-radius:2mm; page-break-inside:avoid; } .pdf-export-container h3, .pdf-export-container h4 { color:#000 !important; font-size:10pt; margin-bottom:5mm; text-transform:uppercase; border-left:4pt solid #a0673a; padding-left:3mm; } .pdf-export-container .total-neto { font-size:15pt !important; color:#4a7c2c !important; font-weight:900 !important; } .pdf-export-container .q-pill { display:inline-block; padding:1mm 2mm; border:0.2pt solid #ccc !important; border-radius:1mm; font-size:8pt; font-weight:bold; } .pdf-export-container img { max-width:100%; height:auto; display:block; margin:5mm auto; }</style>`;
         const opt = { margin:[15,10,20,10], filename:'Cork_'+tipo+'_'+finca.nombre.replace(/\s/g,'_')+'.pdf', image:{type:'jpeg',quality:1}, html2canvas:{scale:2, logging:false, useCORS:true, width:800}, jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}, pagebreak:{mode:['avoid-all','css','legacy']} };
-        try { if (window.isNative) await this._exportNativePDF(tipo, plantilla); else await html2pdf().set(opt).from(plantilla).toPdf().get('pdf').then(() => document.body.removeChild(printContainer)).save(); } catch (e) { App.toastError("Error al generar PDF"); }
+        try { if (window.isNative) await this._exportNativePDF(tipo, plantilla); else await html2pdf().set(opt).from(plantilla).toPdf().get('pdf').then(() => document.body.removeChild(printContainer)).save(); } catch (e) { Utils.toastError("Error al generar PDF"); }
     },
 
     async _exportNativePDF(tipo, html) {
@@ -222,7 +223,7 @@ export const Export = {
         const r = await Reportes.generarReporteGlobalCampaña();
         const finca = await Fincas.getActive();
         if(!r || !finca) return;
-        if (!window.XLSX) { App.toastError("La librería Excel no está cargada."); return; }
+        if (!window.XLSX) { Utils.toastError("La librería Excel no está cargada."); return; }
         const wb = XLSX.utils.book_new();
         const wsData = [
             ["Finca", finca.nombre],
@@ -251,7 +252,7 @@ export const Export = {
         const r = await Reportes.generarReporteEconomicoGlobal();
         const finca = await Fincas.getActive();
         if(!r || !finca) return;
-        if (!window.XLSX) { App.toastError("La librería Excel no está cargada."); return; }
+        if (!window.XLSX) { Utils.toastError("La librería Excel no está cargada."); return; }
         const wb = XLSX.utils.book_new();
         const wsData = [
             ["Finca", finca.nombre],
@@ -293,7 +294,7 @@ export const Export = {
                 await Capacitor.Plugins.Share.share({ url: saved.uri });
             } catch (e) {
                 console.error("Error guardando Excel nativo", e);
-                App.toastError("Error guardando Excel");
+                Utils.toastError("Error guardando Excel");
             }
         } else {
             XLSX.writeFile(wb, fileName);
