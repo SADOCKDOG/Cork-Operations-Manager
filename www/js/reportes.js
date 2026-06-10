@@ -24,8 +24,8 @@ export class Reportes {
     
     pesadas.forEach(p => {
       ['primera', 'bornizo', 'refugo'].forEach(cal => {
-        const kg = p.pesadasPorCalidad[cal]?.kg || 0;
-        const q = p.pesadasPorCalidad[cal]?.quintales || 0;
+        const kg = p.pesadasPorCalidad?.[cal]?.kg || 0;
+        const q = p.pesadasPorCalidad?.[cal]?.quintales || 0;
         if (kg > 0) {
           totalesGlobales[cal].kg += kg;
           totalesGlobales[cal].quintales += q;
@@ -57,8 +57,8 @@ export class Reportes {
 
     pesadasZona.forEach(p => {
       ['primera', 'bornizo', 'refugo'].forEach(calidad => {
-        const kg = p.pesadasPorCalidad[calidad]?.kg || 0;
-        const q = p.pesadasPorCalidad[calidad]?.quintales || 0;
+        const kg = p.pesadasPorCalidad?.[calidad]?.kg || 0;
+        const q = p.pesadasPorCalidad?.[calidad]?.quintales || 0;
         if (kg > 0) {
           totales[calidad].kg += kg;
           totales[calidad].quintales += q;
@@ -87,7 +87,7 @@ export class Reportes {
     
     pesadas.forEach(p => {
       ['primera', 'bornizo', 'refugo'].forEach(cal => {
-        const qOriginal = p.pesadasPorCalidad[cal]?.quintales || 0;
+        const qOriginal = p.pesadasPorCalidad?.[cal]?.quintales || 0;
         if (qOriginal > 0) {
             totales[cal].bruto += qOriginal;
             const merma = qOriginal * oreoFactor;
@@ -127,7 +127,7 @@ export class Reportes {
     const finca = await Fincas.getActive();
     if (!finca) return null;
 
-    const precios = finca.precios;
+    const precios = finca.precios || {};
     const oreoPorc = finca.porcentajeOreo || 0;
     const oreoFactor = oreoPorc / 100;
     if (!['primera', 'bornizo', 'refugo'].includes(calidad)) return null;
@@ -139,7 +139,7 @@ export class Reportes {
     
     pesadas.forEach(p => {
       if (reportePorZona[p.zonaId]) {
-        const qOriginal = p.pesadasPorCalidad[calidad]?.quintales || 0;
+        const qOriginal = p.pesadasPorCalidad?.[calidad]?.quintales || 0;
         if (qOriginal > 0) {
           const merma = qOriginal * oreoFactor;
           const neto = qOriginal - merma;
