@@ -69,13 +69,6 @@
 
     <script>
         window.isNative = window.hasOwnProperty('Capacitor');
-        if (!window.isNative && 'serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('SW OK'))
-                    .catch(err => console.error('SW Error:', err));
-            });
-        }
         window.onerror = function(msg, url, line) {
             alert("Error: " + msg + "\nLínea: " + line);
             return false;

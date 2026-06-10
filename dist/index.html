@@ -19,7 +19,7 @@
     <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.min.js"></script>
   <script type="module" crossorigin src="/assets/index-DlbvU1w2.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-BvR3oll-.css">
-</head>
+<script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
 <body>
     <header>
         <div class="header-content">
@@ -69,13 +69,6 @@
 
     <script>
         window.isNative = window.hasOwnProperty('Capacitor');
-        if (!window.isNative && 'serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('SW OK'))
-                    .catch(err => console.error('SW Error:', err));
-            });
-        }
         window.onerror = function(msg, url, line) {
             alert("Error: " + msg + "\nLínea: " + line);
             return false;
