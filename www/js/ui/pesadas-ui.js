@@ -151,7 +151,7 @@ export const PesadasUI = {
 
             await Pesadas.save(dp);
             Utils.toast('✅ Guardada correctamente');
-            App.route('/lista');
+            window.location.hash = '#/lista';
         };
     },
 
