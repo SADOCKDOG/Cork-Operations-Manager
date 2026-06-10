@@ -28,8 +28,19 @@ export const App = {
 
     _activeObjectUrls: [],
     
-    // Some minor utility methods left over from app.js
+    _totalsCache: null,
+    _lastPesadasHash: null,
+    
     _calculateQualityTotals(pesadas) {
+        if (!pesadas || !Array.isArray(pesadas)) return { primera: {kg:0, quintales:0}, bornizo: {kg:0, quintales:0}, refugo: {kg:0, quintales:0} };
+        
+        // Simple hash based on length and a checksum of IDs to detect changes
+        const hash = pesadas.length + '_' + (pesadas.length > 0 ? pesadas[pesadas.length - 1].id : 0) + '_' + (pesadas.length > 0 ? pesadas[0].id : 0);
+        
+        if (this._totalsCache && this._lastPesadasHash === hash) {
+            return this._totalsCache;
+        }
+
         let tp = {kg:0, quintales:0}, tb = {kg:0, quintales:0}, tr = {kg:0, quintales:0};
         pesadas.forEach(p => {
             if(p.pesadasPorCalidad) {
@@ -38,7 +49,10 @@ export const App = {
                 if(p.pesadasPorCalidad.refugo.kg > 0) { tr.kg += p.pesadasPorCalidad.refugo.kg; tr.quintales += p.pesadasPorCalidad.refugo.quintales; }
             }
         });
-        return { primera: tp, bornizo: tb, refugo: tr };
+        
+        this._totalsCache = { primera: tp, bornizo: tb, refugo: tr };
+        this._lastPesadasHash = hash;
+        return this._totalsCache;
     },
 
     openManualZonas() {

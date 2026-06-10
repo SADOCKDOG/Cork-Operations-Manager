@@ -42,6 +42,7 @@ export const Events = {
         else if (action === 'App._saveActiveFincaSettings') App._saveActiveFincaSettings();
         else if (action === 'App.renderFincasManager') App.renderFincasManager();
         else if (action === 'App.renderGastosManager') App.renderGastosManager();
+        else if (action === 'App.loadMorePesadas') App.loadMorePesadas();
         else if (action === 'App._showGastoForm') App._showGastoForm(btn.dataset.id ? parseInt(btn.dataset.id) : null);
         else if (action === 'App._deleteGasto') App._deleteGasto(parseInt(btn.dataset.id));
         else if (action === 'Export.exportBackup') Export.exportBackup(btn.dataset.id ? [parseInt(btn.dataset.id)] : undefined);

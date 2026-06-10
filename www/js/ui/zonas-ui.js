@@ -2,6 +2,7 @@ import { Zonas } from '../zonas.js';
 import { Fincas } from '../fincas.js';
 import { App } from '../app.js';
 import { Utils } from '../core/utils.js';
+import { parsePdfCatastro } from '../pdf-import.js';
 
 export const ZonasUI = {
     async renderZonas() {
@@ -125,16 +126,21 @@ export const ZonasUI = {
 
         input.onchange = async (e) => {
             if (!e.target.files.length) return;
-            zonesToSave = []; list.innerHTML = '<div class="loader">Procesando documentos...</div>'; container.style.display = 'block';
+            zonesToSave = []; list.innerHTML = ''; container.style.display = 'block';
+            Utils.showLoading('Procesando PDF (SIGPAC)...');
 
-            for (const file of e.target.files) {
-                try {
-                    const data = await parsePdfCatastro(file);
-                    if (data) {
-                        data._tempId = Math.random().toString(36).substr(2, 9);
-                        zonesToSave.push(data);
-                    }
-                } catch (err) { App.toastError(`Error en ${file.name}`); }
+            try {
+                for (const file of e.target.files) {
+                    try {
+                        const data = await parsePdfCatastro(file);
+                        if (data) {
+                            data._tempId = Math.random().toString(36).substr(2, 9);
+                            zonesToSave.push(data);
+                        }
+                    } catch (err) { App.toastError(`Error en ${file.name}`); }
+                }
+            } finally {
+                Utils.hideLoading();
             }
 
             if (zonesToSave.length === 0) { list.innerHTML = '<p class="text-center text-muted">No se detectaron datos válidos en los PDFs.</p>'; return; }

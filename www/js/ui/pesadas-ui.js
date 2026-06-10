@@ -5,6 +5,11 @@ import { App } from '../app.js';
 import { Utils } from '../core/utils.js';
 
 export const PesadasUI = {
+    _todas: [],
+    _page: 1,
+    _perPage: 20,
+    _zonas: [],
+
     async renderFormPesada(id = null) {
         const isEdit = id != null;
         let p = { bruto: '', tara: '', calidad: 'primera', saca: '', kg: 0, quintales: 0, observacion: '', fotoUrl: null };
@@ -153,6 +158,11 @@ export const PesadasUI = {
             return;
         }
 
+        // Initialize state
+        this._todas = pesadas.sort((a,b) => b.fecha - a.fecha); // Ordenar más recientes primero
+        this._zonas = zonas;
+        this._page = 1;
+
         const t = App._calculateQualityTotals(pesadas);
         const totalQ = (t.primera.quintales + t.bornizo.quintales + t.refugo.quintales).toFixed(2);
 
@@ -173,30 +183,57 @@ export const PesadasUI = {
             <h3 style="font-size: 1.5rem; margin-bottom: 15px; color: #fff; border:none;">Listado de Pesadas</h3>
             <button class="btn btn-secondary mt-1" data-action="Export.exportarPDF" data-tipo="lista">📄 Exportar a PDF</button>
         </div>
-        <div class="lista-detallada">
-            ${pesadas.map(p => { 
-                const z = zonas.find(z => z.id == p.zonaId); 
-                let em = '⭐', cal = '1ª Calidad', col = '#10b981'; 
-                if (p.pesadasPorCalidad.bornizo.kg > 0) { em = '🟡'; cal = 'Bornizo'; col = '#eab308'; } 
-                else if (p.pesadasPorCalidad.refugo.kg > 0) { em = '🔴'; cal = 'Refugo'; col = '#ef4444'; } 
-                const fH = new Date(p.fecha).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); 
-                return `<div class="pesada-card" style="--card-color: ${col};" data-route="/pesada/${p.id}/editar">
-                    <div class="pesada-card-content">
-                        <div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
-                            <div class="pesada-saca-badge">SACA #${p.saca}</div>
-                            <strong style="color: ${col}; font-size: 1.3rem;">${em} ${cal}</strong>
-                        </div>
-                        <div style="font-size: 1.1rem; margin-bottom: 12px; color: #fff;">
-                            <strong>🌲 ${Utils.escapeHtml(z ? z.nombre : '?')}</strong>
-                        </div>
-                        <table class="pesada-table-bordered">
-                            <tr><th>FECHA Y HORA</th><td class="val-large">${fH}</td></tr>
-                            <tr><th>PESO BRUTO</th><td class="val-large highlight">${p.kg.toFixed(1)} kg</td></tr>
-                            <tr><th>PESO NETO</th><td class="val-large highlight">${p.quintales.toFixed(2)} Q</td></tr>
-                        </table>
+        <div class="lista-detallada" id="lista-pesadas-container">
+            ${this._renderPesadasHTML(pesadas.slice(0, this._perPage), zonas)}
+        </div>
+        ${pesadas.length > this._perPage ? `<div id="load-more-container" style="text-align:center; padding:20px;"><button class="btn btn-outline" data-action="App.loadMorePesadas">Cargar más (${pesadas.length - this._perPage} restantes)</button></div>` : ''}`;
+    },
+
+    _renderPesadasHTML(pesadas, zonas) {
+        return pesadas.map(p => { 
+            const z = zonas.find(z => z.id == p.zonaId); 
+            let em = '⭐', cal = '1ª Calidad', col = '#10b981'; 
+            if (p.pesadasPorCalidad.bornizo.kg > 0) { em = '🟡'; cal = 'Bornizo'; col = '#eab308'; } 
+            else if (p.pesadasPorCalidad.refugo.kg > 0) { em = '🔴'; cal = 'Refugo'; col = '#ef4444'; } 
+            const fH = new Date(p.fecha).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); 
+            return `<div class="pesada-card" style="--card-color: ${col};" data-route="/pesada/${p.id}/editar">
+                <div class="pesada-card-content">
+                    <div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <div class="pesada-saca-badge">SACA #${p.saca}</div>
+                        <strong style="color: ${col}; font-size: 1.3rem;">${em} ${cal}</strong>
                     </div>
-                </div>`; 
-            }).join('')}
-        </div>`;
+                    <div style="font-size: 1.1rem; margin-bottom: 12px; color: #fff;">
+                        <strong>🌲 ${Utils.escapeHtml(z ? z.nombre : '?')}</strong>
+                    </div>
+                    <table class="pesada-table-bordered">
+                        <tr><th>FECHA Y HORA</th><td class="val-large">${fH}</td></tr>
+                        <tr><th>PESO BRUTO</th><td class="val-large highlight">${p.kg.toFixed(1)} kg</td></tr>
+                        <tr><th>PESO NETO</th><td class="val-large highlight">${p.quintales.toFixed(2)} Q</td></tr>
+                    </table>
+                </div>
+            </div>`; 
+        }).join('');
+    },
+
+    loadMorePesadas() {
+        this._page++;
+        const startIndex = (this._page - 1) * this._perPage;
+        const endIndex = startIndex + this._perPage;
+        const nextBatch = this._todas.slice(startIndex, endIndex);
+        
+        const container = document.getElementById('lista-pesadas-container');
+        if (container && nextBatch.length > 0) {
+            container.insertAdjacentHTML('beforeend', this._renderPesadasHTML(nextBatch, this._zonas));
+        }
+
+        const remaining = this._todas.length - endIndex;
+        const btnContainer = document.getElementById('load-more-container');
+        if (btnContainer) {
+            if (remaining > 0) {
+                btnContainer.innerHTML = `<button class="btn btn-outline" data-action="App.loadMorePesadas">Cargar más (${remaining} restantes)</button>`;
+            } else {
+                btnContainer.remove();
+            }
+        }
     }
 };
