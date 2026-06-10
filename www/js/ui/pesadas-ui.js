@@ -131,11 +131,6 @@ export const PesadasUI = {
         document.getElementById('form-pesada').onsubmit = async (e) => {
             e.preventDefault();
             const dt = document.getElementById('p-fecha').value;
-            let finalDate = new Date().getTime();
-            if (dt) {
-                const parts = dt.split('-');
-                finalDate = new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0).getTime();
-            }
             
             const b = parseFloat(inB.value) || 0;
             const t = 0;
@@ -147,17 +142,12 @@ export const PesadasUI = {
             const dp = {
                 id: isEdit ? parseInt(id) : undefined,
                 zonaId: parseInt(document.getElementById('p-zona').value),
-                fecha: finalDate,
+                fecha: dt || new Date().toISOString().split('T')[0],
                 saca: parseInt(document.getElementById('p-saca').value),
-                bruto: b,
+                pesoBruto: b,
                 tara: t,
-                kg: kg,
-                quintales: q,
                 calidad: selQ
             };
-            
-            dp.pesadasPorCalidad = { primera: {kg:0, quintales:0}, bornizo: {kg:0, quintales:0}, refugo: {kg:0, quintales:0} };
-            dp.pesadasPorCalidad[selQ] = { kg: kg, quintales: q };
 
             await Pesadas.save(dp);
             Utils.toast('✅ Guardada correctamente');
