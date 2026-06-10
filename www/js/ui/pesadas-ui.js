@@ -87,7 +87,7 @@ export const PesadasUI = {
                         <div class="resultado-neto" style="margin-top:20px; text-align:center; padding-top:20px; border-top:1px dashed rgba(255,255,255,0.2);">
                             <span style="font-size:1.2rem; color:var(--text-s);">NETO ESTIMADO</span><br>
                             <span id="p-neto-calc" style="font-size: 3rem; font-weight: 900; color: #10b981;">0.00</span> <span id="p-neto-lbl" style="font-size:1.5rem; color:#10b981;">Quintales</span>
-                            <div id="p-validation-msg" style="margin-top:10px; font-weight:bold; min-height:24px;"></div>
+                            <div id="p-validation-msg" style="margin-top:10px; font-weight:bold;">&nbsp;</div>
                         </div>
                     </div>
 
@@ -133,7 +133,7 @@ export const PesadasUI = {
                 } else {
                     netoEl.style.color = "#10b981";
                     netoLbl.style.color = "#10b981";
-                    valMsg.textContent = "";
+                    valMsg.innerHTML = "&nbsp;";
                 }
             }
         };
