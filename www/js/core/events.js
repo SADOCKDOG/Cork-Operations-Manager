@@ -28,6 +28,7 @@ export const Events = {
         else if (action === 'App._selectFincaForLoad') App._selectFincaForLoad(btn.dataset.id, btn.dataset.name);
         else if (action === 'App._deleteFinca') App._deleteFinca(btn.dataset.id, btn.dataset.name);
         else if (action === 'App._deleteZona') App._deleteZona(btn.dataset.id);
+        else if (action === 'App.openManualZonas') App.openManualZonas();
         else if (action === 'App.renderReporteGlobal') App.renderReporteGlobal();
         else if (action === 'App.renderReporteEconomico') App.renderReporteEconomico();
         else if (action === 'App.renderMenuZonasReport') App.renderMenuZonasReport();

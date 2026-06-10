@@ -1,3 +1,4 @@
+import { db } from '../db.js';
 import { Zonas } from '../zonas.js';
 import { Fincas } from '../fincas.js';
 import { App } from '../app.js';
