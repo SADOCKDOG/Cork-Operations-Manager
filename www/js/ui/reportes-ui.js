@@ -52,7 +52,42 @@ export const ReportesUI = {
     async renderReporteEconomico() {
         const r = await Reportes.generarReporteEconomicoGlobal(), finca = await Fincas.getActive(); if (!r || !finca) return;
         const totalGastos = await Gastos.getTotal(), beneficioNeto = r.valorTotal - totalGastos, comp = finca.comprador || {};
-        let h = `<div class="reporte-container"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;"><h2 style="margin:0; color:var(--p-cork); font-weight:800;">💶 Liquidación Final</h2><div style="display:flex; gap:10px;"><button class="btn btn-outline" style="height:40px; padding:0 15px; border-radius:10px;" data-action="Export.exportarPDF" data-tipo="economico">📄 PDF</button><button class="btn btn-outline" style="height:40px; padding:0 15px; border-radius:10px;" data-action="Export.exportEconomicoToExcel">📊 Excel</button></div></div>${App._getDualHeaderHtml(finca.nombre, finca.propietario||'-', finca.cif||'-', comp.nombreEmpresa||'Sin Empresa', comp.cifNif||'-', comp.representante||'-')}<div class="card"><h4>Desglose Económico</h4><div class="table-responsive"><table class="reporte-table"><thead><tr><th>Calidad</th><th>Precio</th><th>Q.Bruto</th><th style="color:#ff9800;">Oreo</th><th>Q.Neto</th><th style="text-align:right;">Total</th></tr></thead><tbody><tr><td><span class="q-pill p1">⭐ 1ª</span></td><td>${(r.precios.primera?.precioQuintal || 0).toFixed(2)}€</td><td>${r.totales.primera.bruto.toFixed(2)}</td><td style="color:#ff9800;">${r.totales.primera.merma.toFixed(2)}</td><td>${r.totales.primera.neto.toFixed(2)}</td><td style="text-align:right; font-weight:800;">${r.totales.primera.valor.toFixed(2)}€</td></tr><tr><td><span class="q-pill pb">🟡 Bo</span></td><td>${(r.precios.bornizo?.precioQuintal || 0).toFixed(2)}€</td><td>${r.totales.bornizo.bruto.toFixed(2)}</td><td style="color:#ff9800;">${r.totales.bornizo.merma.toFixed(2)}</td><td>${r.totales.bornizo.neto.toFixed(2)}</td><td style="text-align:right; font-weight:800;">${r.totales.bornizo.valor.toFixed(2)}€</td></tr><tr><td><span class="q-pill pr">🔴 Re</span></td><td>${(r.precios.refugo?.precioQuintal || 0).toFixed(2)}€</td><td>${r.totales.refugo.bruto.toFixed(2)}</td><td style="color:#ff9800;">${r.totales.refugo.merma.toFixed(2)}</td><td>${r.totales.refugo.neto.toFixed(2)}</td><td style="text-align:right; font-weight:800;">${r.totales.refugo.valor.toFixed(2)}€</td></tr></tbody><tfoot><tr><td colspan="2">SUBTOTALES</td><td>${r.brutoTotal.toFixed(2)}</td><td style="color:#ff9800;">${(r.brutoTotal - r.netoTotal).toFixed(2)}</td><td>${r.netoTotal.toFixed(2)}</td><td style="text-align:right; color:var(--p-cork); font-size:1rem;">${r.valorTotal.toFixed(2)}€</td></tr></tfoot></table></div></div><div class="card-finance" style="background: linear-gradient(135deg, #1a1a1a 0%, #000 100%); border: 1px solid var(--border); padding:25px;"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span class="text-muted">Ingresos Brutos</span><span>${r.valorTotal.toFixed(2)}€</span></div><div style="display:flex; justify-content:space-between; margin-bottom:15px;"><span style="color:#ff4d4d;">Gastos Campaña (-)</span><span style="color:#ff4d4d;">-${totalGastos.toFixed(2)}€</span></div><hr style="opacity:0.3; margin-bottom:15px;"><div style="display:flex; justify-content:space-between; align-items:center;"><span style="color:var(--accent); font-weight:900; font-size:1.1rem;">BENEFICIO NETO REAL</span><span class="total-neto" style="color:var(--accent); font-size:1.8rem; font-weight:900;">${beneficioNeto.toFixed(2)}€</span></div></div></div>`;
+        const listaGastos = await Gastos.list();
+        
+        let gastosHtml = '';
+        if (listaGastos.length > 0) {
+            gastosHtml = `<div class="card" style="margin-top:20px;">
+                <h4>Desglose de Gastos Campaña</h4>
+                <div class="table-responsive">
+                    <table class="reporte-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Naturaleza</th>
+                                <th>Concepto</th>
+                                <th style="text-align:right;">Importe</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${listaGastos.map(g => `<tr>
+                                <td>${new Date(g.fecha).toLocaleDateString()}</td>
+                                <td>${Utils.escapeHtml(g.categoria || 'Otros')}</td>
+                                <td>${Utils.escapeHtml(g.concepto || '-')}</td>
+                                <td style="text-align:right; font-weight:700; color:#ff4d4d;">${parseFloat(g.monto).toFixed(2)}€</td>
+                            </tr>`).join('')}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3"><strong>TOTAL GASTOS</strong></td>
+                                <td style="text-align:right; color:#ff4d4d;"><strong>${totalGastos.toFixed(2)}€</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>`;
+        }
+
+        let h = `<div class="reporte-container"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;"><h2 style="margin:0; color:var(--p-cork); font-weight:800;">💶 Liquidación Final</h2><div style="display:flex; gap:10px;"><button class="btn btn-outline" style="height:40px; padding:0 15px; border-radius:10px;" data-action="Export.exportarPDF" data-tipo="economico">📄 PDF</button><button class="btn btn-outline" style="height:40px; padding:0 15px; border-radius:10px;" data-action="Export.exportEconomicoToExcel">📊 Excel</button></div></div>${App._getDualHeaderHtml(finca.nombre, finca.propietario||'-', finca.cif||'-', comp.nombreEmpresa||'Sin Empresa', comp.cifNif||'-', comp.representante||'-')}<div class="card"><h4>Ingresos por Calidad</h4><div class="table-responsive"><table class="reporte-table"><thead><tr><th>Calidad</th><th>Precio</th><th>Q.Bruto</th><th style="color:#ff9800;">Oreo</th><th>Q.Neto</th><th style="text-align:right;">Total</th></tr></thead><tbody><tr><td><span class="q-pill p1">⭐ 1ª</span></td><td>${(r.precios.primera?.precioQuintal || 0).toFixed(2)}€</td><td>${r.totales.primera.bruto.toFixed(2)}</td><td style="color:#ff9800;">${r.totales.primera.merma.toFixed(2)}</td><td>${r.totales.primera.neto.toFixed(2)}</td><td style="text-align:right; font-weight:800;">${r.totales.primera.valor.toFixed(2)}€</td></tr><tr><td><span class="q-pill pb">🟡 Bo</span></td><td>${(r.precios.bornizo?.precioQuintal || 0).toFixed(2)}€</td><td>${r.totales.bornizo.bruto.toFixed(2)}</td><td style="color:#ff9800;">${r.totales.bornizo.merma.toFixed(2)}</td><td>${r.totales.bornizo.neto.toFixed(2)}</td><td style="text-align:right; font-weight:800;">${r.totales.bornizo.valor.toFixed(2)}€</td></tr><tr><td><span class="q-pill pr">🔴 Re</span></td><td>${(r.precios.refugo?.precioQuintal || 0).toFixed(2)}€</td><td>${r.totales.refugo.bruto.toFixed(2)}</td><td style="color:#ff9800;">${r.totales.refugo.merma.toFixed(2)}</td><td>${r.totales.refugo.neto.toFixed(2)}</td><td style="text-align:right; font-weight:800;">${r.totales.refugo.valor.toFixed(2)}€</td></tr></tbody><tfoot><tr><td colspan="2">SUBTOTALES INGRESOS</td><td>${r.brutoTotal.toFixed(2)}</td><td style="color:#ff9800;">${(r.brutoTotal - r.netoTotal).toFixed(2)}</td><td>${r.netoTotal.toFixed(2)}</td><td style="text-align:right; color:var(--p-cork); font-size:1rem;">${r.valorTotal.toFixed(2)}€</td></tr></tfoot></table></div></div>${gastosHtml}<div class="card-finance" style="background: linear-gradient(135deg, #1a1a1a 0%, #000 100%); border: 1px solid var(--border); padding:25px; margin-top:20px;"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span class="text-muted">Ingresos Brutos</span><span>${r.valorTotal.toFixed(2)}€</span></div><div style="display:flex; justify-content:space-between; margin-bottom:15px;"><span style="color:#ff4d4d;">Gastos Campaña (-)</span><span style="color:#ff4d4d;">-${totalGastos.toFixed(2)}€</span></div><hr style="opacity:0.3; margin-bottom:15px;"><div style="display:flex; justify-content:space-between; align-items:center;"><span style="color:var(--accent); font-weight:900; font-size:1.1rem;">BENEFICIO NETO REAL</span><span class="total-neto" style="color:var(--accent); font-size:1.8rem; font-weight:900;">${beneficioNeto.toFixed(2)}€</span></div></div></div>`;
         document.getElementById('cont-rep').innerHTML = h;
     },
 
