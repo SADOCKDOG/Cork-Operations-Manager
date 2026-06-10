@@ -56,17 +56,7 @@ export const App = {
     },
 
     openManualZonas() {
-        const modal = document.createElement('div');
-        modal.innerHTML = `<div style="position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center; padding:20px;">
-            <div class="card" style="max-width:500px; width:100%; border-top: 5px solid var(--p-cork);">
-                <h3 style="color:#fff;">Ayuda: Gestión de Zonas</h3>
-                <p style="color:var(--text-s); margin-bottom:15px;">Las zonas te permiten organizar tu finca (por ejemplo: "Umbría", "Solana", "Parcela 1").</p>
-                <div style="margin-bottom:10px;"><strong>➕ Nueva Zona:</strong> Crea una zona manualmente donde el croquis se generará de forma automática basándose en las pesadas.</div>
-                <div style="margin-bottom:20px;"><strong>📥 Importar PDF:</strong> Si tienes un PDF de la parcela (SIGPAC Catastro), la app intentará extraer el mapa y datos de cultivo e importarlos.</div>
-                <button class="btn btn-primary" onclick="this.parentElement.parentElement.remove()" style="width:100%;">Entendido</button>
-            </div>
-        </div>`;
-        document.body.appendChild(modal.firstChild);
+        window.location.href = 'manual-zonas.html';
     },
 
     async updateHeader() {
