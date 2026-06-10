@@ -193,11 +193,27 @@ export const Export = {
             const originalCont = document.getElementById('cont-rep');
             if (originalCont) {
                 const clone = originalCont.cloneNode(true);
-                originalCont.querySelectorAll('canvas').forEach((canv, idx) => { const img = document.createElement('img'); img.src = canv.toDataURL('image/png'); img.style.width = '100%'; img.style.height = 'auto'; img.style.display = 'block'; clone.querySelectorAll('canvas')[idx].parentNode.replaceChild(img, clone.querySelectorAll('canvas')[idx]); });
+                const originalCanvases = originalCont.querySelectorAll('canvas');
+                const cloneCanvases = clone.querySelectorAll('canvas');
+                originalCanvases.forEach((canv, idx) => { 
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = canv.width; tempCanvas.height = canv.height;
+                    const ctx = tempCanvas.getContext('2d');
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+                    ctx.drawImage(canv, 0, 0);
+                    
+                    const img = document.createElement('img'); 
+                    img.src = tempCanvas.toDataURL('image/png'); 
+                    img.style.width = '100%'; 
+                    img.style.height = 'auto'; 
+                    img.style.display = 'block'; 
+                    cloneCanvases[idx].parentNode.replaceChild(img, cloneCanvases[idx]); 
+                });
                 contenidoHtml = clone.innerHTML;
             }
         } else { const contRep = document.getElementById('cont-rep'); contenidoHtml = contRep ? contRep.innerHTML : ""; }
-        if (!contenidoHtml) { Utils.toastError("No hay contenido"); return; }
+        if (!contenidoHtml) { Utils.toastError("No hay contenido"); Utils.hideLoading(); return; }
         const printContainer = document.createElement('div');
         printContainer.style.position = 'absolute'; printContainer.style.left = '-9999px'; printContainer.style.width = '800px';
         printContainer.innerHTML = contenidoHtml; document.body.appendChild(printContainer);

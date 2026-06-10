@@ -2,6 +2,7 @@ import { Reportes } from '../reportes.js';
 import { Fincas } from '../fincas.js';
 import { Pesadas } from '../pesadas.js';
 import { Zonas } from '../zonas.js';
+import { Gastos } from '../gastos.js';
 import { App } from '../app.js';
 import { Utils } from '../core/utils.js';
 import { Charts } from '../charts.js';
