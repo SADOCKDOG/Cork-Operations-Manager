@@ -107,9 +107,12 @@ export const FincasUI = {
                 <button class="report-select-btn" data-route="/usuarios" style="background: rgba(160, 103, 58, 0.15); border: 2px solid var(--p-cork); color: var(--text-p);"><span class="btn-icon">👥</span><strong>Usuarios y Roles</strong></button>
             </div>
 
-            <div style="margin-top: 20px;">
-                <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px; padding: 12px; font-weight: 600;" onclick="App.toast('Sincronizando...'); window.App.CloudSync.syncNow().then(() => App.toast('✅ Sincronizado')).catch(e => App.toastError(e.message))">
+            <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 600;" onclick="App.toast('Sincronizando...'); window.App.CloudSync.syncNow().then(() => { App.toast('✅ Sincronizado'); document.getElementById('btn-ver-drive').style.display='block'; }).catch(e => App.toastError(e.message))">
                     <span style="margin-right: 5px;">☁️</span> Forzar Sincronización a Drive
+                </button>
+                <button id="btn-ver-drive" class="btn btn-secondary" style="width: 100%; padding: 12px; font-weight: 600; display: ${localStorage.getItem('cloudSync_driveFileId') ? 'block' : 'none'}; background: #4285F4; color: white; border: none;" onclick="window.open('https://drive.google.com/file/d/' + localStorage.getItem('cloudSync_driveFileId') + '/view', '_blank')">
+                    <span style="margin-right: 5px;">👁️</span> Ver archivo en Google Drive (Web)
                 </button>
                 <button class="btn btn-secondary" style="width: 100%; border: 1px solid #ff4444; color: #ff4444; background: transparent; padding: 12px; font-weight: 600;" onclick="App.logout()">
                     <span style="margin-right: 5px;">🚪</span> Cerrar Sesión (Google)
