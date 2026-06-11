@@ -1,6 +1,7 @@
 import { Fincas } from '../fincas.js';
 import { App } from '../app.js';
 import { Utils } from '../core/utils.js';
+import { Export } from '../export.js';
 
 export const FincasUI = {
     async renderFincasManager() {
