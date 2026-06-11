@@ -6,7 +6,8 @@ import { Utils } from '../core/utils.js';
 export const DashboardUI = {
     async renderWelcomeWizard() {
         const main = document.getElementById('app-content');
-        main.innerHTML = `<div class="card text-center welcome-wizard"><img src="icons/logo-header.png" style="width: 140px; margin-bottom: 25px;"><h1>¡Bienvenido!</h1><p>Crea o importa una finca para comenzar.</p><div class="wizard-actions mt-2" style="display:flex; flex-direction:column; gap:12px;"><button class="btn btn-primary" data-action="App._showFincaForm">➕ Crear Finca</button><button class="btn btn-secondary" data-trigger="import-wizard">📥 Importar Backup</button><input type="file" id="import-wizard" accept=".json" style="display:none"></div></div>`;
+        const authStatus = App.Auth.getCurrentUser() ? 'block' : 'none';
+        main.innerHTML = `<div class="card text-center welcome-wizard"><img src="icons/logo-header.png" style="width: 140px; margin-bottom: 25px;"><h1>¡Bienvenido!</h1><p>Crea o importa una finca para comenzar.</p><div class="wizard-actions mt-2" style="display:flex; flex-direction:column; gap:12px;"><button class="btn btn-primary" data-action="App._showFincaForm">➕ Crear Finca</button><button class="btn btn-secondary" data-trigger="import-wizard">📥 Importar Backup Local</button><input type="file" id="import-wizard" accept=".json" style="display:none"><button class="btn btn-secondary" style="background: #4285F4; color: white; border: none; display: ${authStatus};" onclick="App.toast('Buscando en Drive...'); window.App.CloudSync.syncNow().then(() => { App.toast('✅ Restaurado'); setTimeout(()=>location.reload(), 800); }).catch(e => App.toastError(e.message))">☁️ Importar copia de Google Drive</button></div></div>`;
         const input = document.getElementById('import-wizard');
         if (input) input.onchange = async (e) => { if (e.target.files[0]) await App._handleImportFile(e.target.files[0]); };
     },
