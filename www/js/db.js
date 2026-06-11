@@ -1,7 +1,7 @@
 import { openDB } from './idb-local.js';
 
 const DB_NAME = 'CorchoDB';
-const DB_VERSION = 7;
+const DB_VERSION = 8;
 
 async function initDB() {
     const database = await openDB(DB_NAME, DB_VERSION, {
@@ -64,6 +64,14 @@ async function initDB() {
                     const gastoStore = db.createObjectStore('gastos', { keyPath: 'id', autoIncrement: true });
                     gastoStore.createIndex('fincaId', 'fincaId');
                     gastoStore.createIndex('fecha', 'fecha');
+                }
+            }
+
+            // --- VERSION 8: USUARIOS ---
+            if (oldVersion < 8) {
+                if (!db.objectStoreNames.contains('usuarios')) {
+                    const userStore = db.createObjectStore('usuarios', { keyPath: 'id' });
+                    userStore.createIndex('email', 'email', { unique: true });
                 }
             }
         },
