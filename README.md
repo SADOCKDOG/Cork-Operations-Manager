@@ -200,13 +200,21 @@ Requisitos básicos: Node.js, npm, Capacitor. Pasos resumidos:
 
   <h3>📄 Licencia y Soporte</h3>
   <p>© 2026 Cork Manager. Todos los derechos reservados.<br>
-  Licencia de uso profesional v6.3.2</p>
+  Licencia de uso profesional v7.0.0</p>
 
   <p>Para soporte técnico o consultas comerciales:<br>
   📩 <a href="mailto:soporte.sdogfarm@gmail.com">soporte.sdogfarm@gmail.com</a></p>
 </div>
 
 ---
+
+## 🆕 Novedades en la versión 7.0.0 (CloudSync & Google Drive)
+
+* **Sincronización en la Nube Automatizada**: Integración completa con Google Drive para salvaguardar todos los datos de la explotación (Fincas, Zonas, Pesadas y Gastos).
+* **Restauración Instantánea**: Nuevo flujo en la pantalla de bienvenida que permite importar la última copia de seguridad sincronizada en Google Drive con un solo clic.
+* **Bi-directional Merge**: El motor `CloudSync` es capaz de fusionar bases de datos locales y remotas evitando pérdida de información si la app es desinstalada o usada en múltiples dispositivos con la misma cuenta.
+* **Autenticación Segura**: Integración con Google SignIn / OAuth 2.0 adaptado nativamente para entornos Android PWA/Capacitor.
+* **Mejoras de UI**: Botón integrado para abrir el archivo directamente en Google Drive web.
 
 ## 🆕 Novedades en la versión 6.3.2 (Optimización de Rendimiento)
 

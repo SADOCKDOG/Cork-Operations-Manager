@@ -1,6 +1,6 @@
 {
     "name": "cork-manager",
-    "version": "6.3.2",
+    "version": "7.0.0",
     "private": true,
     "description": "App de gestión para explotaciones corcheras",
     "scripts": {
