@@ -127,7 +127,7 @@ export const FincasUI = {
                 <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 5px; border:none; padding:0;">📄 Licencia y Soporte</h3>
                 <p style="font-size: 0.85rem; color: var(--text-s); line-height: 1.5;">
                     © 2026 Cork Manager. Todos los derechos reservados.<br>
-                    Licencia de uso profesional v6.3.1
+                    Licencia de uso profesional v7.0.0
                 </p>
                 <p style="font-size: 0.85rem; color: var(--p-cork); margin-top: 15px; font-weight: 600;">
                     📩 soporte.sdogfarm@gmail.com
