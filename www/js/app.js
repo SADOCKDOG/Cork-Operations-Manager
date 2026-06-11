@@ -31,6 +31,7 @@ export const App = {
     ...ReportesUI,
     ...LoginUI,
     ...UsuariosUI,
+    ...Auth,
 
     _activeObjectUrls: [],
     

@@ -106,6 +106,12 @@ export const FincasUI = {
                 <button class="report-select-btn" data-route="/usuarios" style="background: rgba(160, 103, 58, 0.15); border: 2px solid var(--p-cork); color: var(--text-p);"><span class="btn-icon">👥</span><strong>Usuarios y Roles</strong></button>
             </div>
 
+            <div style="margin-top: 20px;">
+                <button class="btn btn-secondary" style="width: 100%; border: 1px solid #ff4444; color: #ff4444; background: transparent; padding: 12px; font-weight: 600;" onclick="App.logout()">
+                    <span style="margin-right: 5px;">🚪</span> Cerrar Sesión (Google)
+                </button>
+            </div>
+
             <div class="card text-center" style="border-top: 2px solid var(--p-cork); margin-top:30px; padding:30px;">
                 <p style="font-size: 0.85rem; color: var(--text-s); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">Desarrollado por</p>
                 <img src="icons/Logo SDOGFARMCORE.png" style="width:160px; margin-bottom:15px; filter: drop-shadow(0 0 10px rgba(212,163,115,0.2));">

@@ -254,11 +254,18 @@ export const Auth = {
         this._sessionToken = null;
 
         sessionStorage.removeItem('auth_token');
+        localStorage.removeItem('auth_token'); // Limpiar de localStorage también
         localStorage.removeItem('auth_user_data');
 
         await this._auditLog('LOGOUT', `Usuario: ${email}`, null);
 
         console.log('[Auth] Sesión cerrada:', email);
+        
+        // Disparar evento para que la UI vuelva al Login
+        if (window.App && typeof window.App.showLoginHideApp === 'function') {
+            window.App.showLoginHideApp();
+            window.dispatchEvent(new CustomEvent('auth_changed'));
+        }
     },
 
     /**
