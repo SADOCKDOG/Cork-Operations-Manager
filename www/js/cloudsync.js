@@ -91,8 +91,8 @@ export const CloudSync = {
             console.error('[CloudSync] Error en sincronización:', error);
             if (error.status === 401) {
                 console.warn("[CloudSync] Token expirado, forzando relogin...");
-                // Podríamos disparar un evento para que la UI pida login de nuevo
             }
+            throw error;
         } finally {
             this._config._syncInProgress = false;
         }
@@ -187,7 +187,10 @@ export const CloudSync = {
         
         // Ejecutar inmediatamente
         if (this._config.syncEnabled) {
-            this.syncNow().catch(e => console.error('[CloudSync] Error en sync inicial:', e));
+            this.syncNow().catch(e => {
+                console.error('[CloudSync] Error en sync inicial:', e);
+                if (window.App) window.App.toastError("Sync Error: " + (e.message || "Drive API"));
+            });
         }
 
         // Configurar intervalo

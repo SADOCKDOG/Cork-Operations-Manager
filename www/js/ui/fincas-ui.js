@@ -108,6 +108,9 @@ export const FincasUI = {
             </div>
 
             <div style="margin-top: 20px;">
+                <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px; padding: 12px; font-weight: 600;" onclick="App.toast('Sincronizando...'); window.App.CloudSync.syncNow().then(() => App.toast('✅ Sincronizado')).catch(e => App.toastError(e.message))">
+                    <span style="margin-right: 5px;">☁️</span> Forzar Sincronización a Drive
+                </button>
                 <button class="btn btn-secondary" style="width: 100%; border: 1px solid #ff4444; color: #ff4444; background: transparent; padding: 12px; font-weight: 600;" onclick="App.logout()">
                     <span style="margin-right: 5px;">🚪</span> Cerrar Sesión (Google)
                 </button>
