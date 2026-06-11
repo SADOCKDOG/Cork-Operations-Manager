@@ -15,6 +15,7 @@ import { FincasUI } from './ui/fincas-ui.js';
 import { GastosUI } from './ui/gastos-ui.js';
 import { ReportesUI } from './ui/reportes-ui.js';
 import { LoginUI } from './ui/login-ui.js';
+import { UsuariosUI } from './ui/usuarios-ui.js';
 import { Auth } from './auth.js';
 import { CloudSync } from './cloudsync.js';
 
@@ -29,6 +30,7 @@ export const App = {
     ...GastosUI,
     ...ReportesUI,
     ...LoginUI,
+    ...UsuariosUI,
 
     _activeObjectUrls: [],
     

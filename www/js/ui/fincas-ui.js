@@ -103,6 +103,7 @@ export const FincasUI = {
             <div class="reportes-selector-grid" style="margin-top:20px;">
                 <button class="report-select-btn theme-zona" data-route="/gastos"><span class="btn-icon">💸</span><strong>Control Gastos</strong></button>
                 <button class="report-select-btn theme-global" data-route="/fincas"><span class="btn-icon">📍</span><strong>Gestor Fincas</strong></button>
+                <button class="report-select-btn" data-route="/usuarios" style="background: rgba(160, 103, 58, 0.15); border: 2px solid var(--p-cork); color: var(--text-p);"><span class="btn-icon">👥</span><strong>Usuarios y Roles</strong></button>
             </div>
 
             <div class="card text-center" style="border-top: 2px solid var(--p-cork); margin-top:30px; padding:30px;">

@@ -13,7 +13,8 @@ export const Router = {
         '/ajustes': 'renderAjustes',
         '/fincas': 'renderFincasManager',
         '/gastos': 'renderGastosManager',
-        '/importar-pdf': 'renderImportarPdf'
+        '/importar-pdf': 'renderImportarPdf',
+        '/usuarios': 'renderUsuarios'
     },
 
     async route() {

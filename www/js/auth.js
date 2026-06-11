@@ -36,13 +36,35 @@ export const Auth = {
      * Inicializar autenticación (cargar usuario de sesión)
      */
     async init() {
-        const token = sessionStorage.getItem('auth_token');
+        const token = localStorage.getItem('auth_token'); // Usar localStorage
         const userData = localStorage.getItem('auth_user_data');
 
         if (token && userData) {
             try {
                 this._sessionToken = token;
                 this._currentUser = JSON.parse(userData);
+                
+                // Intentar refrescar el token de Google en segundo plano
+                try {
+                    if (!window.isNative) {
+                        GoogleAuth.initialize({
+                            clientId: '186318731165-7tplui80jai6m37l810p1rapvsipu33p.apps.googleusercontent.com',
+                            scopes: ['profile', 'email', 'https://www.googleapis.com/auth/drive.file']
+                        });
+                    }
+                    const googleUser = await GoogleAuth.refresh();
+                    if (googleUser && googleUser.authentication) {
+                        this._sessionToken = googleUser.authentication.accessToken;
+                        this._currentUser.accessToken = googleUser.authentication.accessToken;
+                        localStorage.setItem('auth_token', this._sessionToken);
+                        localStorage.setItem('auth_user_data', JSON.stringify(this._currentUser));
+                    }
+                } catch (e) {
+                    console.warn('[Auth] No se pudo refrescar token de Google silenciosamente:', e);
+                    // Si falla el refresco (por ejemplo, revocado), cerramos sesión.
+                    throw e; 
+                }
+
                 console.log(`[Auth] Sesión restaurada: ${this._currentUser.nombre}`);
                 return true;
             } catch (error) {
@@ -145,7 +167,7 @@ export const Auth = {
             usuario.ultimoAcceso = new Date().toISOString();
             await db.put('usuarios', usuario);
             
-            sessionStorage.setItem('auth_token', this._sessionToken);
+            localStorage.setItem('auth_token', this._sessionToken); // Guardar en persistencia
             localStorage.setItem('auth_user_data', JSON.stringify(this._currentUser));
             
             await this._auditLog('LOGIN_EXITOSO', `Google Login: ${usuario.email}`, usuario.id);
