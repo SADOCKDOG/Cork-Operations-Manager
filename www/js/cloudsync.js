@@ -184,9 +184,16 @@ export const CloudSync = {
 
     startAutoSync() {
         if (this._syncInterval) clearInterval(this._syncInterval);
+        
+        // Ejecutar inmediatamente
+        if (this._config.syncEnabled) {
+            this.syncNow().catch(e => console.error('[CloudSync] Error en sync inicial:', e));
+        }
+
+        // Configurar intervalo
         this._syncInterval = setInterval(() => {
             if (this._config.syncEnabled) {
-                this.syncNow().catch(e => console.error(e));
+                this.syncNow().catch(e => console.error('[CloudSync] Error en auto-sync:', e));
             }
         }, this._config.autoSyncInterval);
         console.log('[CloudSync] Auto-Sync activado');
