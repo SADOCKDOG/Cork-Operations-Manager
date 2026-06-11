@@ -61,8 +61,9 @@ export const Auth = {
                     }
                 } catch (e) {
                     console.warn('[Auth] No se pudo refrescar token de Google silenciosamente:', e);
-                    // Si falla el refresco (por ejemplo, revocado), cerramos sesión.
-                    throw e; 
+                    // No hacemos throw aquí. Si falla el refresco silencioso pero el token actual 
+                    // sigue siendo válido para Drive, queremos dejarle entrar.
+                    // Solo fallará luego si Drive devuelve 401.
                 }
 
                 console.log(`[Auth] Sesión restaurada: ${this._currentUser.nombre}`);
