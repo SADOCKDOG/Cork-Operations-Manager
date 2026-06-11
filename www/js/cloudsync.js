@@ -161,6 +161,12 @@ export const CloudSync = {
             body: blob
         });
         if (!res.ok) {
+            if (res.status === 404) {
+                // File deleted from drive, clear local cache so next sync recreates it
+                localStorage.removeItem('cloudSync_driveFileId');
+                this._config.driveFileId = null;
+                throw new Error("El archivo fue borrado de Google Drive. Se recreará en la próxima sincronización.");
+            }
             let errorMsg = "Fallo actualizando archivo";
             try { const errObj = await res.json(); errorMsg = errObj.error.message || errObj.error; } catch(e){}
             throw new Error(errorMsg);
