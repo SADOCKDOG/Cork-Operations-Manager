@@ -45,7 +45,7 @@ export const LoginUI = {
         document.getElementById('app-content').style.display = 'block';
         
         const nav = document.querySelector('.bottom-nav');
-        if (nav) nav.style.display = 'flex';
+        if (nav) nav.style.display = ''; // Vacío para que herede 'grid' del CSS
         
         const headerInfo = document.getElementById('finca-header-info');
         if (headerInfo) headerInfo.style.display = 'flex';
