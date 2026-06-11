@@ -11,7 +11,7 @@ import { Export } from './export.js';
 
 export const CloudSync = {
     _config: {
-        syncEnabled: JSON.parse(localStorage.getItem('cloudSync_enabled') || 'false'),
+        syncEnabled: JSON.parse(localStorage.getItem('cloudSync_enabled') || 'true'),
         autoSyncInterval: 5 * 60 * 1000,
         _lastSync: null,
         _syncInProgress: false,
@@ -19,6 +19,9 @@ export const CloudSync = {
     },
 
     async init() {
+        if (!this._config.syncEnabled) {
+            await this.enableCloudSync();
+        }
         if (this._config.syncEnabled) {
             console.log('[CloudSync] Inicializando sincronización con Google Drive...');
             this.startAutoSync();
