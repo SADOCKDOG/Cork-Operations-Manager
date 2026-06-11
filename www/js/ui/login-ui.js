@@ -28,7 +28,7 @@ export const LoginUI = {
     },
 
     showLoginHideApp() {
-        document.getElementById('login-container').style.display = 'block';
+        document.getElementById('login-container').style.display = 'flex';
         document.getElementById('app-content').style.display = 'none';
         
         // Hide navigation if it exists
