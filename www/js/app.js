@@ -32,6 +32,7 @@ export const App = {
     ...LoginUI,
     ...UsuariosUI,
     ...Auth,
+    CloudSync,
 
     _activeObjectUrls: [],
     
