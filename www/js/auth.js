@@ -54,10 +54,14 @@ export const Auth = {
                     }
                     const googleUser = await GoogleAuth.refresh();
                     if (googleUser && googleUser.authentication) {
-                        this._sessionToken = googleUser.authentication.accessToken;
-                        this._currentUser.accessToken = googleUser.authentication.accessToken;
-                        localStorage.setItem('auth_token', this._sessionToken);
-                        localStorage.setItem('auth_user_data', JSON.stringify(this._currentUser));
+                        if (googleUser.authentication.accessToken) {
+                            this._sessionToken = googleUser.authentication.accessToken;
+                            this._currentUser.accessToken = googleUser.authentication.accessToken;
+                            localStorage.setItem('auth_token', this._sessionToken);
+                            localStorage.setItem('auth_user_data', JSON.stringify(this._currentUser));
+                        } else {
+                            console.warn("[Auth] Refresh no devolvió accessToken para Drive.");
+                        }
                     }
                 } catch (e) {
                     console.warn('[Auth] No se pudo refrescar token de Google silenciosamente:', e);
@@ -153,6 +157,11 @@ export const Auth = {
                 };
                 await db.add('usuarios', usuario);
                 await this._auditLog('USUARIO_CREADO', `Usuario Google: ${usuario.email}`, usuario.id);
+            }
+            
+            if (!googleUser.authentication || !googleUser.authentication.accessToken) {
+                console.error("[Auth] Falta accessToken en la respuesta de Google:", googleUser);
+                throw new Error("Google no ha devuelto un Token de Acceso válido para Drive. Por favor, asegúrate de marcar la casilla de permisos de Google Drive al iniciar sesión.");
             }
             
             this._sessionToken = googleUser.authentication.accessToken;
