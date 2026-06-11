@@ -73,7 +73,7 @@ export const CloudSync = {
 
             // 3. Generar backup local actualizado (con los datos recién fusionados)
             console.log('[CloudSync] Generando JSON local...');
-            const localBackupBlob = await Export.exportBackup(false); // Sin encriptar para Drive, o encriptado si se configura
+            const localBackupBlob = await Export.generateBackupBlob();
             
             // 4. Subir a Drive
             if (fileId) {
@@ -120,7 +120,12 @@ export const CloudSync = {
             headers: { Authorization: `Bearer ${accessToken}` }
         });
         if (!res.ok) return null;
-        return await res.json();
+        try {
+            return await res.json();
+        } catch (e) {
+            console.warn('[CloudSync] Archivo en Drive no es JSON válido (puede estar corrupto o vacío). Se sobrescribirá.');
+            return null;
+        }
     },
 
     async _createDriveFile(blob, accessToken) {

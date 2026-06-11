@@ -11,6 +11,23 @@ import { Crypto } from './core/crypto.js';
  */
 
 export const Export = {
+    async generateBackupBlob() {
+        const allFincas = await Fincas.list();
+        const exportData = { version: '6.3.0', app: "Cork Manager", exportedAt: new Date().toISOString(), fincas: [] };
+        for (const finca of allFincas) {
+            const zonas = await db.getAllFromIndex('zonas', 'fincaId', finca.id);
+            const pesadas = await db.getAllFromIndex('pesadas', 'fincaId', finca.id);
+            const gastos = await db.getAllFromIndex('gastos', 'fincaId', finca.id);
+            const serializableZonas = await Promise.all(zonas.map(async z => {
+                const zCopy = { ...z };
+                if (zCopy.croquisBlob instanceof Blob) { zCopy.croquisBase64 = await this._blobToBase64(zCopy.croquisBlob); }
+                delete zCopy.croquisBlob; return zCopy;
+            }));
+            exportData.fincas.push({ info: finca, zonas: serializableZonas, pesadas: pesadas, gastos: gastos });
+        }
+        return new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    },
+
     async exportBackup(fincasIds = null) {
         try {
             const allFincas = await Fincas.list();
