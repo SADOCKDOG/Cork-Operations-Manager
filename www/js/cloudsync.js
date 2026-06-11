@@ -129,25 +129,27 @@ export const CloudSync = {
     },
 
     async _createDriveFile(blob, accessToken) {
-        const metadata = {
-            name: 'cork_manager_sync.json',
-            mimeType: 'application/json'
-        };
-        const form = new FormData();
-        form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-        form.append('file', blob);
-
-        const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+        // Paso 1: Crear archivo vacío con metadata correcta
+        const resMetadata = await fetch('https://www.googleapis.com/drive/v3/files', {
             method: 'POST',
-            headers: { Authorization: `Bearer ${accessToken}` },
-            body: form
+            headers: { 
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: 'cork_manager_sync.json',
+                mimeType: 'application/json'
+            })
         });
-        if (!res.ok) {
-            let errorMsg = "Fallo creando archivo";
-            try { const errObj = await res.json(); errorMsg = errObj.error.message || errObj.error; } catch(e){}
+        if (!resMetadata.ok) {
+            let errorMsg = "Fallo creando metadata del archivo";
+            try { const errObj = await resMetadata.json(); errorMsg = errObj.error.message || errObj.error; } catch(e){}
             throw new Error(errorMsg);
         }
-        const data = await res.json();
+        const data = await resMetadata.json();
+        
+        // Paso 2: Subir el contenido
+        await this._updateDriveFile(data.id, blob, accessToken);
         return data.id;
     },
 
