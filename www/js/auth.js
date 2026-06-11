@@ -102,7 +102,7 @@ export const Auth = {
         try {
             if (!window.isNative) {
                 GoogleAuth.initialize({
-                    clientId: '186318731165-2vbt730ihgdejrgq19ut71gom7lucvc6.apps.googleusercontent.com',
+                    clientId: '186318731165-7tplui80jai6m37l810p1rapvsipu33p.apps.googleusercontent.com',
                     scopes: ['profile', 'email', 'https://www.googleapis.com/auth/drive.file'],
                     grantOfflineAccess: true
                 });
