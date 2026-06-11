@@ -142,7 +142,11 @@ export const CloudSync = {
             headers: { Authorization: `Bearer ${accessToken}` },
             body: form
         });
-        if (!res.ok) throw new Error("Fallo creando archivo");
+        if (!res.ok) {
+            let errorMsg = "Fallo creando archivo";
+            try { const errObj = await res.json(); errorMsg = errObj.error.message || errObj.error; } catch(e){}
+            throw new Error(errorMsg);
+        }
         const data = await res.json();
         return data.id;
     },
@@ -156,7 +160,11 @@ export const CloudSync = {
             },
             body: blob
         });
-        if (!res.ok) throw new Error("Fallo actualizando archivo");
+        if (!res.ok) {
+            let errorMsg = "Fallo actualizando archivo";
+            try { const errObj = await res.json(); errorMsg = errObj.error.message || errObj.error; } catch(e){}
+            throw new Error(errorMsg);
+        }
     },
 
     async _mergeCloudData(cloudData) {
