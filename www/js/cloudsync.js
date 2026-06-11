@@ -103,7 +103,11 @@ export const CloudSync = {
         const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&spaces=drive`, {
             headers: { Authorization: `Bearer ${accessToken}` }
         });
-        if (!res.ok) throw new Error("Fallo buscando archivo en Drive");
+        if (!res.ok) {
+            let errorMsg = "Fallo buscando archivo en Drive";
+            try { const errObj = await res.json(); errorMsg = errObj.error.message; } catch(e){}
+            throw new Error(errorMsg);
+        }
         const data = await res.json();
         if (data.files && data.files.length > 0) {
             return data.files[0].id;
