@@ -174,32 +174,38 @@ export const CloudSync = {
     },
 
     async _mergeCloudData(cloudData) {
-        // Usa la misma lógica de parseBackupFile pero fusionando sin sobreescribir ciegamente
-        // Si un registro ya existe, cogemos el más nuevo (basado en un timestamp si existiera, o ignoramos)
-        // Por simplicidad, importaremos llamando a un import especial
-        if (!cloudData.fincas) return;
-        
+        if (!cloudData || !cloudData.fincas) return;
         const currentUser = Auth.getCurrentUser();
         
-        // Fincas
-        for (const f of cloudData.fincas) {
-            const ext = await db.get('fincas', f.id);
-            if (!ext) await db.add('fincas', f);
-        }
-        // Zonas
-        if (cloudData.zonas) {
-            for (const z of cloudData.zonas) {
-                const ext = await db.get('zonas', z.id);
-                if (!ext) await db.add('zonas', z);
+        for (const fData of cloudData.fincas) {
+            const fInfo = fData.info;
+            if (!fInfo || !fInfo.id) continue;
+            
+            const extFinca = await db.get('fincas', Number(fInfo.id));
+            if (!extFinca) await db.add('fincas', fInfo);
+            
+            if (fData.zonas) {
+                for (const z of fData.zonas) {
+                    if (!z.id) continue;
+                    const extZ = await db.get('zonas', Number(z.id));
+                    if (!extZ) await db.add('zonas', z);
+                }
             }
-        }
-        // Pesadas
-        if (cloudData.pesadas) {
-            for (const p of cloudData.pesadas) {
-                const ext = await db.get('pesadas', p.id);
-                if (!ext) {
-                    if (!p.creadoPor) p.creadoPor = currentUser.id;
-                    await db.add('pesadas', p);
+            if (fData.pesadas) {
+                for (const p of fData.pesadas) {
+                    if (!p.id) continue;
+                    const extP = await db.get('pesadas', Number(p.id));
+                    if (!extP) {
+                        if (!p.creadoPor && currentUser) p.creadoPor = currentUser.id;
+                        await db.add('pesadas', p);
+                    }
+                }
+            }
+            if (fData.gastos) {
+                for (const g of fData.gastos) {
+                    if (!g.id) continue;
+                    const extG = await db.get('gastos', Number(g.id));
+                    if (!extG) await db.add('gastos', g);
                 }
             }
         }
