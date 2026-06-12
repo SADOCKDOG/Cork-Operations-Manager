@@ -66,14 +66,6 @@ async function initDB() {
                     gastoStore.createIndex('fecha', 'fecha');
                 }
             }
-
-            // --- VERSION 8: USUARIOS ---
-            if (oldVersion < 8) {
-                if (!db.objectStoreNames.contains('usuarios')) {
-                    const userStore = db.createObjectStore('usuarios', { keyPath: 'id' });
-                    userStore.createIndex('email', 'email', { unique: true });
-                }
-            }
         },
     });
     

@@ -23,7 +23,7 @@ export const FincasUI = {
                 </button>
                 <button class="report-select-btn theme-econ" data-action="Export.exportBackup" style="background: linear-gradient(135deg, rgba(44,62,80,0.5) 0%, rgba(76,161,175,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(44,62,80,0.15); min-height: 80px; padding: 10px;">
                     <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">📄</span>
-                    <strong style="font-size:0.85rem;">Exportar Todo 🔒</strong>
+                    <strong style="font-size:0.85rem;">Exportar Todo</strong>
                 </button>
             </div>
 
@@ -104,19 +104,6 @@ export const FincasUI = {
             <div class="reportes-selector-grid" style="margin-top:20px;">
                 <button class="report-select-btn theme-zona" data-route="/gastos"><span class="btn-icon">💸</span><strong>Control Gastos</strong></button>
                 <button class="report-select-btn theme-global" data-route="/fincas"><span class="btn-icon">📍</span><strong>Gestor Fincas</strong></button>
-                <button class="report-select-btn" data-route="/usuarios" style="background: rgba(160, 103, 58, 0.15); border: 2px solid var(--p-cork); color: var(--text-p);"><span class="btn-icon">👥</span><strong>Usuarios y Roles</strong></button>
-            </div>
-
-            <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
-                <button class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 600;" onclick="App.toast('Sincronizando...'); window.App.CloudSync.syncNow().then(() => { App.toast('✅ Sincronizado'); document.getElementById('btn-ver-drive').style.display='block'; }).catch(e => App.toastError(e.message))">
-                    <span style="margin-right: 5px;">☁️</span> Forzar Sincronización a Drive
-                </button>
-                <button id="btn-ver-drive" class="btn btn-secondary" style="width: 100%; padding: 12px; font-weight: 600; display: ${localStorage.getItem('cloudSync_driveFileId') ? 'block' : 'none'}; background: #4285F4; color: white; border: none;" onclick="window.open('https://drive.google.com/file/d/' + localStorage.getItem('cloudSync_driveFileId') + '/view', '_blank')">
-                    <span style="margin-right: 5px;">👁️</span> Ver archivo en Google Drive (Web)
-                </button>
-                <button class="btn btn-secondary" style="width: 100%; border: 1px solid #ff4444; color: #ff4444; background: transparent; padding: 12px; font-weight: 600;" onclick="App.logout()">
-                    <span style="margin-right: 5px;">🚪</span> Cerrar Sesión (Google)
-                </button>
             </div>
 
             <div class="card text-center" style="border-top: 2px solid var(--p-cork); margin-top:30px; padding:30px;">
@@ -127,7 +114,7 @@ export const FincasUI = {
                 <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 5px; border:none; padding:0;">📄 Licencia y Soporte</h3>
                 <p style="font-size: 0.85rem; color: var(--text-s); line-height: 1.5;">
                     © 2026 Cork Manager. Todos los derechos reservados.<br>
-                    Licencia de uso profesional v7.0.0
+                    Licencia de uso profesional v6.3.1
                 </p>
                 <p style="font-size: 0.85rem; color: var(--p-cork); margin-top: 15px; font-weight: 600;">
                     📩 soporte.sdogfarm@gmail.com

@@ -14,10 +14,6 @@ import { ZonasUI } from './ui/zonas-ui.js';
 import { FincasUI } from './ui/fincas-ui.js';
 import { GastosUI } from './ui/gastos-ui.js';
 import { ReportesUI } from './ui/reportes-ui.js';
-import { LoginUI } from './ui/login-ui.js';
-import { UsuariosUI } from './ui/usuarios-ui.js';
-import { Auth } from './auth.js';
-import { CloudSync } from './cloudsync.js';
 
 export const App = {
     ...Utils,
@@ -29,10 +25,6 @@ export const App = {
     ...FincasUI,
     ...GastosUI,
     ...ReportesUI,
-    ...LoginUI,
-    ...UsuariosUI,
-    ...Auth,
-    CloudSync,
 
     _activeObjectUrls: [],
     
@@ -42,7 +34,6 @@ export const App = {
     _calculateQualityTotals(pesadas) {
         if (!pesadas || !Array.isArray(pesadas)) return { primera: {kg:0, quintales:0}, bornizo: {kg:0, quintales:0}, refugo: {kg:0, quintales:0} };
         
-        // Simple hash based on length and a checksum of IDs to detect changes
         const hash = pesadas.length + '_' + (pesadas.length > 0 ? pesadas[pesadas.length - 1].id : 0) + '_' + (pesadas.length > 0 ? pesadas[0].id : 0);
         
         if (this._totalsCache && this._lastPesadasHash === hash) {
@@ -79,32 +70,15 @@ export const App = {
 
     async init() {
         try {
-            console.log("App: Iniciando v6.2.5 (Multi-User & Cloud Sync)...");
+            console.log("App: Iniciando v6.3.1 (Local Only)...");
             window.addEventListener('hashchange', () => App.route());
             window.addEventListener('fincaChanged', () => { App.updateHeader().then(() => App.route()); });
             
             App.initEvents();
-            App.initLogin(); // Asignar listeners del botón de login
             await dbPromise;
 
-            // Verificar si hay sesión iniciada
-            const isLogged = await Auth.init();
-            
-            if (!isLogged) {
-                App.showLoginHideApp();
-            } else {
-                App.hideLoginShowApp();
-                await CloudSync.init();
-                await App.updateHeader();
-                await App.route();
-            }
-            
-            // Listener para cuando cambia la auth
-            window.addEventListener('auth_changed', async () => {
-                await CloudSync.init();
-                await App.updateHeader();
-                await App.route();
-            });
+            await App.updateHeader();
+            await App.route();
 
         } catch (error) {
             console.error(error);
