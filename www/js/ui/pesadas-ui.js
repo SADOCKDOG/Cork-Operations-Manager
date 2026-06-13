@@ -44,34 +44,41 @@ export const PesadasUI = {
         }
 
         main.innerHTML = `
-            <div class="card" style="border-top: 5px solid ${isEdit ? '#eab308' : 'var(--p-cork)'}; padding: 25px;">
+            <div class="card card-fullscreen animate-in" style="border-top: 5px solid ${isEdit ? '#eab308' : 'var(--p-cork)'}; padding: 25px;">
                 <h2 style="color:#fff; margin-bottom:20px; font-size:1.5rem; border:none; padding:0; text-align:center;">${isEdit ? 'Editar' : 'Nueva'} Pesada</h2>
                 <form id="form-pesada">
                     <!-- 1. Bruto a pantalla completa -->
-                    <div class="form-group" style="text-align:center;">
+                    <div class="form-group centered" style="text-align:center;">
                         <label style="font-size:1.3rem;">Peso Neto Directo (kg)</label>
-                        <input type="number" id="p-bruto" value="${d.bruto || d.pesoBruto || ''}" placeholder="0.0" step="0.1" required style="font-size:4rem; height:100px; font-weight:900; color:#fff; background-color:rgba(0,0,0,0.4); border: 2px solid var(--p-cork); text-align:center; width:100%;">
+                        <input type="number" id="p-bruto" value="${d.bruto || d.pesoBruto || ''}" placeholder="0.0" step="0.1" required class="input-huge">
                     </div>
                     
                     <div id="p-validation-msg" style="text-align:center; font-weight:bold; margin-top:5px; margin-bottom:15px;">&nbsp;</div>
 
                     <!-- 2. Zona -->
-                    <div class="form-group">
+                    <div class="form-group centered">
                         <label>Zona / Parcela</label>
-                        <select id="p-zona" style="height:60px; font-size:1.2rem;">
+                        <select id="p-zona" style="height:70px; font-size:1.3rem; text-align-last:center;">
                             ${zonas.map(z => `<option value="${z.id}" ${curZona == z.id ? 'selected' : ''}>${Utils.escapeHtml(z.nombre)}</option>`).join('')}
                         </select>
                     </div>
 
                     <!-- 3. Selector de Calidad -->
-                    <div class="form-group">
+                    <div class="form-group centered">
                         <label>Calidad del Corcho</label>
-                        <div class="quality-selector" style="display:flex; gap:10px;">
+                        <div class="quality-selector-centered" style="display:flex; gap:10px;">
                             <button type="button" class="quality-btn ${d.calidad === 'primera' ? 'selected' : ''}" data-quality="primera" style="flex:1; height:60px; font-size:1.2rem;">⭐ 1ª</button>
                             <button type="button" class="quality-btn ${d.calidad === 'bornizo' ? 'selected' : ''}" data-quality="bornizo" style="flex:1; height:60px; font-size:1.2rem;">🟡 Bo</button>
                             <button type="button" class="quality-btn ${d.calidad === 'refugo' ? 'selected' : ''}" data-quality="refugo" style="flex:1; height:60px; font-size:1.2rem;">🔴 Re</button>
                         </div>
                     </div>
+
+                    <!-- BOTÓN GUARDAR (Justo debajo de calidades como solicitado) -->
+                    <div style="margin-bottom: 20px;">
+                        <button type="submit" class="btn btn-primary" style="width:100%; height:80px; font-size:1.4rem;">💾 Guardar Pesada</button>
+                    </div>
+
+                    <hr style="border:0; border-top:1px solid var(--border); margin:25px 0;">
 
                     <!-- 4. Datos calculados: Quintales -->
                     <div class="card stat-grid" style="display:flex; justify-content:center; background: rgba(255,255,255,0.03); margin: 15px 0;">
@@ -87,10 +94,9 @@ export const PesadasUI = {
                         <div class="form-group"><label>Nº Saca</label><input type="number" id="p-saca" value="${d.saca}"></div>
                     </div>
 
-                    <div style="margin-top: 20px;">
-                        <button type="submit" class="btn btn-primary" style="width:100%; height:70px; font-size:1.3rem;">💾 Guardar Pesada</button>
-                        ${isEdit ? `<button type="button" class="btn btn-danger mt-1" data-action="App._deletePesada" data-id="${id}" style="width:100%; height:60px;">🗑️ Eliminar</button>` : ''}
-                        <button type="button" class="btn btn-outline mt-1" data-action="back" style="width:100%; height:60px;">Cancelar</button>
+                    <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
+                        ${isEdit ? `<button type="button" class="btn btn-danger" data-action="App._deletePesada" data-id="${id}" style="width:100%; height:60px;">🗑️ Eliminar Pesada</button>` : ''}
+                        <button type="button" class="btn btn-outline" data-action="back" style="width:100%; height:60px;">Cancelar</button>
                     </div>
                 </form>
             </div>
@@ -107,13 +113,13 @@ export const PesadasUI = {
             const n = b - t;
             const qEl = document.getElementById('calc-q');
             
-            qEl.textContent = Math.max(0, n / factor).toFixed(2);
+            if (qEl) qEl.textContent = Math.max(0, n / factor).toFixed(2);
             if (b > 1500) {
-                qEl.style.color = "#eab308";
+                if (qEl) qEl.style.color = "#eab308";
                 valMsg.textContent = "⚠️ Peso inusualmente alto (>1500kg)";
                 valMsg.style.color = "#eab308";
             } else {
-                qEl.style.color = "#10b981";
+                if (qEl) qEl.style.color = "#10b981";
                 valMsg.innerHTML = "&nbsp;";
             }
         };
@@ -134,11 +140,7 @@ export const PesadasUI = {
             
             const b = parseFloat(inB.value) || 0;
             const t = 0;
-            const kg = b - t;
-            const config = Fincas._activeCache || await Fincas.getActive();
-            const factor = config ? config.factorQuintal : 46;
-            const q = kg / factor;
-            
+
             const dp = {
                 id: isEdit ? parseInt(id) : undefined,
                 zonaId: parseInt(document.getElementById('p-zona').value),
@@ -153,6 +155,14 @@ export const PesadasUI = {
             Utils.toast('✅ Guardada correctamente');
             window.location.hash = '#/lista';
         };
+
+        // Autofocus y apertura de teclado numérico
+        setTimeout(() => {
+            if (inB) {
+                inB.focus();
+                inB.click(); // Algunos navegadores Android requieren click para el teclado
+            }
+        }, 300);
     },
 
     async _deletePesada(id) {
