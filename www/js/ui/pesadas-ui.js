@@ -44,28 +44,27 @@ export const PesadasUI = {
         }
 
         main.innerHTML = `
-            <div class="card card-fullscreen animate-in" style="border-top: 5px solid ${isEdit ? '#eab308' : 'var(--p-cork)'}; padding: 25px;">
-                <h2 style="color:#fff; margin-bottom:20px; font-size:1.5rem; border:none; padding:0; text-align:center;">${isEdit ? 'Editar' : 'Nueva'} Pesada</h2>
+            <div class="card card-fullscreen animate-in" style="border-top: 5px solid ${isEdit ? '#eab308' : 'var(--p-cork)'}; padding: 15px 20px;">
                 <form id="form-pesada">
                     <!-- 1. Bruto a pantalla completa -->
-                    <div class="form-group centered" style="text-align:center;">
-                        <label style="font-size:1.3rem;">Peso Neto Directo (kg)</label>
+                    <div class="form-group centered" style="text-align:center; margin-bottom: 5px;">
+                        <label style="font-size:1.1rem; margin-bottom: 5px;">Peso Neto Directo (kg)</label>
                         <input type="number" id="p-bruto" value="${d.bruto || d.pesoBruto || ''}" placeholder="0.0" step="0.1" required class="input-huge">
                     </div>
                     
-                    <div id="p-validation-msg" style="text-align:center; font-weight:bold; margin-top:5px; margin-bottom:15px;">&nbsp;</div>
+                    <div id="p-validation-msg" style="text-align:center; font-weight:bold; font-size: 0.8rem; margin-bottom: 10px;">&nbsp;</div>
 
                     <!-- 2. Zona -->
-                    <div class="form-group centered">
-                        <label>Zona / Parcela</label>
-                        <select id="p-zona" style="height:70px; font-size:1.3rem; text-align-last:center;">
+                    <div class="form-group centered" style="margin-bottom: 15px;">
+                        <label style="font-size: 0.9rem; margin-bottom: 8px;">Zona / Parcela</label>
+                        <select id="p-zona" style="height:60px; font-size:1.2rem; text-align-last:center;">
                             ${zonas.map(z => `<option value="${z.id}" ${curZona == z.id ? 'selected' : ''}>${Utils.escapeHtml(z.nombre)}</option>`).join('')}
                         </select>
                     </div>
 
                     <!-- 3. Selector de Calidad -->
-                    <div class="form-group centered">
-                        <label>Calidad del Corcho</label>
+                    <div class="form-group centered" style="margin-bottom: 15px;">
+                        <label style="font-size: 0.9rem; margin-bottom: 8px;">Calidad del Corcho</label>
                         <div class="quality-selector-centered" style="display:flex; gap:10px;">
                             <button type="button" class="quality-btn ${d.calidad === 'primera' ? 'selected' : ''}" data-quality="primera" style="flex:1; height:60px; font-size:1.2rem;">⭐ 1ª</button>
                             <button type="button" class="quality-btn ${d.calidad === 'bornizo' ? 'selected' : ''}" data-quality="bornizo" style="flex:1; height:60px; font-size:1.2rem;">🟡 Bo</button>
@@ -73,30 +72,30 @@ export const PesadasUI = {
                         </div>
                     </div>
 
-                    <!-- BOTÓN GUARDAR (Justo debajo de calidades como solicitado) -->
-                    <div style="margin-bottom: 20px;">
-                        <button type="submit" class="btn btn-primary" style="width:100%; height:80px; font-size:1.4rem;">💾 Guardar Pesada</button>
+                    <!-- BOTÓN GUARDAR -->
+                    <div style="margin-bottom: 15px;">
+                        <button type="submit" class="btn btn-primary" style="width:100%; height:80px; font-size:1.5rem; font-weight: 900;">💾 GUARDAR PESADA</button>
                     </div>
 
-                    <hr style="border:0; border-top:1px solid var(--border); margin:25px 0;">
+                    <hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
 
                     <!-- 4. Datos calculados: Quintales -->
-                    <div class="card stat-grid" style="display:flex; justify-content:center; background: rgba(255,255,255,0.03); margin: 15px 0;">
+                    <div class="card stat-grid" style="display:flex; justify-content:center; background: rgba(255,255,255,0.03); margin: 10px 0; padding: 10px !important;">
                         <div style="text-align:center;">
-                            <div id="calc-q" class="stat-value" style="font-size: 2.5rem; color: #10b981; font-weight:900;">0.00</div>
-                            <div class="stat-label" style="color:var(--text-s);">Quintales</div>
+                            <div id="calc-q" class="stat-value" style="font-size: 2.2rem; color: #10b981; font-weight:900;">0.00</div>
+                            <div class="stat-label" style="color:var(--text-s); font-size: 0.8rem;">Quintales</div>
                         </div>
                     </div>
 
                     <!-- 5. Fecha y Nº Saca al final -->
-                    <div class="grid-2">
-                        <div class="form-group"><label>Fecha</label><input type="date" id="p-fecha" value="${d.fecha}"></div>
-                        <div class="form-group"><label>Nº Saca</label><input type="number" id="p-saca" value="${d.saca}"></div>
+                    <div class="grid-2" style="gap: 10px;">
+                        <div class="form-group" style="margin-bottom: 10px;"><label style="font-size: 0.8rem;">Fecha</label><input type="date" id="p-fecha" value="${d.fecha}" style="height: 50px; font-size: 1rem;"></div>
+                        <div class="form-group" style="margin-bottom: 10px;"><label style="font-size: 0.8rem;">Nº Saca</label><input type="number" id="p-saca" value="${d.saca}" style="height: 50px; font-size: 1rem;"></div>
                     </div>
 
-                    <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
-                        ${isEdit ? `<button type="button" class="btn btn-danger" data-action="App._deletePesada" data-id="${id}" style="width:100%; height:60px;">🗑️ Eliminar Pesada</button>` : ''}
-                        <button type="button" class="btn btn-outline" data-action="back" style="width:100%; height:60px;">Cancelar</button>
+                    <div style="margin-top: 5px; display: flex; flex-direction: column; gap: 8px;">
+                        ${isEdit ? `<button type="button" class="btn btn-danger" data-action="App._deletePesada" data-id="${id}" style="width:100%; height:55px; font-size: 1rem;">🗑️ Eliminar Pesada</button>` : ''}
+                        <button type="button" class="btn btn-outline" data-action="back" style="width:100%; height:55px; font-size: 1rem;">Cancelar</button>
                     </div>
                 </form>
             </div>

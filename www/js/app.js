@@ -80,6 +80,20 @@ export const App = {
             await App.updateHeader();
             await App.route();
 
+            // Gestión del botón retroceder de Android
+            if (window.Capacitor && window.Capacitor.Plugins.App) {
+                window.Capacitor.Plugins.App.addListener('backButton', () => {
+                    const hash = window.location.hash;
+                    if (hash === '' || hash === '#/') {
+                        if (confirm('¿Deseas salir de la aplicación?')) {
+                            window.Capacitor.Plugins.App.exitApp();
+                        }
+                    } else {
+                        window.history.back();
+                    }
+                });
+            }
+
             // Lógica de Pantalla de Bienvenida (Wizard)
             const allFincas = await Fincas.list();
             const hideWelcome = localStorage.getItem('cork_hide_welcome') === 'true';

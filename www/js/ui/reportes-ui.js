@@ -16,25 +16,25 @@ export const ReportesUI = {
                 <h2 style="margin:0; border:none; padding:0; color:var(--text-p); font-weight:800;">Central de Informes</h2>
             </div>
             <div class="reportes-selector-grid">
-                <button class="report-select-btn" data-action="App.renderReporteGlobal" style="background: linear-gradient(135deg, rgba(160,103,58,0.5) 0%, rgba(212,163,115,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(160,103,58,0.15); min-height: 80px; padding: 10px;">
-                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">🌍</span>
-                    <strong style="font-size:0.85rem;">Balance Global</strong>
+                <button class="report-select-btn theme-global" data-action="App.renderReporteGlobal">
+                    <span class="btn-icon">🌍</span>
+                    <strong>Balance Global</strong>
                 </button>
-                <button class="report-select-btn" data-action="App.renderReporteEconomico" style="background: linear-gradient(135deg, rgba(44,62,80,0.5) 0%, rgba(76,161,175,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(44,62,80,0.15); min-height: 80px; padding: 10px;">
-                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">💶</span>
-                    <strong style="font-size:0.85rem;">Liq. Económica</strong>
+                <button class="report-select-btn theme-econ" data-action="App.renderReporteEconomico">
+                    <span class="btn-icon">💶</span>
+                    <strong>Liq. Económica</strong>
                 </button>
-                <button class="report-select-btn" data-action="App.renderMenuZonasReport" style="background: linear-gradient(135deg, rgba(19,78,94,0.5) 0%, rgba(113,178,128,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(19,78,94,0.15); min-height: 80px; padding: 10px;">
-                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">🌲</span>
-                    <strong style="font-size:0.85rem;">Prod. Zona</strong>
+                <button class="report-select-btn theme-zona" data-action="App.renderMenuZonasReport">
+                    <span class="btn-icon">🌲</span>
+                    <strong>Prod. Zona</strong>
                 </button>
-                <button class="report-select-btn" data-action="App.renderMenuCalidadesReport" style="background: linear-gradient(135deg, rgba(127,176,105,0.5) 0%, rgba(141,179,105,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(127,176,105,0.15); min-height: 80px; padding: 10px;">
-                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">⭐</span>
-                    <strong style="font-size:0.85rem;">Liq. Calidad</strong>
+                <button class="report-select-btn theme-calidad" data-action="App.renderMenuCalidadesReport">
+                    <span class="btn-icon">⭐</span>
+                    <strong>Liq. Calidad</strong>
                 </button>
-                <button class="report-select-btn" data-action="App.renderGraficos" style="background: linear-gradient(135deg, rgba(106,17,203,0.5) 0%, rgba(37,117,252,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(106,17,203,0.15); min-height: 80px; padding: 10px;">
-                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">📈</span>
-                    <strong style="font-size:0.85rem;">Panel Gráficos</strong>
+                <button class="report-select-btn theme-graficos" data-action="App.renderGraficos">
+                    <span class="btn-icon">📈</span>
+                    <strong>Panel Gráficos</strong>
                 </button>
             </div>
             <hr style="border:0; border-top:1px solid var(--border); margin:25px 0;">

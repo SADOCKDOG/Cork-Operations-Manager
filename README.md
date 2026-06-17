@@ -208,6 +208,11 @@ Requisitos básicos: Node.js, npm, Capacitor. Pasos resumidos:
 
 ---
 
+## 🆕 Novedades en la versión 7.0.1 (Fixes & Estabilidad)
+
+* **Corrección de Configuración Proguard**: Actualizado `build.gradle` del plugin `@capacitor/app` para usar `proguard-android-optimize.txt`. Esto resuelve el error de compilación en versiones recientes del Android Gradle Plugin (AGP 8.0+) que impedía el uso de `proguard-android.txt` debido a la restricción de `-dontoptimize`.
+* **Sincronización de Dependencias**: Verificada la consistencia de las directivas Proguard en todos los módulos de Capacitor para garantizar optimizaciones R8 seguras.
+
 ## 🆕 Novedades en la versión 7.0.0 (CloudSync & Google Drive)
 
 * **Sincronización en la Nube Automatizada**: Integración completa con Google Drive para salvaguardar todos los datos de la explotación (Fincas, Zonas, Pesadas y Gastos).
