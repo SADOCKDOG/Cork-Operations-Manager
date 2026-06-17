@@ -108,13 +108,15 @@ export const FincasUI = {
 
             <div class="card text-center" style="border-top: 2px solid var(--p-cork); margin-top:30px; padding:30px;">
                 <p style="font-size: 0.85rem; color: var(--text-s); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">Desarrollado por</p>
+                <h4 style="color: #fff; margin-bottom: 10px; border:none; padding:0;">David Asuar Arteaga</h4>
                 <img src="icons/Logo SDOGFARMCORE.png" style="width:160px; margin-bottom:15px; filter: drop-shadow(0 0 10px rgba(212,163,115,0.2));">
                 <p style="font-weight:800; color:var(--p-cork); margin-bottom: 5px;">Ecosistema CORE de Gestión Inteligente</p>
                 <div style="width: 40px; height: 2px; background: var(--border); margin: 15px auto;"></div>
                 <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 5px; border:none; padding:0;">📄 Licencia y Soporte</h3>
                 <p style="font-size: 0.85rem; color: var(--text-s); line-height: 1.5;">
                     © 2026 Cork Manager. Todos los derechos reservados.<br>
-                    Licencia de uso profesional v6.3.1
+                    Licencia de uso profesional v6.3.1<br>
+                    <a href="https://github.com/SADOCKDOG/Cork-Operations-Manager" target="_blank" style="color:var(--accent); text-decoration:none; font-weight:bold; display:inline-block; margin-top:10px;">Repositorio en GitHub ➔</a>
                 </p>
                 <p style="font-size: 0.85rem; color: var(--p-cork); margin-top: 15px; font-weight: 600;">
                     📩 soporte.sdogfarm@gmail.com

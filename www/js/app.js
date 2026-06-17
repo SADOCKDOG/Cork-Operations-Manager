@@ -80,11 +80,99 @@ export const App = {
             await App.updateHeader();
             await App.route();
 
+            // Lógica de Pantalla de Bienvenida (Wizard)
+            const allFincas = await Fincas.list();
+            const hideWelcome = localStorage.getItem('cork_hide_welcome') === 'true';
+
+            if (!hideWelcome || allFincas.length === 0) {
+                App.showWelcomeWizard();
+            }
+
         } catch (error) {
             console.error(error);
             const content = document.getElementById('app-content');
             if (content) content.innerHTML = `<div class="card error-card"><h2>Error de Inicio</h2><p>${Utils.escapeHtml(error.message)}</p></div>`;
         }
+    },
+
+    showWelcomeWizard() {
+        if (document.getElementById('tour-overlay')) return;
+
+        const steps = [
+            {
+                title: "🌳 Bienvenido a Cork Manager",
+                text: "Tu ecosistema digital para la gestión profesional de pesadas de corcho. Diseñado por y para el trabajo en el monte."
+            },
+            {
+                title: "📍 Paso 1: Crea tu Finca",
+                text: "Lo primero es registrar tu explotación en el menú <strong>FINCAS</strong>. Podrás configurar los precios de mercado y datos del comprador."
+            },
+            {
+                title: "⚖️ Paso 2: Pesa en Campo",
+                text: "Usa el botón <strong>NUEVA PESADA</strong>. La app funciona sin internet y calculará automáticamente los quintales según el factor que elijas."
+            },
+            {
+                title: "📄 Paso 3: Informes Listos",
+                text: "Al terminar la saca, genera informes en <strong>PDF o EXCEL</strong> con un solo clic para enviarlos por WhatsApp a tus compradores."
+            }
+        ];
+
+        let currentStep = 0;
+        const overlay = document.createElement('div');
+        overlay.id = 'tour-overlay';
+        overlay.className = 'tour-overlay';
+
+        const renderStep = () => {
+            const step = steps[currentStep];
+            const isLast = currentStep === steps.length - 1;
+
+            overlay.innerHTML = `
+                <div class="tour-modal animate-in">
+                    <div class="tour-step-content">
+                        <h3>${step.title}</h3>
+                        <p>${step.text}</p>
+                    </div>
+
+                    <div class="tour-dots">
+                        ${steps.map((_, i) => `<div class="tour-dot ${i === currentStep ? 'active' : ''}"></div>`).join('')}
+                    </div>
+
+                    <div style="display:flex; gap:12px;">
+                        ${currentStep > 0 ? `<button class="btn btn-secondary" id="wiz-prev" style="flex:1;">Atrás</button>` : ''}
+                        <button class="btn btn-primary" id="wiz-next" style="flex:2;">${isLast ? '¡EMPEZAR!' : 'Siguiente'}</button>
+                    </div>
+
+                    <div class="welcome-checkbox-container">
+                        <input type="checkbox" id="stop-welcome">
+                        <label for="stop-welcome">No mostrar más al iniciar</label>
+                    </div>
+                </div>
+            `;
+
+            if (!document.getElementById('tour-overlay')) {
+                document.body.appendChild(overlay);
+            }
+
+            document.getElementById('wiz-next').onclick = () => {
+                if (isLast) {
+                    const stop = document.getElementById('stop-welcome').checked;
+                    if (stop) localStorage.setItem('cork_hide_welcome', 'true');
+                    overlay.remove();
+                } else {
+                    currentStep++;
+                    renderStep();
+                }
+            };
+
+            if (currentStep > 0) {
+                document.getElementById('wiz-prev').onclick = () => {
+                    currentStep--;
+                    renderStep();
+                };
+            }
+        };
+
+        renderStep();
     }
 };
 
