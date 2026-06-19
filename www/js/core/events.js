@@ -1,5 +1,6 @@
 import { Export } from '../export.js';
 import { App } from '../app.js';
+import { Billing } from './billing.js';
 
 export const Events = {
     initEvents() {
@@ -49,5 +50,8 @@ export const Events = {
         else if (action === 'Export.exportBackup') Export.exportBackup(btn.dataset.id ? [parseInt(btn.dataset.id)] : undefined);
         else if (action === 'Export.exportGlobalToExcel') Export.exportGlobalToExcel();
         else if (action === 'Export.exportEconomicoToExcel') Export.exportEconomicoToExcel();
+        else if (action === 'Billing.purchasePremium') Billing.purchasePremium();
+        else if (action === 'Billing.restorePurchases') Billing.restorePurchases();
+        else if (action === 'Billing.unlockLocally') Billing.unlockLocally();
     }
 };

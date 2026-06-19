@@ -72,6 +72,8 @@ export const FincasUI = {
         const main = document.getElementById('app-content'), finca = await Fincas.getActive(); if (!finca) return App.renderFincasManager();
         const comp = finca.comprador || {};
         const precios = finca.precios || {};
+        const premiumUnlocked = App.isPremiumUnlocked();
+        const billingAvailable = App.isAvailable();
 
         main.innerHTML = `
             <div style="display:flex; align-items:center; gap:12px; margin-bottom:25px;"><div style="width:5px; height:30px; background:var(--p-cork); border-radius:3px;"></div><h2 style="margin:0; border:none; padding:0; color:var(--text-p); font-weight:800;">Ajustes de Finca</h2></div>
@@ -104,6 +106,25 @@ export const FincasUI = {
             <div class="reportes-selector-grid" style="margin-top:20px;">
                 <button class="report-select-btn theme-zona" data-route="/gastos"><span class="btn-icon">💸</span><strong>Control Gastos</strong></button>
                 <button class="report-select-btn theme-global" data-route="/fincas"><span class="btn-icon">📍</span><strong>Gestor Fincas</strong></button>
+            </div>
+
+            <div class="card" style="margin-top:20px; border: 2px solid rgba(160,103,58,0.35);">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px;">
+                    <h4 style="margin:0; border:none; padding:0; color:var(--text-p);">Google Play Premium</h4>
+                    <span style="padding:4px 10px; border-radius:999px; font-size:0.8rem; font-weight:800; background:${premiumUnlocked ? 'rgba(16,185,129,0.18)' : 'rgba(245,158,11,0.18)'}; color:${premiumUnlocked ? '#10b981' : '#f59e0b'};">
+                        ${premiumUnlocked ? 'Activado' : 'Pendiente'}
+                    </span>
+                </div>
+                <p style="margin-top:0; color:var(--text-s); line-height:1.5;">
+                    Compra única para desbloquear funciones premium y conservar el acceso tras reinstalar la app.
+                </p>
+                <div class="grid-2" style="margin-top:14px;">
+                    <button class="btn btn-primary" data-action="Billing.purchasePremium" ${premiumUnlocked || !billingAvailable ? 'disabled' : ''}>${premiumUnlocked ? 'Ya desbloqueado' : (billingAvailable ? 'Comprar Premium' : 'No disponible')}</button>
+                    <button class="btn btn-outline" data-action="Billing.restorePurchases" ${!billingAvailable ? 'disabled' : ''}>Restaurar compra</button>
+                </div>
+                <p style="margin:12px 0 0; font-size:0.85rem; color:var(--text-s);">
+                    ${billingAvailable ? 'Disponible para Android con Google Play Billing.' : 'Disponible solo en compilación Android firmada.'}
+                </p>
             </div>
 
             <div class="card text-center" style="border-top: 2px solid var(--p-cork); margin-top:30px; padding:30px;">

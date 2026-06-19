@@ -2,6 +2,7 @@ import './idb-local.js';
 import './seed-zonas.js';
 
 import { dbPromise } from './db.js';
+import { Billing } from './core/billing.js';
 import { Fincas } from './fincas.js';
 import { Utils } from './core/utils.js';
 import { Events } from './core/events.js';
@@ -19,6 +20,7 @@ export const App = {
     ...Utils,
     ...Events,
     ...Router,
+    ...Billing,
     ...DashboardUI,
     ...PesadasUI,
     ...ZonasUI,
@@ -75,6 +77,7 @@ export const App = {
             window.addEventListener('fincaChanged', () => { App.updateHeader().then(() => App.route()); });
             
             App.initEvents();
+            Billing.init();
             await dbPromise;
 
             await App.updateHeader();
