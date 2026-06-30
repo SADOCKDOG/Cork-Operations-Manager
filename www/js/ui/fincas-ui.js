@@ -136,7 +136,7 @@ export const FincasUI = {
                 <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 5px; border:none; padding:0;">📄 Licencia y Soporte</h3>
                 <p style="font-size: 0.85rem; color: var(--text-s); line-height: 1.5;">
                     © 2026 Cork Manager. Todos los derechos reservados.<br>
-                    Licencia de uso profesional v6.3.1<br>
+                     Licencia de uso profesional v7.0.0<br>
                     <a href="https://github.com/SADOCKDOG/Cork-Operations-Manager" target="_blank" style="color:var(--accent); text-decoration:none; font-weight:bold; display:inline-block; margin-top:10px;">Repositorio en GitHub ➔</a>
                 </p>
                 <p style="font-size: 0.85rem; color: var(--p-cork); margin-top: 15px; font-weight: 600;">
@@ -193,9 +193,27 @@ export const FincasUI = {
         if (footer) footer.style.display = 'block';
     },
 
-    async _confirmSwitchFinca(newId, nombre) { if (confirm(`¿Cargar finca "${nombre}"?`)) { await Fincas.setActiveId(newId); location.reload(); } },
+    async _confirmSwitchFinca(newId, nombre) {
+        const ok = await Utils.confirmDialog({
+            title: 'Cambiar Finca',
+            message: `¿Cargar finca "${nombre}"?`,
+            icon: '📍',
+            confirmText: 'Cargar',
+            variant: 'success'
+        });
+        if (ok) { await Fincas.setActiveId(newId); location.reload(); }
+    },
 
-    async _deleteFinca(id, nombre) { if (confirm(`¿Borrar permanentemente ${nombre}?`)) { await Fincas.delete(id); location.reload(); } },
+    async _deleteFinca(id, nombre) {
+        const ok = await Utils.confirmDialog({
+            title: 'Eliminar Finca',
+            message: `¿Borrar permanentemente "${nombre}"? Se eliminarán todas las pesadas asociadas.`,
+            icon: '🗑️',
+            confirmText: 'Eliminar',
+            variant: 'danger'
+        });
+        if (ok) { await Fincas.delete(id); location.reload(); }
+    },
 
     async _saveActiveFincaSettings() {
         const finca = await Fincas.getActive(); if (!finca) return;
@@ -226,7 +244,17 @@ export const FincasUI = {
             App.toast('Analizando backup...'); const data = await Export.parseBackupFile(file); if (!data || !data.fincas) throw new Error("Inválido");
             for (const fD of data.fincas) {
                 const existing = (await Fincas.list()).find(f => f.nombre === fD.info.nombre);
-                if (existing) { if (!confirm(`La finca "${fD.info.nombre}" ya existe en el sistema. ¿Desea SOBREESCRIBIRLA?`)) continue; await Fincas.delete(existing.id); }
+                if (existing) {
+                    const overwrite = await Utils.confirmDialog({
+                        title: 'Finca Existente',
+                        message: `La finca "${fD.info.nombre}" ya existe en el sistema. ¿Desea SOBREESCRIBIRLA?`,
+                        icon: '⚠️',
+                        confirmText: 'Sobreescribir',
+                        variant: 'danger'
+                    });
+                    if (!overwrite) continue;
+                    await Fincas.delete(existing.id);
+                }
                 await Export.saveImportedFincaData(fD);
             }
             App.toast('✅ Importación completada'); setTimeout(() => location.reload(), 1000);

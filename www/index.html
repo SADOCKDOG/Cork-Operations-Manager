@@ -7,7 +7,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Cork Manager</title>
-    <link rel="stylesheet" href="css/styles.css?v=6.3.1">
+    <link rel="stylesheet" href="css/styles.css?v=7.0.0">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="icons/app-icon.png">
     
@@ -32,18 +32,14 @@
         </div>
     </header>
 
-    <main id="app-content">
+    <main id="app-content" class="page-active">
         <div class="loader">Iniciando aplicación...</div>
     </main>
 
-    <nav class="bottom-nav">
+    <nav class="bottom-nav compact">
         <a href="#/" class="nav-item" id="nav-home" aria-label="Ir al inicio">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
             <span class="label">Inicio</span>
-        </a>
-        <a href="#/nueva" class="nav-item" id="nav-nueva" aria-label="Nueva pesada">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            <span class="label">Nueva</span>
         </a>
         <a href="#/lista" class="nav-item" id="nav-lista">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
@@ -62,6 +58,10 @@
             <span class="label">Ajustes</span>
         </a>
     </nav>
+
+    <button class="fab fab-pulse" id="fab-nueva" aria-label="Nueva pesada" data-route="/nueva">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="28" height="28"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+    </button>
 
     <div id="toast-container"></div>
 

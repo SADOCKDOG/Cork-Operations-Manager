@@ -17,5 +17,14 @@ export const GastosUI = {
 
     async _handleGastoSubmit(e, id) { e.preventDefault(); try { const dS = { id: id?Number(id):undefined, concepto: document.getElementById('g-con').value.trim(), monto: document.getElementById('g-mon').value, categoria: document.getElementById('g-cat').value, fecha: document.getElementById('g-fec').value }; await Gastos.save(dS); App.toast('✅ Gasto guardado'); await App.renderGastosManager(); } catch(err){ App.toastError(err.message); } },
 
-    async _deleteGasto(id) { if (confirm("¿Eliminar gasto?")) { await Gastos.delete(id); App.toast('✅ Eliminado'); App.renderGastosManager(); } }
+    async _deleteGasto(id) {
+        const ok = await Utils.confirmDialog({
+            title: 'Eliminar Gasto',
+            message: '¿Eliminar este gasto permanentemente?',
+            icon: '🗑️',
+            confirmText: 'Eliminar',
+            variant: 'danger'
+        });
+        if (ok) { await Gastos.delete(id); App.toast('Gasto eliminado'); App.renderGastosManager(); }
+    }
 };

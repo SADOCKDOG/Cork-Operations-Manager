@@ -30,14 +30,42 @@ export const Router = {
         const isFullScreenForm = path === '/nueva' || (path === '/pesada' && action === 'editar');
         document.body.classList.toggle('full-screen-mode', isFullScreenForm);
 
+        // FAB visibility: hide on full-screen forms, welcome, and fincas manager
+        const fab = document.getElementById('fab-nueva');
+        if (fab) {
+            const hideFab = isFullScreenForm || path === '/fincas' || path === '/ajustes' || path === '/gastos';
+            fab.classList.toggle('hidden', hideFab);
+        }
+
         document.querySelectorAll('.nav-item').forEach(el => { const base = (path === '/zona' || path === '/importar-pdf') ? '/zonas' : path; el.classList.toggle('active', el.getAttribute('href') === `#${base}`); });
+
+        // Slide up scroll to top on navigation
+        window.scrollTo({ top: 0, behavior: 'instant' });
+
         const main = document.getElementById('app-content');
+
+        // Transición de salida
+        main.classList.add('page-exiting');
+        main.classList.remove('page-active');
+
         const allFincas = await Fincas.list();
-        if (allFincas.length === 0) return await App.renderWelcomeWizard();
+        if (allFincas.length === 0) {
+            main.classList.remove('page-exiting');
+            main.classList.add('page-active');
+            return await App.renderWelcomeWizard();
+        }
         const fincaId = await Fincas.getActiveId();
-        if (!fincaId && path !== '/fincas') return await App.renderFincasManager();
+        if (!fincaId && path !== '/fincas') {
+            main.classList.remove('page-exiting');
+            main.classList.add('page-active');
+            return await App.renderFincasManager();
+        }
         
         main.innerHTML = '<div class="loader">Cargando...</div>';
+
+        // Pequeño delay para que la transición de salida se vea
+        await new Promise(r => setTimeout(r, 120));
+
         try {
             if (path === '/zona' && id) { if (action === 'editar' || id === 'nueva') await App.renderFormZona(id === 'nueva' ? null : id); else await App.renderFichaZona(id); }
             else if (path === '/pesada' && id && action === 'editar') await App.renderFormPesada(id);
@@ -47,5 +75,9 @@ export const Router = {
             console.error(error); 
             main.innerHTML = `<div class="card error-card"><h2>Error</h2><p>${Utils.escapeHtml(error.message)}</p></div>`; 
         }
+
+        // Transición de entrada
+        main.classList.remove('page-exiting');
+        main.classList.add('page-active');
     }
 };

@@ -9,6 +9,8 @@ export const Events = {
             if (!btn) return;
             if (btn.classList.contains('stop-prop')) e.stopPropagation();
             
+            App.vibrate(15);
+
             if (btn.dataset.route) {
                 location.hash = btn.dataset.route;
             } else if (btn.dataset.trigger) {
@@ -17,6 +19,11 @@ export const Events = {
             } else if (btn.dataset.action) {
                 App.dispatchAction(btn, e);
             }
+        });
+
+        // Eventos de navegación inferior y FAB (haptic en taps nativos)
+        document.querySelectorAll('.nav-item, .fab').forEach(el => {
+            el.addEventListener('touchstart', () => App.vibrate(10), { passive: true });
         });
     },
 

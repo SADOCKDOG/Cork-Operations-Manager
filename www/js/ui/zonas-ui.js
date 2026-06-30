@@ -8,7 +8,18 @@ import { parsePdfCatastro } from '../pdf-import.js';
 export const ZonasUI = {
     async renderZonas() {
         const main = document.getElementById('app-content'), stats = await Zonas.getStats();
-        main.innerHTML = `<div class="card"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><h3>Gestión de Zonas</h3><div data-action="App.openManualZonas" style="cursor:pointer; color:var(--p-cork); font-weight:bold; font-size:0.85rem;">Ayuda ➔ ❓</div></div><div class="grid-2" style="gap:10px;"><button class="btn btn-primary" data-route="/zona/nueva">➕ Nueva Zona</button><button class="btn btn-secondary" data-route="/importar-pdf">📥 Importar PDF</button></div></div>${stats.map(z => `<div class="card" data-route="/zona/${z.id}" style="cursor:pointer; border-top: 5px solid var(--p-cork); padding: 25px;"><h3 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none;">${App.escapeHtml(z.nombre)}</h3><div class="summary-table-grid"><div class="summary-cell c-1a"><div class="s-lbl">1ª CAL</div><div class="s-val">${z.totalesPorCalidad.primera.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div><div class="summary-cell c-bo"><div class="s-lbl">BORNIZO</div><div class="s-val">${z.totalesPorCalidad.bornizo.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div><div class="summary-cell c-re"><div class="s-lbl">REFUGO</div><div class="s-val">${z.totalesPorCalidad.refugo.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div></div></div>`).join('')}`;
+        if (stats.length === 0) {
+            main.innerHTML = Utils.renderEmptyState({
+                icon: '🌲',
+                title: 'Sin zonas registradas',
+                message: 'Crea tu primera zona de trabajo o importa datos catastrales desde un PDF del SIGPAC.',
+                actionText: '➕ Nueva Zona',
+                actionRoute: '/zona/nueva'
+            });
+            main.innerHTML += `<div style="text-align:center; margin-top:10px;"><button class="btn btn-secondary" data-route="/importar-pdf" style="max-width:260px; width:100%;">📥 Importar desde PDF</button></div>`;
+            return;
+        }
+        main.innerHTML = `<div class="card" style="animation: fadeInUp 0.4s ease;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><h3>Gestión de Zonas</h3><div data-action="App.openManualZonas" style="cursor:pointer; color:var(--p-cork); font-weight:bold; font-size:0.85rem;">Ayuda ➔ ❓</div></div><div class="grid-2" style="gap:10px;"><button class="btn btn-primary" data-route="/zona/nueva">➕ Nueva Zona</button><button class="btn btn-secondary" data-route="/importar-pdf">📥 Importar PDF</button></div></div>${stats.map((z, i) => `<div class="card" data-route="/zona/${z.id}" style="cursor:pointer; border-top: 5px solid var(--p-cork); padding: 25px; animation: fadeInUp 0.4s ease; animation-delay: ${i * 0.05}s;"><h3 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none;">${App.escapeHtml(z.nombre)}</h3><div class="summary-table-grid"><div class="summary-cell c-1a"><div class="s-lbl">1ª CAL</div><div class="s-val">${z.totalesPorCalidad.primera.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div><div class="summary-cell c-bo"><div class="s-lbl">BORNIZO</div><div class="s-val">${z.totalesPorCalidad.bornizo.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div><div class="summary-cell c-re"><div class="s-lbl">REFUGO</div><div class="s-val">${z.totalesPorCalidad.refugo.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div></div></div>`).join('')}`;
     },
 
     async renderFichaZona(id) {
@@ -167,10 +178,17 @@ export const ZonasUI = {
     },
 
     async _deleteZona(id) {
-        if (confirm("¿Eliminar zona permanentemente?")) {
+        const ok = await Utils.confirmDialog({
+            title: 'Eliminar Zona',
+            message: '¿Eliminar zona permanentemente? Se borrarán todas las pesadas asociadas.',
+            icon: '🗑️',
+            confirmText: 'Eliminar',
+            variant: 'danger'
+        });
+        if (ok) {
             try {
                 await Zonas.delete(id);
-                App.toast("✅ Zona eliminada");
+                App.toast("Zona eliminada");
                 location.hash = '/zonas';
             } catch (e) {
                 App.toastError(e.message);

@@ -72,7 +72,7 @@ export const App = {
 
     async init() {
         try {
-            console.log("App: Iniciando v6.3.1 (Local Only)...");
+            console.log("App: Iniciando v7.0.0 (Local Only)...");
             window.addEventListener('hashchange', () => App.route());
             window.addEventListener('fincaChanged', () => { App.updateHeader().then(() => App.route()); });
             
@@ -85,10 +85,17 @@ export const App = {
 
             // Gestión del botón retroceder de Android
             if (window.Capacitor && window.Capacitor.Plugins.App) {
-                window.Capacitor.Plugins.App.addListener('backButton', () => {
+                window.Capacitor.Plugins.App.addListener('backButton', async () => {
                     const hash = window.location.hash;
                     if (hash === '' || hash === '#/') {
-                        if (confirm('¿Deseas salir de la aplicación?')) {
+                        const ok = await Utils.confirmDialog({
+                            title: 'Salir',
+                            message: '¿Deseas salir de la aplicación?',
+                            icon: '👋',
+                            confirmText: 'Salir',
+                            variant: 'danger'
+                        });
+                        if (ok) {
                             window.Capacitor.Plugins.App.exitApp();
                         }
                     } else {

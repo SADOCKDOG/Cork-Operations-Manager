@@ -8,8 +8,8 @@ export const Utils = {
              .replace(/"/g, "&quot;")
              .replace(/'/g, "&#039;");
     },
-    toast(msg) { const container = document.getElementById('toast-container'); const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; container.appendChild(t); setTimeout(() => t.remove(), 3000); },
-    toastError(msg) { const container = document.getElementById('toast-container'); const t = document.createElement('div'); t.className = 'toast error'; t.textContent = `❌ ${msg}`; container.appendChild(t); setTimeout(() => t.remove(), 4000); },
+    toast(msg) { const container = document.getElementById('toast-container'); const t = document.createElement('div'); t.className = 'toast animate-in'; t.textContent = msg; container.appendChild(t); setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(20px)'; t.style.transition = 'all 0.3s ease'; setTimeout(() => t.remove(), 300); }, 3000); },
+    toastError(msg) { const container = document.getElementById('toast-container'); const t = document.createElement('div'); t.className = 'toast error animate-in'; t.textContent = msg; container.appendChild(t); setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(20px)'; t.style.transition = 'all 0.3s ease'; setTimeout(() => t.remove(), 300); }, 4000); },
     
     showLoading(msg = 'Cargando...') {
         let loader = document.getElementById('global-loader');
@@ -51,5 +51,86 @@ export const Utils = {
                     <div class="entity-meta">CIF/NIF: ${this.escapeHtml(c2)}</div>
                 </div>
             </div>`;
+    },
+
+    confirmDialog({ title, message, icon = '⚠️', confirmText = 'Confirmar', cancelText = 'Cancelar', variant = 'danger' }) {
+        return new Promise((resolve) => {
+            const overlay = document.createElement('div');
+            overlay.className = 'confirm-overlay';
+            overlay.innerHTML = `
+                <div class="confirm-dialog">
+                    <div class="confirm-icon">${icon}</div>
+                    <h3>${this.escapeHtml(title)}</h3>
+                    <p>${this.escapeHtml(message)}</p>
+                    <div class="confirm-actions">
+                        <button class="btn-cancel">${cancelText}</button>
+                        <button class="btn-confirm ${variant}">${confirmText}</button>
+                    </div>
+                </div>`;
+            document.body.appendChild(overlay);
+
+            overlay.querySelector('.btn-cancel').onclick = () => { overlay.remove(); resolve(false); };
+            overlay.querySelector('.btn-confirm').onclick = () => { overlay.remove(); resolve(true); };
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) { overlay.remove(); resolve(false); } });
+        });
+    },
+
+    vibrate(pattern = 10) {
+        if (navigator.vibrate) navigator.vibrate(pattern);
+    },
+
+    renderEmptyState({ icon = '📭', title = 'Sin datos', message = 'No hay elementos para mostrar.', actionText = null, actionRoute = null }) {
+        let actionHtml = '';
+        if (actionText && actionRoute) {
+            actionHtml = `<button class="btn btn-primary" data-route="${actionRoute}">${actionText}</button>`;
+        } else if (actionText) {
+            actionHtml = `<button class="btn btn-primary" onclick="window.location.hash='#/nueva'">${actionText}</button>`;
+        }
+        return `
+            <div class="empty-state animate-in">
+                <div class="empty-state-icon">${icon}</div>
+                <h3>${this.escapeHtml(title)}</h3>
+                <p>${this.escapeHtml(message)}</p>
+                ${actionHtml}
+            </div>`;
+    },
+
+    renderSkeletonDashboard() {
+        return `
+            <div class="card" style="border-top:5px solid var(--p-cork); padding:25px; margin-bottom:25px;">
+                <div class="skeleton skeleton-heading" style="margin:0 auto 20px;"></div>
+                <div class="skeleton-grid">
+                    <div class="skeleton skeleton-cell"></div>
+                    <div class="skeleton skeleton-cell"></div>
+                    <div class="skeleton skeleton-cell"></div>
+                </div>
+                <div class="skeleton skeleton-value" style="margin:0 auto;"></div>
+            </div>
+            <div class="card" style="border-top:5px solid var(--p-cork); padding:25px;">
+                <div class="skeleton skeleton-heading" style="margin:0 auto 20px;"></div>
+                <div class="skeleton-grid">
+                    <div class="skeleton skeleton-cell"></div>
+                    <div class="skeleton skeleton-cell"></div>
+                    <div class="skeleton skeleton-cell"></div>
+                </div>
+                <div class="skeleton skeleton-value" style="margin:0 auto;"></div>
+            </div>
+            <div class="card" style="border-top:5px solid var(--accent); padding:25px; margin-top:16px;">
+                <div class="skeleton skeleton-heading" style="margin:0 auto 20px;"></div>
+                <div class="grid-2">
+                    <div class="skeleton" style="height:80px; border-radius:16px;"></div>
+                    <div class="skeleton" style="height:80px; border-radius:16px;"></div>
+                    <div class="skeleton" style="height:80px; border-radius:16px;"></div>
+                    <div class="skeleton" style="height:80px; border-radius:16px;"></div>
+                </div>
+            </div>`;
+    },
+
+    renderSkeletonList() {
+        let h = `<div class="card" style="border-top:5px solid var(--p-cork); padding:25px;"><div class="skeleton skeleton-heading" style="margin:0 auto 20px;"></div><div class="skeleton-grid"><div class="skeleton skeleton-cell"></div><div class="skeleton skeleton-cell"></div><div class="skeleton skeleton-cell"></div></div><div class="skeleton skeleton-value" style="margin:0 auto;"></div></div>`;
+        for (let i = 0; i < 4; i++) {
+            h += `<div class="skeleton skeleton-card"></div>`;
+        }
+        return h;
     }
 };

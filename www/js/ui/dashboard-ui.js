@@ -7,13 +7,13 @@ export const DashboardUI = {
     async renderWelcomeWizard() {
         const main = document.getElementById('app-content');
         main.innerHTML = `
-            <div class="card text-center welcome-wizard">
-                <img src="icons/logo-header.png" style="width: 140px; margin-bottom: 25px;">
-                <h1>¡Bienvenido!</h1>
-                <p>Crea o importa una finca para comenzar.</p>
+            <div class="card text-center welcome-wizard animate-in">
+                <img src="icons/logo-header.png" style="width: 140px; margin-bottom: 25px; animation: fadeInUp 0.6s ease;">
+                <h1 style="animation: fadeInUp 0.6s ease 0.1s both;">¡Bienvenido!</h1>
+                <p style="animation: fadeInUp 0.6s ease 0.2s both;">Crea o importa una finca para comenzar.</p>
                 <div class="wizard-actions mt-2" style="display:flex; flex-direction:column; gap:12px;">
-                    <button class="btn btn-primary" data-action="App._showFincaForm">➕ Crear Finca</button>
-                    <button class="btn btn-secondary" data-trigger="import-wizard">📥 Importar Backup Local</button>
+                    <button class="btn btn-primary" data-action="App._showFincaForm" style="animation: fadeInUp 0.6s ease 0.3s both;">➕ Crear Finca</button>
+                    <button class="btn btn-secondary" data-trigger="import-wizard" style="animation: fadeInUp 0.6s ease 0.35s both;">📥 Importar Backup Local</button>
                     <input type="file" id="import-wizard" accept=".json" style="display:none">
                 </div>
             </div>`;
@@ -23,13 +23,17 @@ export const DashboardUI = {
 
     async renderDashboard() {
         const main = document.getElementById('app-content');
+        // Show skeleton while loading
+        main.innerHTML = Utils.renderSkeletonDashboard();
+        await new Promise(r => setTimeout(r, 50));
+
         const finca = await Fincas.getActive();
         const pesadas = await Pesadas.list();
         const tGlobal = App._calculateQualityTotals(pesadas);
         const totalQGlobal = (tGlobal.primera.quintales + tGlobal.bornizo.quintales + tGlobal.refugo.quintales).toFixed(2);
 
         main.innerHTML = `
-            <div class="card" style="border-top: 5px solid var(--p-cork); padding: 25px; margin-bottom: 25px;">
+            <div class="card" style="border-top: 5px solid var(--p-cork); padding: 25px; margin-bottom: 25px; animation: fadeInUp 0.4s ease;">
                 <h3 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none; padding:0;">Resumen Global de Campaña</h3>
                 <div class="summary-table-grid">
                     <div class="summary-cell c-1a"><div class="s-lbl">1ª CAL</div><div class="s-val">${tGlobal.primera.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div>
@@ -42,7 +46,7 @@ export const DashboardUI = {
                 </div>
             </div>
 
-            <div id="resumenHoy" class="card" style="border-top: 5px solid var(--p-cork); padding: 25px;">
+            <div id="resumenHoy" class="card" style="border-top: 5px solid var(--p-cork); padding: 25px; animation: fadeInUp 0.4s ease; animation-delay: 0.1s;">
                 <h3 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none; padding:0;">📅 Resumen Hoy</h3>
                 <div class="summary-table-grid">
                     <div class="summary-cell c-1a">
@@ -68,7 +72,7 @@ export const DashboardUI = {
                 </div>
             </div>
 
-            <div class="card" style="border-top: 5px solid var(--accent); padding: 25px;">
+            <div class="card" style="border-top: 5px solid var(--accent); padding: 25px; animation: fadeInUp 0.4s ease; animation-delay: 0.15s;">
                 <h3 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none; padding:0;">Acciones Rápidas</h3>
                 <div class="grid-2">
                     <button class="btn btn-primary" style="height:100%; min-height:80px; font-size:1.1rem;" data-route="/nueva">➕ PESADA</button>
@@ -106,10 +110,17 @@ export const DashboardUI = {
         const container = document.getElementById('ultimas-pesadas-container');
         if (!container) return;
         const pesadas = await Pesadas.list();
-        if (pesadas.length === 0) { container.innerHTML = ''; return; }
+        if (pesadas.length === 0) { 
+            container.innerHTML = Utils.renderEmptyState({
+                icon: '⚖️',
+                title: 'Sin actividad',
+                message: 'Aún no has registrado ninguna pesada. ¡Empieza hoy!'
+            });
+            return; 
+        }
         const limit = 5;
         const recent = pesadas.sort((a,b)=>b.fecha-a.fecha).slice(0, limit);
-        let h = `<div class="card" style="border-top: 5px solid #8e9eab; padding: 25px;"><h3 style="text-align:center; color: #fff; font-size: 1.3rem; margin-bottom: 20px; border:none; padding:0;">Últimas Pesadas Registradas</h3><div class="lista-detallada">`;
+        let h = `<div class="card" style="border-top: 5px solid #8e9eab; padding: 25px; animation: fadeInUp 0.4s ease; animation-delay: 0.2s;"><h3 style="text-align:center; color: #fff; font-size: 1.3rem; margin-bottom: 20px; border:none; padding:0;">Últimas Pesadas Registradas</h3><div class="lista-detallada">`;
         for (const p of recent) {
             let em = '⭐', cal = '1ª Calidad', col = '#10b981';
             if (p.pesadasPorCalidad.bornizo.kg > 0) { em = '🟡'; cal = 'Bornizo'; col = '#eab308'; }

@@ -473,6 +473,45 @@ input:focus::placeholder { color: rgba(160, 160, 160, 0.3); }
     margin-bottom: 20px;
 }
 
+.reporte-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.reporte-header .entity-card {
+    background: var(--surface-light);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    position: relative;
+    overflow: hidden;
+}
+.reporte-header .entity-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 4px;
+}
+.reporte-header .entity-card:first-child::before { background: var(--accent); }
+.reporte-header .entity-card:last-child::before { background: var(--p-cork); }
+.reporte-header .entity-title {
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: var(--text-p);
+    margin-bottom: 2px;
+}
+.reporte-header .entity-sub {
+    font-size: 0.7rem;
+    color: var(--text-s);
+    margin-bottom: 2px;
+}
+.reporte-header .entity-meta {
+    font-size: 0.65rem;
+    color: var(--text-s);
+    opacity: 0.8;
+}
+
 .entity-card {
     background: var(--surface-light);
     border: 1px solid var(--border);
@@ -730,4 +769,405 @@ input:focus::placeholder { color: rgba(160, 160, 160, 0.3); }
     color: var(--text-s);
 }
 .welcome-checkbox-container input { width: 18px; height: 18px; cursor: pointer; }
+
+/* ============================================================
+   MEJORAS UI/UX v7.0
+   ============================================================ */
+
+/* 1. TRANSICIONES DE PANTALLA */
+#app-content {
+    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 1;
+    transform: translateY(0);
+}
+#app-content.page-exiting {
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+}
+#app-content.page-entering {
+    opacity: 0;
+    transform: translateY(10px);
+}
+#app-content.page-active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 2. DIÁLOGO DE CONFIRMACIÓN PERSONALIZADO */
+.confirm-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.2s ease;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+.confirm-dialog {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 28px 24px;
+    width: 85%;
+    max-width: 360px;
+    text-align: center;
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--p-cork);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.confirm-dialog .confirm-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+}
+.confirm-dialog h3 {
+    color: var(--text-p);
+    font-size: 1.15rem;
+    margin: 0 0 8px 0;
+    border: none;
+    padding: 0;
+}
+.confirm-dialog p {
+    color: var(--text-s);
+    font-size: 0.9rem;
+    margin: 0 0 24px 0;
+    line-height: 1.5;
+}
+.confirm-dialog .confirm-actions {
+    display: flex;
+    gap: 10px;
+}
+.confirm-dialog .confirm-actions button {
+    flex: 1;
+    height: 50px;
+    border-radius: 14px;
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.confirm-dialog .confirm-actions .btn-cancel {
+    background: var(--surface-light);
+    color: var(--text-p);
+    border: 1px solid var(--border);
+}
+.confirm-dialog .confirm-actions .btn-confirm {
+    color: #000;
+    font-weight: 800;
+}
+.confirm-dialog .confirm-actions .btn-confirm.danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: #fff;
+}
+.confirm-dialog .confirm-actions .btn-confirm.success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #fff;
+}
+.confirm-dialog .confirm-actions .btn-confirm:active { transform: scale(0.95); }
+
+/* 3. SKELETON LOADERS */
+.skeleton {
+    background: linear-gradient(90deg, var(--surface) 25%, var(--surface-light) 50%, var(--surface) 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+    border-radius: 12px;
+}
+.skeleton-text {
+    height: 16px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    width: 80%;
+}
+.skeleton-text.short { width: 50%; }
+.skeleton-text.medium { width: 65%; }
+.skeleton-heading {
+    height: 24px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    width: 55%;
+}
+.skeleton-card {
+    height: 100px;
+    margin-bottom: 14px;
+    border-radius: 14px;
+}
+.skeleton-value {
+    height: 40px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    width: 45%;
+}
+.skeleton-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+.skeleton-cell {
+    height: 80px;
+    border-radius: 12px;
+}
+.skeleton-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.skeleton-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+/* 4. PULL-TO-REFRESH */
+.ptr-container {
+    position: relative;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.ptr-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 0;
+    overflow: hidden;
+    transition: height 0.2s ease;
+    color: var(--p-cork);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    gap: 8px;
+}
+.ptr-indicator.visible { height: 56px; }
+.ptr-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(212,163,115,0.3);
+    border-top-color: var(--p-cork);
+    border-radius: 50%;
+    animation: ptrSpin 0.8s linear infinite;
+}
+@keyframes ptrSpin { to { transform: rotate(360deg); } }
+
+/* 5. ESTADOS VACÍOS */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 30px;
+    text-align: center;
+}
+.empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+    filter: grayscale(0.3);
+}
+.empty-state h3 {
+    color: var(--text-p);
+    font-size: 1.3rem;
+    margin: 0 0 8px 0;
+    border: none;
+    padding: 0;
+}
+.empty-state p {
+    color: var(--text-s);
+    font-size: 0.9rem;
+    margin: 0 0 24px 0;
+    max-width: 280px;
+    line-height: 1.5;
+}
+.empty-state .btn { max-width: 260px; }
+
+/* 6. SWIPE EN TARJETAS DE PESADA */
+.pesada-swipe-wrapper {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 16px;
+    border-radius: 14px;
+}
+.pesada-swipe-actions {
+    position: absolute;
+    top: 0; bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 75px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+.pesada-swipe-actions.swipe-edit {
+    right: 0;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    border-radius: 0 14px 14px 0;
+}
+.pesada-swipe-actions.swipe-delete {
+    left: 0;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border-radius: 14px 0 0 14px;
+}
+.pesada-swipe-content {
+    position: relative;
+    z-index: 1;
+    background: linear-gradient(145deg, #222222 0%, #151515 100%);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-left: 8px solid var(--card-color, #7fb069);
+    border-radius: 14px;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.pesada-swipe-content.swiped-left {
+    transform: translateX(-75px);
+    border-radius: 14px 0 0 14px;
+}
+.pesada-swipe-content.swiped-right {
+    transform: translateX(75px);
+    border-radius: 0 14px 14px 0;
+}
+
+/* 7. FAB (FLOATING ACTION BUTTON) */
+.fab {
+    position: fixed;
+    bottom: calc(85px + var(--safe-bottom));
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--p-cork) 0%, #c29a6b 100%);
+    color: #000;
+    border: none;
+    box-shadow: 0 8px 24px rgba(212, 163, 115, 0.5);
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+    font-size: 1.8rem;
+    font-weight: 900;
+}
+.fab:active {
+    transform: scale(0.9);
+    box-shadow: 0 4px 12px rgba(212, 163, 115, 0.4);
+}
+.fab-pulse {
+    animation: fabPulse 2s infinite;
+}
+@keyframes fabPulse {
+    0%, 100% { box-shadow: 0 8px 24px rgba(212, 163, 115, 0.5); }
+    50% { box-shadow: 0 8px 36px rgba(212, 163, 115, 0.8); }
+}
+
+/* 8. HAPTIC RIPPLE ENHANCEMENT */
+.btn-haptic:active {
+    transition: transform 0.1s ease;
+}
+
+/* 9. CHIP / BADGE PARA FILTROS */
+.filter-chips {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 4px 0 12px 0;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.filter-chips::-webkit-scrollbar { display: none; }
+.filter-chip {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: var(--surface-light);
+    border: 1px solid var(--border);
+    color: var(--text-s);
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+.filter-chip.active {
+    background: rgba(212,163,115,0.15);
+    border-color: var(--p-cork);
+    color: var(--p-cork);
+}
+.filter-chip:active { transform: scale(0.95); }
+
+/* 10. MEJORA DEL NAV INFERIOR (5 items + FAB) */
+nav.bottom-nav.compact {
+    grid-template-columns: repeat(5, 1fr);
+}
+nav.bottom-nav .label {
+    font-size: 10px;
+    margin-top: 2px;
+}
+
+/* 11. INDICADOR DE SIN CONEXIÓN */
+.offline-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(239,68,68,0.15);
+    border: 1px solid rgba(239,68,68,0.3);
+    color: #ef4444;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* 12. CONTADOR DE ITEMS EN LA LISTA */
+.list-counter {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-s);
+    padding: 8px 0;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* 13. SCROLL TOP BUTTON */
+.scroll-top-btn {
+    position: fixed;
+    bottom: calc(155px + var(--safe-bottom));
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--surface-light);
+    border: 1px solid var(--border);
+    color: var(--text-p);
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+}
+.scroll-top-btn.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
 

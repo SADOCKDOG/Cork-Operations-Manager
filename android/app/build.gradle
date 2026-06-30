@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     namespace "com.elchamorro.pesadascorcho"
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdk 35
     defaultConfig {
         applicationId "com.elchamorro.pesadascorcho"
         minSdkVersion rootProject.ext.minSdkVersion
