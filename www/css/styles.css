@@ -1,7 +1,12 @@
 /**
- * styles.css - Interfaz "Deep Dark" v4.0 (Exclusivo Modo Oscuro)
- * Optimizado para pantallas OLED de Android y dispositivos móviles.
+ * styles.css - Cork Manager "Dark Pro" v7.1
+ * Mobile-first design system for field operations
+ * Optimizado para Android + dispositivos móviles de 375px a 768px+
  */
+
+/* ============================================================
+   DESIGN TOKENS - SPACING SCALE
+   ============================================================ */
 
 :root {
     /* Paleta Deep Dark */
@@ -404,8 +409,8 @@ input:focus::placeholder { color: rgba(160, 160, 160, 0.3); }
 }
 
 /* SUMMARY TABLE MODERN */
-.summary-table-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; margin: 15px 0; }
-.summary-cell { border-radius: 12px; padding: 12px 6px; border: 2px solid transparent; background: var(--surface-light); transition: transform 0.2s ease; }
+.summary-table-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; margin: 15px 0; }
+.summary-cell { border-radius: 12px; padding: 10px 2px; border: 2px solid transparent; background: var(--surface-light); transition: transform 0.2s ease; overflow: hidden; word-break: break-word; }
 .summary-cell:active { transform: scale(0.96); }
 .summary-cell.c-1a { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); }
 .summary-cell.c-1a .s-lbl, .summary-cell.c-1a .s-val { color: var(--color-metric-primary); }
@@ -413,8 +418,9 @@ input:focus::placeholder { color: rgba(160, 160, 160, 0.3); }
 .summary-cell.c-bo .s-lbl, .summary-cell.c-bo .s-val { color: var(--color-metric-warning); }
 .summary-cell.c-re { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); }
 .summary-cell.c-re .s-lbl, .summary-cell.c-re .s-val { color: var(--color-metric-danger); }
-.s-lbl { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
-.s-val { font-size: 1.6rem; font-weight: 900; line-height: 1; }
+.s-lbl { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.3px; }
+.s-val { font-size: 1.25rem; font-weight: 900; line-height: 1.1; }
+.s-val span { font-size: 0.45em; }
 
 /* TABLAS DE INFORMES (RESPONSIVAS) */
 .reporte-table { 

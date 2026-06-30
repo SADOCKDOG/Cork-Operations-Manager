@@ -90,9 +90,15 @@ export const PesadasUI = {
                     <div class="form-group centered" style="margin-bottom: 10px;">
                         <label style="font-size: 0.85rem; margin-bottom: 8px;">Calidad del Corcho</label>
                         <div class="quality-selector-centered" style="display:flex; gap:10px;">
-                            <button type="button" class="quality-btn ${d.calidad === 'primera' ? 'selected' : ''}" data-quality="primera" style="flex:1; height:56px; font-size:1.1rem;">⭐ 1ª</button>
-                            <button type="button" class="quality-btn ${d.calidad === 'bornizo' ? 'selected' : ''}" data-quality="bornizo" style="flex:1; height:56px; font-size:1.1rem;">🟡 Bo</button>
-                            <button type="button" class="quality-btn ${d.calidad === 'refugo' ? 'selected' : ''}" data-quality="refugo" style="flex:1; height:56px; font-size:1.1rem;">🔴 Re</button>
+                            <button type="button" class="quality-btn ${d.calidad === 'primera' ? 'selected' : ''}" data-quality="primera" style="flex:1; height:56px; font-size:1rem; display:flex; align-items:center; justify-content:center; gap:6px;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> 1ª
+                            </button>
+                            <button type="button" class="quality-btn ${d.calidad === 'bornizo' ? 'selected' : ''}" data-quality="bornizo" style="flex:1; height:56px; font-size:1rem; display:flex; align-items:center; justify-content:center; gap:6px;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg> Bo
+                            </button>
+                            <button type="button" class="quality-btn ${d.calidad === 'refugo' ? 'selected' : ''}" data-quality="refugo" style="flex:1; height:56px; font-size:1rem; display:flex; align-items:center; justify-content:center; gap:6px;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 22 12 12 22 2 12"/></svg> Re
+                            </button>
                         </div>
                     </div>
 
@@ -245,24 +251,27 @@ export const PesadasUI = {
     },
 
     _renderPesadasHTML(pesadas, zonas) {
+        const starSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#10b981"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+        const circleSVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308"><circle cx="12" cy="12" r="10"/></svg>';
+        const refSVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#ef4444"><polygon points="12 2 22 12 12 22 2 12"/></svg>';
         return pesadas.map(p => { 
             const z = zonas.find(z => z.id == p.zonaId); 
-            let em = '⭐', cal = '1ª Calidad', col = '#10b981'; 
-            if (p.pesadasPorCalidad.bornizo.kg > 0) { em = '🟡'; cal = 'Bornizo'; col = '#eab308'; } 
-            else if (p.pesadasPorCalidad.refugo.kg > 0) { em = '🔴'; cal = 'Refugo'; col = '#ef4444'; } 
+            let svg = starSVG, cal = '1ª Calidad', col = '#10b981'; 
+            if (p.pesadasPorCalidad.bornizo.kg > 0) { svg = circleSVG; cal = 'Bornizo'; col = '#eab308'; } 
+            else if (p.pesadasPorCalidad.refugo.kg > 0) { svg = refSVG; cal = 'Refugo'; col = '#ef4444'; } 
             const fH = new Date(p.fecha).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); 
             return `<div class="pesada-swipe-wrapper" data-id="${p.id}">
                 <div class="pesada-swipe-actions swipe-edit" data-action-swipe="edit" data-id="${p.id}">
-                    ✏️<br>Editar
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 </div>
                 <div class="pesada-swipe-content" style="--card-color: ${col};">
                     <div class="pesada-card-content">
                         <div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <div class="pesada-saca-badge">SACA #${p.saca}</div>
-                            <strong style="color: ${col}; font-size: 1.3rem;">${em} ${cal}</strong>
+                            <strong style="color: ${col}; font-size: 1.1rem; display:flex; align-items:center; gap:6px;">${svg} ${cal}</strong>
                         </div>
                         <div style="font-size: 1.1rem; margin-bottom: 12px; color: #fff;">
-                            <strong>🌲 ${Utils.escapeHtml(z ? z.nombre : '?')}</strong>
+                            <strong>${Utils.escapeHtml(z ? z.nombre : '?')}</strong>
                         </div>
                         <table class="pesada-table-bordered">
                             <tr><th>FECHA Y HORA</th><td class="val-large">${fH}</td></tr>

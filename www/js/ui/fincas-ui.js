@@ -72,75 +72,63 @@ export const FincasUI = {
         const main = document.getElementById('app-content'), finca = await Fincas.getActive(); if (!finca) return App.renderFincasManager();
         const comp = finca.comprador || {};
         const precios = finca.precios || {};
-        const premiumUnlocked = App.isPremiumUnlocked();
-        const billingAvailable = App.isAvailable();
 
         main.innerHTML = `
             <div style="display:flex; align-items:center; gap:12px; margin-bottom:25px;"><div style="width:5px; height:30px; background:var(--p-cork); border-radius:3px;"></div><h2 style="margin:0; border:none; padding:0; color:var(--text-p); font-weight:800;">Ajustes de Finca</h2></div>
 
-            <div class="card" style="border: 2px solid var(--p-cork); border-left: 8px solid var(--p-cork);">
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;"><div style="width:4px; height:20px; background:var(--p-cork); border-radius:2px;"></div><h4 style="margin:0; font-size:0.9rem; text-transform:uppercase;">Datos Propietario</h4></div>
+            <div class="card" style="border: 2px solid var(--p-cork); border-left: 8px solid var(--p-cork); margin-bottom:16px;">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;"><div style="width:4px; height:20px; background:var(--p-cork); border-radius:2px;"></div><h4 style="margin:0; font-size:0.9rem; text-transform:uppercase;">Datos del Propietario</h4></div>
                 <div class="form-group"><label>Nombre Explotación</label><input type="text" value="${App.escapeHtml(finca.nombre)}" readonly style="opacity:0.6;"></div>
                 <div class="form-group"><label>Nombre Propietario</label><input type="text" id="adj-prop" value="${finca.propietario||''}"></div>
                 <div class="form-group"><label>Teléfono</label><input type="tel" id="adj-prop-tel" value="${finca.telefono||''}"></div>
             </div>
 
-            <div class="card" style="border: 2px solid var(--accent); border-left: 8px solid var(--accent);">
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;"><div style="width:4px; height:20px; background:var(--accent); border-radius:2px;"></div><h4 style="margin:0; font-size:0.9rem; text-transform:uppercase;">Datos Comprador y Precios</h4></div>
+            <div class="card" style="border: 2px solid var(--accent); border-left: 8px solid var(--accent); margin-bottom:16px;">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;"><div style="width:4px; height:20px; background:var(--accent); border-radius:2px;"></div><h4 style="margin:0; font-size:0.9rem; text-transform:uppercase;">Datos del Comprador</h4></div>
                 <div class="form-group"><label>Empresa / Comprador</label><input type="text" id="adj-empresa" value="${comp.nombreEmpresa||''}"></div>
                 <div class="form-group"><label>CIF/NIF Comprador</label><input type="text" id="adj-cif" value="${comp.cifNif||''}"></div>
                 <div class="form-group"><label>Representante</label><input type="text" id="adj-representante" value="${comp.representante||''}"></div>
-                <div class="form-group"><label>Porcentaje de Oreo (%)</label><input type="number" step="0.1" id="adj-oreo" value="${finca.porcentajeOreo || 0}"></div>
-                <div class="form-group"><label>Teléfono</label><input type="tel" id="adj-tel" value="${comp.telefono||''}"></div>
-                <div class="form-group"><label>Correo Electrónico</label><input type="email" id="adj-email" value="${comp.email||''}"></div>
+                <div class="grid-2">
+                    <div class="form-group"><label>Teléfono</label><input type="tel" id="adj-tel" value="${comp.telefono||''}"></div>
+                    <div class="form-group"><label>Correo Electrónico</label><input type="email" id="adj-email" value="${comp.email||''}"></div>
+                </div>
                 <div class="form-group"><label>Dirección Comercial</label><input type="text" id="adj-direccion" value="${comp.direccion||''}"></div>
-
-                <h5 style="margin: 15px 0 10px 0; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 5px;">Precios de Mercado (€/Q)</h5>
-                <div class="form-group"><label>Precio 1ª</label><input type="number" step="0.01" id="adj-p1" value="${precios.primera?.precioQuintal || ''}"></div>
-                <div class="form-group"><label>Precio Bornizo</label><input type="number" step="0.01" id="adj-pb" value="${precios.bornizo?.precioQuintal || ''}"></div>
-                <div class="form-group"><label>Precio Refugo</label><input type="number" step="0.01" id="adj-pr" value="${precios.refugo?.precioQuintal || ''}"></div>
-
-                <button class="btn btn-primary" style="width:100%; margin-top:20px;" data-action="App._saveActiveFincaSettings">💾 Guardar Ajustes</button>
             </div>
 
-            <div class="reportes-selector-grid" style="margin-top:20px;">
+            <div class="card" style="border: 2px solid rgba(245,158,11,0.35); border-left: 8px solid rgba(245,158,11,0.6); margin-bottom:16px;">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;"><div style="width:4px; height:20px; background:#f59e0b; border-radius:2px;"></div><h4 style="margin:0; font-size:0.9rem; text-transform:uppercase;">Contrato y Precios Acordados</h4></div>
+                <div class="form-group"><label>Porcentaje de Oreo / Merma (%)</label><input type="number" step="0.1" id="adj-oreo" value="${finca.porcentajeOreo || 0}"></div>
+                <div style="border-top:1px solid var(--border); padding-top:12px; margin-top:12px;">
+                    <h5 style="margin:0 0 12px 0; color: #f59e0b; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Precios Acordados (€/Quintal)</h5>
+                </div>
+                <div class="grid-3" style="gap:10px;">
+                    <div class="form-group"><label style="font-size:0.75rem;">1ª Calidad</label><input type="number" step="0.01" id="adj-p1" value="${precios.primera?.precioQuintal || ''}" style="text-align:center; font-size:0.95rem;"></div>
+                    <div class="form-group"><label style="font-size:0.75rem;">Bornizo</label><input type="number" step="0.01" id="adj-pb" value="${precios.bornizo?.precioQuintal || ''}" style="text-align:center; font-size:0.95rem;"></div>
+                    <div class="form-group"><label style="font-size:0.75rem;">Refugo</label><input type="number" step="0.01" id="adj-pr" value="${precios.refugo?.precioQuintal || ''}" style="text-align:center; font-size:0.95rem;"></div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" style="width:100%; height:60px; margin-bottom:16px; font-size:1.1rem;" data-action="App._saveActiveFincaSettings">Guardar Ajustes</button>
+
+            <div class="reportes-selector-grid" style="margin-bottom:16px;">
                 <button class="report-select-btn theme-zona" data-route="/gastos"><span class="btn-icon">💸</span><strong>Control Gastos</strong></button>
                 <button class="report-select-btn theme-global" data-route="/fincas"><span class="btn-icon">📍</span><strong>Gestor Fincas</strong></button>
             </div>
 
-            <div class="card" style="margin-top:20px; border: 2px solid rgba(160,103,58,0.35);">
-                <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px;">
-                    <h4 style="margin:0; border:none; padding:0; color:var(--text-p);">Google Play Premium</h4>
-                    <span style="padding:4px 10px; border-radius:999px; font-size:0.8rem; font-weight:800; background:${premiumUnlocked ? 'rgba(16,185,129,0.18)' : 'rgba(245,158,11,0.18)'}; color:${premiumUnlocked ? '#10b981' : '#f59e0b'};">
-                        ${premiumUnlocked ? 'Activado' : 'Pendiente'}
-                    </span>
-                </div>
-                <p style="margin-top:0; color:var(--text-s); line-height:1.5;">
-                    Compra única para desbloquear funciones premium y conservar el acceso tras reinstalar la app.
-                </p>
-                <div class="grid-2" style="margin-top:14px;">
-                    <button class="btn btn-primary" data-action="Billing.purchasePremium" ${premiumUnlocked || !billingAvailable ? 'disabled' : ''}>${premiumUnlocked ? 'Ya desbloqueado' : (billingAvailable ? 'Comprar Premium' : 'No disponible')}</button>
-                    <button class="btn btn-outline" data-action="Billing.restorePurchases" ${!billingAvailable ? 'disabled' : ''}>Restaurar compra</button>
-                </div>
-                <p style="margin:12px 0 0; font-size:0.85rem; color:var(--text-s);">
-                    ${billingAvailable ? 'Disponible para Android con Google Play Billing.' : 'Disponible solo en compilación Android firmada.'}
-                </p>
-            </div>
-
-            <div class="card text-center" style="border-top: 2px solid var(--p-cork); margin-top:30px; padding:30px;">
+            <div class="card text-center" style="border-top: 2px solid var(--p-cork); padding:30px;">
                 <p style="font-size: 0.85rem; color: var(--text-s); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">Desarrollado por</p>
                 <h4 style="color: #fff; margin-bottom: 10px; border:none; padding:0;">David Asuar Arteaga</h4>
                 <img src="icons/Logo SDOGFARMCORE.png" style="width:160px; margin-bottom:15px; filter: drop-shadow(0 0 10px rgba(212,163,115,0.2));">
                 <p style="font-weight:800; color:var(--p-cork); margin-bottom: 5px;">Ecosistema CORE de Gestión Inteligente</p>
                 <div style="width: 40px; height: 2px; background: var(--border); margin: 15px auto;"></div>
-                <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 5px; border:none; padding:0;">📄 Licencia y Soporte</h3>
+                <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 5px; border:none; padding:0;">Licencia y Soporte</h3>
                 <p style="font-size: 0.85rem; color: var(--text-s); line-height: 1.5;">
                     © 2026 Cork Manager. Todos los derechos reservados.<br>
                      Licencia de uso profesional v7.0.0<br>
-                    <a href="https://github.com/SADOCKDOG/Cork-Operations-Manager" target="_blank" style="color:var(--accent); text-decoration:none; font-weight:bold; display:inline-block; margin-top:10px;">Repositorio en GitHub ➔</a>
+                    <a href="https://github.com/SADOCKDOG/Cork-Operations-Manager" target="_blank" style="color:var(--accent); text-decoration:none; font-weight:bold; display:inline-block; margin-top:10px;">Repositorio en GitHub</a>
                 </p>
                 <p style="font-size: 0.85rem; color: var(--p-cork); margin-top: 15px; font-weight: 600;">
-                    📩 soporte.sdogfarm@gmail.com
+                    soporte.sdogfarm@gmail.com
                 </p>
             </div>`;
     },

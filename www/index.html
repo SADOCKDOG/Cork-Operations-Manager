@@ -32,7 +32,7 @@
         </div>
     </header>
 
-    <main id="app-content" class="page-active">
+    <main id="app-content">
         <div class="loader">Iniciando aplicación...</div>
     </main>
 
@@ -68,7 +68,7 @@
     <script type="module" src="js/app.js"></script>
 
     <script>
-        window.isNative = window.hasOwnProperty('Capacitor');
+        window.isNative = (typeof window.Capacitor !== 'undefined');
         window.onerror = function(msg, url, line) {
             alert("Error: " + msg + "\nLínea: " + line);
             return false;

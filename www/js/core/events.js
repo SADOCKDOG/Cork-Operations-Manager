@@ -1,6 +1,5 @@
 import { Export } from '../export.js';
 import { App } from '../app.js';
-import { Billing } from './billing.js';
 
 export const Events = {
     initEvents() {
@@ -9,7 +8,7 @@ export const Events = {
             if (!btn) return;
             if (btn.classList.contains('stop-prop')) e.stopPropagation();
             
-            App.vibrate(15);
+            try { App.vibrate(15); } catch(e) { /* ignore */ }
 
             if (btn.dataset.route) {
                 location.hash = btn.dataset.route;
@@ -19,11 +18,6 @@ export const Events = {
             } else if (btn.dataset.action) {
                 App.dispatchAction(btn, e);
             }
-        });
-
-        // Eventos de navegación inferior y FAB (haptic en taps nativos)
-        document.querySelectorAll('.nav-item, .fab').forEach(el => {
-            el.addEventListener('touchstart', () => App.vibrate(10), { passive: true });
         });
     },
 
@@ -57,8 +51,5 @@ export const Events = {
         else if (action === 'Export.exportBackup') Export.exportBackup(btn.dataset.id ? [parseInt(btn.dataset.id)] : undefined);
         else if (action === 'Export.exportGlobalToExcel') Export.exportGlobalToExcel();
         else if (action === 'Export.exportEconomicoToExcel') Export.exportEconomicoToExcel();
-        else if (action === 'Billing.purchasePremium') Billing.purchasePremium();
-        else if (action === 'Billing.restorePurchases') Billing.restorePurchases();
-        else if (action === 'Billing.unlockLocally') Billing.unlockLocally();
     }
 };

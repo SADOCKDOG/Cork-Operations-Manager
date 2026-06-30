@@ -17,8 +17,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.min.js"></script>
-  <script type="module" crossorigin src="/assets/index-5LSQ_H4I.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-DTZ-r5iB.css">
+  <script type="module" crossorigin src="/assets/index-DgiKm8b8.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-CIZL0lxD.css">
 <script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
 <body>
     <header>
@@ -33,7 +33,7 @@
         </div>
     </header>
 
-    <main id="app-content" class="page-active">
+    <main id="app-content">
         <div class="loader">Iniciando aplicación...</div>
     </main>
 
@@ -68,7 +68,7 @@
 
 
     <script>
-        window.isNative = window.hasOwnProperty('Capacitor');
+        window.isNative = (typeof window.Capacitor !== 'undefined');
         window.onerror = function(msg, url, line) {
             alert("Error: " + msg + "\nLínea: " + line);
             return false;
