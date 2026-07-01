@@ -131,9 +131,6 @@ export const UxUiUI = {
                     ${historialHTML}
                 </div>
             </div>
-        `;
-
         main.innerHTML = html;
-        App._bindEvents(main);
     }
 };
