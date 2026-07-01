@@ -37,7 +37,19 @@ export const Router = {
             fab.classList.toggle('hidden', hideFab);
         }
 
-        document.querySelectorAll('.nav-item').forEach(el => { const base = (path === '/zona' || path === '/importar-pdf') ? '/zonas' : path; el.classList.toggle('active', el.getAttribute('href') === `#${base}`); });
+        document.querySelectorAll('.nav-item').forEach(el => { 
+            const base = (path === '/zona' || path === '/importar-pdf') ? '/zonas' : path; 
+            const isActive = el.getAttribute('href') === `#${base}`;
+            el.classList.toggle('active', isActive); 
+            if (isActive) {
+                const headerIcon = document.getElementById('header-current-icon');
+                if (headerIcon) {
+                    const clonedSvg = el.querySelector('svg').cloneNode(true);
+                    clonedSvg.setAttribute('id', 'header-current-icon');
+                    headerIcon.parentNode.replaceChild(clonedSvg, headerIcon);
+                }
+            }
+        });
 
         const main = document.getElementById('app-content');
         if (!main) return;

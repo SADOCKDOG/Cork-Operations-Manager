@@ -4,8 +4,23 @@ import { App } from '../app.js';
 export const Events = {
     initEvents() {
         document.body.addEventListener('click', (e) => {
-            const btn = e.target.closest('[data-action], [data-route], [data-trigger]');
+            const dropdown = document.getElementById('header-dropdown');
+            const menuBtn = e.target.closest('#header-menu-btn');
+            
+            if (menuBtn) {
+                if (dropdown) dropdown.style.display = dropdown.style.display === 'none' ? 'flex' : 'none';
+                return;
+            } else if (dropdown && dropdown.style.display !== 'none' && !e.target.closest('#header-dropdown')) {
+                dropdown.style.display = 'none';
+            }
+
+            const btn = e.target.closest('[data-action], [data-route], [data-trigger], .dropdown-item');
             if (!btn) return;
+            
+            if (btn.classList.contains('dropdown-item') && dropdown) {
+                dropdown.style.display = 'none';
+            }
+
             if (btn.classList.contains('stop-prop')) e.stopPropagation();
             
             try { App.vibrate(15); } catch(e) { /* ignore */ }

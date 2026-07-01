@@ -76,43 +76,59 @@ export const FincasUI = {
         main.innerHTML = `
             <div style="display:flex; align-items:center; gap:12px; margin-bottom:25px;"><div style="width:5px; height:30px; background:var(--p-cork); border-radius:3px;"></div><h2 style="margin:0; border:none; padding:0; color:var(--text-p); font-weight:800;">Ajustes de Finca</h2></div>
 
-            <div class="card" style="border: 2px solid var(--p-cork); border-left: 8px solid var(--p-cork); margin-bottom:16px;">
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;"><div style="width:4px; height:20px; background:var(--p-cork); border-radius:2px;"></div><h4 style="margin:0; font-size:0.9rem; text-transform:uppercase;">Datos del Propietario</h4></div>
-                <div class="form-group"><label>Nombre Explotación</label><input type="text" value="${App.escapeHtml(finca.nombre)}" readonly style="opacity:0.6;"></div>
-                <div class="form-group"><label>Nombre Propietario</label><input type="text" id="adj-prop" value="${finca.propietario||''}"></div>
-                <div class="form-group"><label>Teléfono</label><input type="tel" id="adj-prop-tel" value="${finca.telefono||''}"></div>
-            </div>
-
-            <div class="card" style="border: 2px solid var(--accent); border-left: 8px solid var(--accent); margin-bottom:16px;">
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;"><div style="width:4px; height:20px; background:var(--accent); border-radius:2px;"></div><h4 style="margin:0; font-size:0.9rem; text-transform:uppercase;">Datos del Comprador</h4></div>
-                <div class="form-group"><label>Empresa / Comprador</label><input type="text" id="adj-empresa" value="${comp.nombreEmpresa||''}"></div>
-                <div class="form-group"><label>CIF/NIF Comprador</label><input type="text" id="adj-cif" value="${comp.cifNif||''}"></div>
-                <div class="form-group"><label>Representante</label><input type="text" id="adj-representante" value="${comp.representante||''}"></div>
-                <div class="grid-2">
-                    <div class="form-group"><label>Teléfono</label><input type="tel" id="adj-tel" value="${comp.telefono||''}"></div>
-                    <div class="form-group"><label>Correo Electrónico</label><input type="email" id="adj-email" value="${comp.email||''}"></div>
+            <div class="card" style="border: 1px solid var(--border); border-left: 5px solid var(--accent); margin-bottom:16px;">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;"><div style="width:4px; height:20px; background:var(--accent); border-radius:2px;"></div><h4 class="text-lime" style="margin:0; font-size:0.95rem; text-transform:uppercase; font-weight:800; letter-spacing: 1px;">Datos del Propietario</h4></div>
+                <div class="form-group"><label class="text-grey" style="font-size:0.75rem; font-weight:800; letter-spacing:1px;">Nombre Explotación</label><input type="text" value="${App.escapeHtml(finca.nombre)}" readonly class="never-edit" style="opacity:0.6; font-weight:600;"></div>
+                <div class="form-group"><label class="text-grey" style="font-size:0.75rem; font-weight:800; letter-spacing:1px;">Nombre Propietario</label><input type="text" id="adj-prop" value="${finca.propietario||''}" readonly style="font-weight:600;"></div>
+                <div class="form-group"><label class="text-grey" style="font-size:0.75rem; font-weight:800; letter-spacing:1px;">Teléfono</label><input type="tel" id="adj-prop-tel" value="${finca.telefono||''}" readonly style="font-weight:600;"></div>
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button class="btn btn-outline" style="flex:1; padding:8px; font-size:0.9rem;" onclick="this.closest('.card').querySelectorAll('input:not(.never-edit)').forEach(i=>i.readOnly=false); this.style.display='none'; this.nextElementSibling.style.display='block';">Editar</button>
+                    <button class="btn btn-primary" style="flex:1; padding:8px; font-size:0.9rem; display:none;" data-action="App._saveActiveFincaSettings">Guardar</button>
                 </div>
-                <div class="form-group"><label>Dirección Comercial</label><input type="text" id="adj-direccion" value="${comp.direccion||''}"></div>
             </div>
 
-            <div class="card" style="border: 2px solid rgba(245,158,11,0.35); border-left: 8px solid rgba(245,158,11,0.6); margin-bottom:16px;">
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;"><div style="width:4px; height:20px; background:#f59e0b; border-radius:2px;"></div><h4 style="margin:0; font-size:0.9rem; text-transform:uppercase;">Contrato y Precios Acordados</h4></div>
-                <div class="form-group"><label>Porcentaje de Oreo / Merma (%)</label><input type="number" step="0.1" id="adj-oreo" value="${finca.porcentajeOreo || 0}"></div>
+            <div class="card" style="border: 1px solid var(--border); border-left: 5px solid #4FACFE; margin-bottom:16px;">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;"><div style="width:4px; height:20px; background:#4FACFE; border-radius:2px;"></div><h4 class="text-blue" style="margin:0; font-size:0.95rem; text-transform:uppercase; font-weight:800; letter-spacing: 1px;">Datos del Comprador</h4></div>
+                <div class="form-group"><label class="text-grey" style="font-size:0.75rem; font-weight:800; letter-spacing:1px;">Empresa / Comprador</label><input type="text" id="adj-empresa" value="${comp.nombreEmpresa||''}" readonly style="font-weight:600;"></div>
+                <div class="form-group"><label class="text-grey" style="font-size:0.75rem; font-weight:800; letter-spacing:1px;">CIF/NIF Comprador</label><input type="text" id="adj-cif" value="${comp.cifNif||''}" readonly style="font-weight:600;"></div>
+                <div class="form-group"><label class="text-grey" style="font-size:0.75rem; font-weight:800; letter-spacing:1px;">Representante</label><input type="text" id="adj-representante" value="${comp.representante||''}" readonly style="font-weight:600;"></div>
+                <div class="grid-2">
+                    <div class="form-group"><label class="text-grey" style="font-size:0.75rem; font-weight:800; letter-spacing:1px;">Teléfono</label><input type="tel" id="adj-tel" value="${comp.telefono||''}" readonly style="font-weight:600;"></div>
+                    <div class="form-group"><label class="text-grey" style="font-size:0.75rem; font-weight:800; letter-spacing:1px;">Correo Electrónico</label><input type="email" id="adj-email" value="${comp.email||''}" readonly style="font-weight:600;"></div>
+                </div>
+                <div class="form-group"><label class="text-grey" style="font-size:0.75rem; font-weight:800; letter-spacing:1px;">Dirección Comercial</label><input type="text" id="adj-direccion" value="${comp.direccion||''}" readonly style="font-weight:600;"></div>
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button class="btn btn-outline" style="flex:1; padding:8px; font-size:0.9rem;" onclick="this.closest('.card').querySelectorAll('input:not(.never-edit)').forEach(i=>i.readOnly=false); this.style.display='none'; this.nextElementSibling.style.display='block';">Editar</button>
+                    <button class="btn btn-primary" style="flex:1; padding:8px; font-size:0.9rem; display:none;" data-action="App._saveActiveFincaSettings">Guardar</button>
+                </div>
+            </div>
+
+            <div class="card" style="border: 1px solid var(--border); border-left: 5px solid #FFD700; margin-bottom:16px;">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;"><div style="width:4px; height:20px; background:#FFD700; border-radius:2px;"></div><h4 class="text-gold" style="margin:0; font-size:0.95rem; text-transform:uppercase; font-weight:800; letter-spacing: 1px;">Contrato y Precios Acordados</h4></div>
+                <div class="form-group"><label class="text-grey" style="font-size:0.75rem; font-weight:800; letter-spacing:1px;">Porcentaje de Oreo / Merma (%)</label><input type="number" step="0.1" id="adj-oreo" value="${finca.porcentajeOreo || 0}" readonly style="font-weight:600; color:#F97316; border-left:3px solid #F97316;"></div>
                 <div style="border-top:1px solid var(--border); padding-top:12px; margin-top:12px;">
-                    <h5 style="margin:0 0 12px 0; color: #f59e0b; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Precios Acordados (€/Quintal)</h5>
+                    <h5 class="text-gold" style="margin:0 0 12px 0; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">Precios Acordados (€/Quintal)</h5>
                 </div>
                 <div class="grid-3" style="gap:10px;">
-                    <div class="form-group"><label style="font-size:0.75rem;">1ª Calidad</label><input type="number" step="0.01" id="adj-p1" value="${precios.primera?.precioQuintal || ''}" style="text-align:center; font-size:0.95rem;"></div>
-                    <div class="form-group"><label style="font-size:0.75rem;">Bornizo</label><input type="number" step="0.01" id="adj-pb" value="${precios.bornizo?.precioQuintal || ''}" style="text-align:center; font-size:0.95rem;"></div>
-                    <div class="form-group"><label style="font-size:0.75rem;">Refugo</label><input type="number" step="0.01" id="adj-pr" value="${precios.refugo?.precioQuintal || ''}" style="text-align:center; font-size:0.95rem;"></div>
+                    <div class="form-group"><label class="text-grey" style="font-size:0.7rem; font-weight:800; letter-spacing:1px; text-align:center;">1ª Calidad</label><input type="number" step="0.01" id="adj-p1" value="${precios.primera?.precioQuintal || ''}" readonly style="text-align:center; font-size:1.1rem; font-weight:800; color: #CCFF00; background: rgba(204,255,0,0.05); border: 1px solid rgba(204,255,0,0.2);"></div>
+                    <div class="form-group"><label class="text-grey" style="font-size:0.7rem; font-weight:800; letter-spacing:1px; text-align:center;">Bornizo</label><input type="number" step="0.01" id="adj-pb" value="${precios.bornizo?.precioQuintal || ''}" readonly style="text-align:center; font-size:1.1rem; font-weight:800; color: #FFD700; background: rgba(255,215,0,0.05); border: 1px solid rgba(255,215,0,0.2);"></div>
+                    <div class="form-group"><label class="text-grey" style="font-size:0.7rem; font-weight:800; letter-spacing:1px; text-align:center;">Refugo</label><input type="number" step="0.01" id="adj-pr" value="${precios.refugo?.precioQuintal || ''}" readonly style="text-align:center; font-size:1.1rem; font-weight:800; color: #FF4444; background: rgba(255,68,68,0.05); border: 1px solid rgba(255,68,68,0.2);"></div>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button class="btn btn-outline" style="flex:1; padding:8px; font-size:0.9rem;" onclick="this.closest('.card').querySelectorAll('input:not(.never-edit)').forEach(i=>i.readOnly=false); this.style.display='none'; this.nextElementSibling.style.display='block';">Editar</button>
+                    <button class="btn btn-primary" style="flex:1; padding:8px; font-size:0.9rem; display:none;" data-action="App._saveActiveFincaSettings">Guardar</button>
                 </div>
             </div>
 
-            <button class="btn btn-primary" style="width:100%; height:60px; margin-bottom:16px; font-size:1.1rem;" data-action="App._saveActiveFincaSettings">Guardar Ajustes</button>
-
-            <div class="reportes-selector-grid" style="margin-bottom:16px;">
-                <button class="report-select-btn theme-zona" data-route="/gastos"><span class="btn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="6" x2="12" y2="12"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span><strong>Control Gastos</strong></button>
-                <button class="report-select-btn theme-global" data-route="/fincas"><span class="btn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span><strong>Gestor Fincas</strong></button>
+            <div class="bento-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 25px;">
+                <div class="card card-interactive" style="margin-bottom: 0; padding: 15px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;" data-route="/gastos">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="6" x2="12" y2="12"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                    <span style="color: #FFFFFF; font-weight: 700; font-size: 0.8rem;">CONTROL GASTOS</span>
+                </div>
+                <div class="card card-interactive" style="margin-bottom: 0; padding: 15px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;" data-route="/fincas">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4FACFE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span style="color: #FFFFFF; font-weight: 700; font-size: 0.8rem;">GESTOR FINCAS</span>
+                </div>
             </div>
 
             <div class="card text-center" style="border-top: 2px solid var(--p-cork); padding:30px;">

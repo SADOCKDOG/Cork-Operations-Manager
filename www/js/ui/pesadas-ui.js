@@ -49,19 +49,19 @@ export const PesadasUI = {
                     <!-- 1. Fecha y Nº Saca (contexto temporal, compacto) -->
                     <div class="grid-2" style="gap: 10px; margin-bottom: 10px;">
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label style="font-size: 0.75rem;">Fecha</label>
-                            <input type="date" id="p-fecha" value="${d.fecha}" style="height: 48px; font-size: 0.95rem;">
+                            <label class="text-grey" style="font-size: 0.75rem; font-weight:800; letter-spacing:1px;">Fecha</label>
+                            <input type="date" id="p-fecha" value="${d.fecha}" style="height: 48px; font-size: 0.95rem; font-weight:600;">
                         </div>
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label style="font-size: 0.75rem;">Nº Saca</label>
-                            <input type="number" id="p-saca" value="${d.saca}" style="height: 48px; font-size: 0.95rem;">
+                            <label class="text-grey" style="font-size: 0.75rem; font-weight:800; letter-spacing:1px;">Nº Saca</label>
+                            <input type="number" id="p-saca" value="${d.saca}" style="height: 48px; font-size: 1.1rem; font-weight:800; color:#4FACFE; border-left:3px solid #4FACFE;">
                         </div>
                     </div>
 
                     <!-- 2. Zona / Parcela -->
                     <div class="form-group centered" style="margin-bottom: 12px;">
-                        <label style="font-size: 0.8rem; margin-bottom: 6px;">Zona / Parcela</label>
-                        <select id="p-zona" style="height:56px; font-size:1.1rem; text-align-last:center;">
+                        <label class="text-grey" style="font-size: 0.8rem; margin-bottom: 6px; font-weight:800; letter-spacing:1px;">Zona / Parcela</label>
+                        <select id="p-zona" style="height:56px; font-size:1.1rem; font-weight:700; text-align-last:center; border-left:3px solid #F97316;">
                             ${zonas.map(z => `<option value="${z.id}" ${curZona == z.id ? 'selected' : ''}>${Utils.escapeHtml(z.nombre)}</option>`).join('')}
                         </select>
                     </div>
@@ -70,8 +70,8 @@ export const PesadasUI = {
 
                     <!-- 3. Peso Neto Directo (campo estrella centrado) -->
                     <div class="form-group" style="text-align:center; margin: 20px 0;">
-                        <label style="font-size:1.1rem; margin-bottom: 10px; display:block; font-weight:600;">Peso Neto (kg)</label>
-                        <input type="number" id="p-bruto" value="${d.bruto || d.pesoBruto || ''}" placeholder="0.0" step="0.1" required class="input-hero" style="text-align:center; font-size:2.5rem; height:90px; width:100%; font-weight:700;">
+                        <label class="text-lime" style="font-size:1rem; margin-bottom: 10px; display:block; font-weight:800; letter-spacing:1px;">PESO NETO (KG)</label>
+                        <input type="number" id="p-bruto" value="${d.bruto || d.pesoBruto || ''}" placeholder="0.0" step="0.1" required class="input-hero" style="text-align:center; font-size:3rem; height:100px; width:100%; font-weight:900; color:#CCFF00; background:rgba(204,255,0,0.05); border:2px solid rgba(204,255,0,0.2); box-shadow:inset 0 4px 10px rgba(0,0,0,0.5); border-radius:12px;">
                     </div>
                     
                     <div id="p-validation-msg" style="text-align:center; font-weight:bold; font-size: 0.9rem; margin-bottom: 15px; min-height:1.2em;">&nbsp;</div>
@@ -79,8 +79,8 @@ export const PesadasUI = {
                     <!-- 4. Datos calculados: Quintales (antes de calidad) -->
                     <div class="card stat-grid" style="display:flex; justify-content:center; background: rgba(255,255,255,0.03); margin: 8px 0; padding: 10px !important;">
                         <div style="text-align:center;">
-                            <div id="calc-q" class="stat-value" style="font-size: 2.2rem; color: #10b981; font-weight:900;">0.00</div>
-                            <div class="stat-label" style="color:var(--text-s); font-size: 0.8rem;">Quintales</div>
+                            <div id="calc-q" class="stat-value" style="font-size: 2.2rem; color: #CCFF00; font-weight:900; text-shadow: 0 0 10px rgba(204,255,0,0.3);">0.00</div>
+                            <div class="stat-label text-grey" style="font-size: 0.8rem; font-weight:800; letter-spacing:1px;">QUINTALES</div>
                         </div>
                     </div>
 
@@ -88,16 +88,16 @@ export const PesadasUI = {
 
                     <!-- 5. Selector de Calidad -->
                     <div class="form-group centered" style="margin-bottom: 10px;">
-                        <label style="font-size: 0.85rem; margin-bottom: 8px;">Calidad del Corcho</label>
-                        <div class="quality-selector-centered" style="display:flex; gap:10px;">
-                            <button type="button" class="quality-btn ${d.calidad === 'primera' ? 'selected' : ''}" data-quality="primera" style="flex:1; height:56px; font-size:1rem; display:flex; align-items:center; justify-content:center; gap:6px;">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> 1ª
+                        <label class="text-grey" style="font-size: 0.85rem; margin-bottom: 8px; font-weight:800; letter-spacing:1px;">Calidad del Corcho</label>
+                        <div class="quality-selector-centered" style="display:flex; justify-content: center; gap: 20px;">
+                            <button type="button" class="quality-btn ${d.calidad === 'primera' ? 'selected' : ''}" data-quality="primera">
+                                1ª
                             </button>
-                            <button type="button" class="quality-btn ${d.calidad === 'bornizo' ? 'selected' : ''}" data-quality="bornizo" style="flex:1; height:56px; font-size:1rem; display:flex; align-items:center; justify-content:center; gap:6px;">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg> Bo
+                            <button type="button" class="quality-btn ${d.calidad === 'bornizo' ? 'selected' : ''}" data-quality="bornizo">
+                                Bo
                             </button>
-                            <button type="button" class="quality-btn ${d.calidad === 'refugo' ? 'selected' : ''}" data-quality="refugo" style="flex:1; height:56px; font-size:1rem; display:flex; align-items:center; justify-content:center; gap:6px;">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 22 12 12 22 2 12"/></svg> Re
+                            <button type="button" class="quality-btn ${d.calidad === 'refugo' ? 'selected' : ''}" data-quality="refugo">
+                                Re
                             </button>
                         </div>
                     </div>
@@ -128,11 +128,11 @@ export const PesadasUI = {
             
             if (qEl) qEl.textContent = Math.max(0, n / factor).toFixed(2);
             if (b > 1500) {
-                if (qEl) qEl.style.color = "#eab308";
+                if (qEl) { qEl.style.color = "#FFD700"; qEl.style.textShadow = "0 0 10px rgba(255,215,0,0.3)"; }
                 valMsg.textContent = "Peso inusualmente alto (>1500kg)";
-                valMsg.style.color = "#eab308";
+                valMsg.style.color = "#FFD700";
             } else {
-                if (qEl) qEl.style.color = "#10b981";
+                if (qEl) { qEl.style.color = "#CCFF00"; qEl.style.textShadow = "0 0 10px rgba(204,255,0,0.3)"; }
                 valMsg.innerHTML = "&nbsp;";
             }
         };
@@ -144,7 +144,11 @@ export const PesadasUI = {
             if(b.dataset.quality === selQ) b.classList.add('selected');
             else b.classList.remove('selected');
         });
-        document.querySelectorAll('.quality-btn').forEach(b => b.onclick = () => { selQ = b.dataset.quality; upQ(); });
+        document.querySelectorAll('.quality-btn').forEach(b => b.onclick = () => { 
+            try { App.vibrate(15); } catch(e) {}
+            selQ = b.dataset.quality; 
+            upQ(); 
+        });
         upQ();
 
         document.getElementById('form-pesada').onsubmit = async (e) => {
@@ -221,21 +225,21 @@ export const PesadasUI = {
         const totalQ = (t.primera.quintales + t.bornizo.quintales + t.refugo.quintales).toFixed(2);
 
         main.innerHTML = `<div class="ptr-container" id="ptr-list">
-            <div class="ptr-indicator" id="ptr-indicator"><span>Desliza para actualizar</span></div>
+            <div class="ptr-indicator" id="ptr-indicator"><span></span></div>
             <div class="card" style="border-top: 5px solid var(--p-cork); padding: 25px; animation: fadeInUp 0.4s ease;">
-                <h3 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none;">Resumen Global de Pesadas</h3>
-                <div class="summary-table-grid">
-                    <div class="summary-cell c-1a"><div class="s-lbl">1ª CAL</div><div class="s-val">${t.primera.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div>
-                    <div class="summary-cell c-bo"><div class="s-lbl">BORNIZO</div><div class="s-val">${t.bornizo.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div>
-                    <div class="summary-cell c-re"><div class="s-lbl">REFUGO</div><div class="s-val">${t.refugo.quintales.toFixed(2)}<span style="font-size:0.5em; margin-left:2px;">Q</span></div></div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px; justify-content:center;"><div style="width:4px; height:20px; background:var(--p-cork); border-radius:2px;"></div><h4 class="text-lime" style="margin:0; font-size:1rem; text-transform:uppercase; font-weight:800; letter-spacing: 1px;">Resumen Global</h4></div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding-top: 5px;">
+                    <div><div class="text-grey" style="font-size: 0.7rem; font-weight: 800; letter-spacing:1px; margin-bottom: 6px;">1ª CAL</div><div class="bg-pill-lime text-lime" style="font-weight: 800; padding: 4px 8px; border-radius: 6px; display: inline-block;">${t.primera.quintales.toFixed(2)}</div></div>
+                    <div><div class="text-grey" style="font-size: 0.7rem; font-weight: 800; letter-spacing:1px; margin-bottom: 6px;">BORNIZO</div><div class="bg-pill-gold text-gold" style="font-weight: 800; padding: 4px 8px; border-radius: 6px; display: inline-block;">${t.bornizo.quintales.toFixed(2)}</div></div>
+                    <div><div class="text-grey" style="font-size: 0.7rem; font-weight: 800; letter-spacing:1px; margin-bottom: 6px;">REFUGO</div><div class="bg-pill-red text-red" style="font-weight: 800; padding: 4px 8px; border-radius: 6px; display: inline-block;">${t.refugo.quintales.toFixed(2)}</div></div>
                 </div>
                 <div style="text-align: center; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
-                    <span style="font-size: 0.9rem; color: var(--text-s); text-transform: uppercase; font-weight:800; letter-spacing:1px;">Total Acumulado</span><br>
-                    <strong style="font-size: 2.2rem; color: var(--p-cork);">${totalQ} <span style="font-size:0.6em">Q</span></strong>
+                    <span class="text-grey" style="font-size: 0.8rem; text-transform: uppercase; font-weight:800; letter-spacing:1px;">Total Acumulado</span><br>
+                    <strong class="text-lime" style="font-size: 2.2rem; text-shadow: 0 0 10px rgba(204,255,0,0.3);">${totalQ} <span style="font-size:0.5em; color:var(--text-s);">Q</span></strong>
                 </div>
             </div>
-            <div class="card" style="border-top: 5px solid var(--accent); text-align: center; padding: 25px; animation: fadeInUp 0.4s ease; animation-delay: 0.1s;">
-                <h3 style="font-size: 1.5rem; margin-bottom: 15px; color: #fff; border:none;">Listado de Pesadas</h3>
+            <div class="card" style="border-top: 5px solid #4FACFE; text-align: center; padding: 25px; animation: fadeInUp 0.4s ease; animation-delay: 0.1s;">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px; justify-content:center;"><div style="width:4px; height:20px; background:#4FACFE; border-radius:2px;"></div><h4 class="text-blue" style="margin:0; font-size:1rem; text-transform:uppercase; font-weight:800; letter-spacing: 1px;">Listado de Pesadas</h4></div>
                 <div class="list-counter">${pesadas.length} pesada${pesadas.length !== 1 ? 's' : ''} registrada${pesadas.length !== 1 ? 's' : ''}</div>
                 <button class="btn btn-secondary mt-1" data-action="Export.exportarPDF" data-tipo="lista"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>Exportar a PDF</button>
             </div>
@@ -251,14 +255,14 @@ export const PesadasUI = {
     },
 
     _renderPesadasHTML(pesadas, zonas) {
-        const starSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#10b981"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
-        const circleSVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308"><circle cx="12" cy="12" r="10"/></svg>';
-        const refSVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#ef4444"><polygon points="12 2 22 12 12 22 2 12"/></svg>';
+        const starSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#CCFF00"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+        const circleSVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#FFD700"><circle cx="12" cy="12" r="10"/></svg>';
+        const refSVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#FF4444"><polygon points="12 2 22 12 12 22 2 12"/></svg>';
         return pesadas.map(p => { 
             const z = zonas.find(z => z.id == p.zonaId); 
-            let svg = starSVG, cal = '1ª Calidad', col = '#10b981'; 
-            if (p.pesadasPorCalidad.bornizo.kg > 0) { svg = circleSVG; cal = 'Bornizo'; col = '#eab308'; } 
-            else if (p.pesadasPorCalidad.refugo.kg > 0) { svg = refSVG; cal = 'Refugo'; col = '#ef4444'; } 
+            let svg = starSVG, cal = '1ª Calidad', col = '#CCFF00', pillClass = 'bg-pill-lime text-lime'; 
+            if (p.pesadasPorCalidad.bornizo.kg > 0) { svg = circleSVG; cal = 'Bornizo'; col = '#FFD700'; pillClass = 'bg-pill-gold text-gold'; } 
+            else if (p.pesadasPorCalidad.refugo.kg > 0) { svg = refSVG; cal = 'Refugo'; col = '#FF4444'; pillClass = 'bg-pill-red text-red'; } 
             const fH = new Date(p.fecha).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); 
             return `<div class="pesada-swipe-wrapper" data-id="${p.id}">
                 <div class="pesada-swipe-actions swipe-edit" data-action-swipe="edit" data-id="${p.id}">
@@ -267,16 +271,16 @@ export const PesadasUI = {
                 <div class="pesada-swipe-content" style="--card-color: ${col};">
                     <div class="pesada-card-content">
                         <div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
-                            <div class="pesada-saca-badge">SACA #${p.saca}</div>
-                            <strong style="color: ${col}; font-size: 1.1rem; display:flex; align-items:center; gap:6px;">${svg} ${cal}</strong>
+                            <div class="pesada-saca-badge bg-pill-blue text-blue" style="border:none;">SACA #${p.saca}</div>
+                            <strong class="${pillClass}" style="font-size: 1.1rem; display:flex; align-items:center; gap:6px; padding: 4px 8px; border-radius: 6px;">${svg} ${cal}</strong>
                         </div>
                         <div style="font-size: 1.1rem; margin-bottom: 12px; color: #fff;">
                             <strong>${Utils.escapeHtml(z ? z.nombre : '?')}</strong>
                         </div>
                         <table class="pesada-table-bordered">
-                            <tr><th>FECHA Y HORA</th><td class="val-large">${fH}</td></tr>
-                            <tr><th>PESO BRUTO</th><td class="val-large highlight">${p.kg.toFixed(1)} kg</td></tr>
-                            <tr><th>PESO NETO</th><td class="val-large highlight">${p.quintales.toFixed(2)} Q</td></tr>
+                            <tr><th class="text-grey">FECHA Y HORA</th><td class="val-large text-grey">${fH}</td></tr>
+                            <tr><th class="text-grey">PESO BRUTO</th><td class="val-large highlight text-grey">${p.kg.toFixed(1)} kg</td></tr>
+                            <tr><th class="text-grey">PESO NETO</th><td class="val-large highlight" style="color: ${col};">${p.quintales.toFixed(2)} Q</td></tr>
                         </table>
                     </div>
                 </div>

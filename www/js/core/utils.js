@@ -97,32 +97,13 @@ export const Utils = {
 
     renderSkeletonDashboard() {
         return `
-            <div class="card" style="border-top:5px solid var(--p-cork); padding:25px; margin-bottom:25px;">
-                <div class="skeleton skeleton-heading" style="margin:0 auto 20px;"></div>
-                <div class="skeleton-grid">
-                    <div class="skeleton skeleton-cell"></div>
-                    <div class="skeleton skeleton-cell"></div>
-                    <div class="skeleton skeleton-cell"></div>
-                </div>
-                <div class="skeleton skeleton-value" style="margin:0 auto;"></div>
-            </div>
-            <div class="card" style="border-top:5px solid var(--p-cork); padding:25px;">
-                <div class="skeleton skeleton-heading" style="margin:0 auto 20px;"></div>
-                <div class="skeleton-grid">
-                    <div class="skeleton skeleton-cell"></div>
-                    <div class="skeleton skeleton-cell"></div>
-                    <div class="skeleton skeleton-cell"></div>
-                </div>
-                <div class="skeleton skeleton-value" style="margin:0 auto;"></div>
-            </div>
-            <div class="card" style="border-top:5px solid var(--accent); padding:25px; margin-top:16px;">
-                <div class="skeleton skeleton-heading" style="margin:0 auto 20px;"></div>
-                <div class="grid-2">
-                    <div class="skeleton" style="height:80px; border-radius:16px;"></div>
-                    <div class="skeleton" style="height:80px; border-radius:16px;"></div>
-                    <div class="skeleton" style="height:80px; border-radius:16px;"></div>
-                    <div class="skeleton" style="height:80px; border-radius:16px;"></div>
-                </div>
+            <div class="bento-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px;">
+                <div class="card skeleton" style="grid-column: span 2; height: 160px; margin-bottom: 0;"></div>
+                <div class="card skeleton" style="grid-column: span 2; height: 160px; margin-bottom: 0;"></div>
+                <div class="card skeleton" style="height: 100px; margin-bottom: 0;"></div>
+                <div class="card skeleton" style="height: 100px; margin-bottom: 0;"></div>
+                <div class="card skeleton" style="height: 100px; margin-bottom: 0;"></div>
+                <div class="card skeleton" style="height: 100px; margin-bottom: 0;"></div>
             </div>`;
     },
 
