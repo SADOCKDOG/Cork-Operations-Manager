@@ -1643,3 +1643,54 @@ grid-template-columns: repeat(3, 1fr);
 grid-template-columns: repeat(4, 1fr);
 }
 }
+
+
+/* botón widget-link con efecto neon — color via CSS vars */
+.widget-link-btn--neon {
+  background: #000;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 12px 8px; gap: 8px;
+  min-height: 80px;
+  border-left: 3px solid var(--neon-color, #888);
+  border-right: 3px solid var(--neon-color, #888);
+  border-radius: 8px; color: var(--text-p);
+  box-shadow: 0 0 20px var(--neon-glow, rgba(136,136,136,0.69)), inset 0 0 12px var(--neon-inner, rgba(136,136,136,0.25));
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.widget-link-btn--neon:active { transform: scale(0.95); }
+/* icono SVG dentro del botón neon: tamaño fijo 24×24, no se encoge */
+.widget-link-btn--neon svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: var(--neon-color) !important; stroke: var(--neon-color) !important; filter: drop-shadow(0 0 8px var(--neon-color, rgba(255,255,255,0.8)));
+}
+
+/* variantes de color neon */
+.neon-danger  { --neon-color: var(--c-danger);  --neon-glow: rgba(255,68,68,0.69);  --neon-inner: rgba(255,68,68,0.25); }
+.neon-info    { --neon-color: var(--c-info);    --neon-glow: rgba(59,130,246,0.69); --neon-inner: rgba(59,130,246,0.25); }
+.neon-success { --neon-color: var(--c-success); --neon-glow: rgba(16,185,129,0.69); --neon-inner: rgba(16,185,129,0.25); }
+.neon-orange { --neon-color: #f97316; --neon-glow: rgba(249,115,22,0.69); --neon-inner: rgba(249,115,22,0.25); }
+.neon-warning { --neon-color: var(--c-warning); --neon-glow: rgba(255,214,0,0.69);  --neon-inner: rgba(255,214,0,0.25); }
+.neon-accent  { --neon-color: #a855f7; --neon-glow: rgba(168,85,247,0.69); --neon-inner: rgba(168,85,247,0.25); }
+.neon-theme   { --neon-color: var(--theme-color); }
+
+/* etiqueta de texto dentro de widget-link-btn--neon — tamaño, fuente y color únicos */
+.widget-link-label,
+.widget-link-label-sm,
+.widget-link-label-xs {
+  font-size: 0.8rem; font-weight: 800;
+  color: #ffffff !important;
+  text-align: center !important;
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  margin-top: 4px;
+  display: block;
+  width: 100%;
+}
+
+/* === PDF loader overlay widget === */
