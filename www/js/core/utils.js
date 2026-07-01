@@ -53,13 +53,13 @@ export const Utils = {
             </div>`;
     },
 
-    confirmDialog({ title, message, icon = '⚠️', confirmText = 'Confirmar', cancelText = 'Cancelar', variant = 'danger' }) {
+    confirmDialog({ title, message, icon='', confirmText = 'Confirmar', cancelText = 'Cancelar', variant = 'danger' }) {
         return new Promise((resolve) => {
             const overlay = document.createElement('div');
             overlay.className = 'confirm-overlay';
             overlay.innerHTML = `
                 <div class="confirm-dialog">
-                    <div class="confirm-icon">${icon}</div>
+                    <div class="confirm-icon">${icon || `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`}</div>
                     <h3>${this.escapeHtml(title)}</h3>
                     <p>${this.escapeHtml(message)}</p>
                     <div class="confirm-actions">
@@ -79,7 +79,7 @@ export const Utils = {
         if (navigator.vibrate) navigator.vibrate(pattern);
     },
 
-    renderEmptyState({ icon = '📭', title = 'Sin datos', message = 'No hay elementos para mostrar.', actionText = null, actionRoute = null }) {
+    renderEmptyState({ icon = '', title = 'Sin datos', message = 'No hay elementos para mostrar.', actionText = null, actionRoute = null }) {
         let actionHtml = '';
         if (actionText && actionRoute) {
             actionHtml = `<button class="btn btn-primary" data-route="${actionRoute}">${actionText}</button>`;
@@ -88,7 +88,7 @@ export const Utils = {
         }
         return `
             <div class="empty-state animate-in">
-                <div class="empty-state-icon">${icon}</div>
+                <div class="empty-state-icon">${icon || `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.5"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>`}</div>
                 <h3>${this.escapeHtml(title)}</h3>
                 <p>${this.escapeHtml(message)}</p>
                 ${actionHtml}

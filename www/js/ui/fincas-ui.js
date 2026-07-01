@@ -14,15 +14,15 @@ export const FincasUI = {
 
             <div class="reportes-selector-grid">
                 <button class="report-select-btn theme-calidad" data-action="App._showFincaForm" style="background: linear-gradient(135deg, rgba(127,176,105,0.5) 0%, rgba(141,179,105,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(127,176,105,0.15); min-height: 80px; padding: 10px;">
-                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">➕</span>
+                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span>
                     <strong style="font-size:0.85rem;">Nueva Finca</strong>
                 </button>
                 <button class="report-select-btn theme-global" data-trigger="import-f-mgr" style="background: linear-gradient(135deg, rgba(160,103,58,0.5) 0%, rgba(212,163,115,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(160,103,58,0.15); min-height: 80px; padding: 10px;">
-                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">📥</span>
+                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
                     <strong style="font-size:0.85rem;">Importar</strong>
                 </button>
                 <button class="report-select-btn theme-econ" data-action="Export.exportBackup" style="background: linear-gradient(135deg, rgba(44,62,80,0.5) 0%, rgba(76,161,175,0.5) 100%); border:none; box-shadow: 0 4px 15px rgba(44,62,80,0.15); min-height: 80px; padding: 10px;">
-                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;">📄</span>
+                    <span class="btn-icon" style="font-size:1.6rem; margin-bottom:2px; height:45px; width:45px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
                     <strong style="font-size:0.85rem;">Exportar Todo</strong>
                 </button>
             </div>
@@ -42,13 +42,13 @@ export const FincasUI = {
 
                         <div style="display:flex; gap:12px; align-items:center;">
                             <button class="btn-modern-action stop-prop" data-action="Export.exportBackup" data-id="${f.id}" title="Exportar" style="background: rgba(255,255,255,0.05); border-radius:12px; width:45px; height:45px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.1); cursor:pointer;">
-                                <span style="font-size:1.4rem;">💾</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                             </button>
                             <button class="btn-modern-action stop-prop" data-action="App._showFincaForm" data-id="${f.id}" title="Editar" style="background: rgba(255,255,255,0.05); border-radius:12px; width:45px; height:45px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.1); cursor:pointer;">
-                                <span style="font-size:1.4rem;">✏️</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                             </button>
                             <button class="btn-modern-action stop-prop" data-action="App._deleteFinca" data-id="${f.id}" data-name="${App.escapeHtml(f.nombre)}" title="Borrar" style="background: rgba(255,77,77,0.1); border-radius:12px; width:45px; height:45px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,77,77,0.2); cursor:pointer; color:#ff4d4d;">
-                                <span style="font-size:1.4rem;">🗑️</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                             </button>
                         </div>
                     </div>`;
@@ -57,7 +57,7 @@ export const FincasUI = {
 
             <div id="load-finca-footer" style="display:none; margin-top:20px;">
                 <button id="btn-load-finca" class="btn btn-primary" style="height:65px; font-weight:900; font-size:1.1rem; border-radius:15px; box-shadow:0 10px 30px rgba(127,176,105,0.3); width:100%;">
-                    🚀 CARGAR FINCA SELECCIONADA
+                    CARGAR FINCA SELECCIONADA
                 </button>
             </div>
 
@@ -111,8 +111,8 @@ export const FincasUI = {
             <button class="btn btn-primary" style="width:100%; height:60px; margin-bottom:16px; font-size:1.1rem;" data-action="App._saveActiveFincaSettings">Guardar Ajustes</button>
 
             <div class="reportes-selector-grid" style="margin-bottom:16px;">
-                <button class="report-select-btn theme-zona" data-route="/gastos"><span class="btn-icon">💸</span><strong>Control Gastos</strong></button>
-                <button class="report-select-btn theme-global" data-route="/fincas"><span class="btn-icon">📍</span><strong>Gestor Fincas</strong></button>
+                <button class="report-select-btn theme-zona" data-route="/gastos"><span class="btn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="6" x2="12" y2="12"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span><strong>Control Gastos</strong></button>
+                <button class="report-select-btn theme-global" data-route="/fincas"><span class="btn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span><strong>Gestor Fincas</strong></button>
             </div>
 
             <div class="card text-center" style="border-top: 2px solid var(--p-cork); padding:30px;">
@@ -148,7 +148,7 @@ export const FincasUI = {
                         <div class="form-group"><label>Teléfono</label><input type="tel" id="f-tel" value="${f.telefono || ''}"></div>
                         <div class="form-group"><label>Correo Electrónico</label><input type="email" id="f-email" value="${f.email || ''}"></div>
                     </div>
-                    <button type="submit" class="btn btn-primary mt-1">💾 Guardar Finca</button>
+                    <button type="submit" class="btn btn-primary mt-1">Guardar Finca</button>
                     <button type="button" class="btn btn-outline mt-1" data-action="App.renderFincasManager">Cancelar</button>
                 </form>
             </div>`;
@@ -163,7 +163,7 @@ export const FincasUI = {
                 telefono: document.getElementById('f-tel').value.trim(),
                 email: document.getElementById('f-email').value.trim()
             };
-            await Fincas.save(dS); App.toast("✅ Éxito"); await App.renderFincasManager();
+            await Fincas.save(dS); App.toast("Éxito"); await App.renderFincasManager();
         };
     },
 
@@ -185,7 +185,7 @@ export const FincasUI = {
         const ok = await Utils.confirmDialog({
             title: 'Cambiar Finca',
             message: `¿Cargar finca "${nombre}"?`,
-            icon: '📍',
+            icon: '',
             confirmText: 'Cargar',
             variant: 'success'
         });
@@ -196,7 +196,7 @@ export const FincasUI = {
         const ok = await Utils.confirmDialog({
             title: 'Eliminar Finca',
             message: `¿Borrar permanentemente "${nombre}"? Se eliminarán todas las pesadas asociadas.`,
-            icon: '🗑️',
+            icon: '',
             confirmText: 'Eliminar',
             variant: 'danger'
         });
@@ -224,7 +224,7 @@ export const FincasUI = {
             refugo: { precioQuintal: parseFloat(document.getElementById('adj-pr').value) || 0 }
         };
 
-        await Fincas.save(finca); App.toast("✅ Ajustes guardados");
+        await Fincas.save(finca); App.toast("Ajustes guardados");
     },
 
     async _handleImportFile(file) {
@@ -236,7 +236,7 @@ export const FincasUI = {
                     const overwrite = await Utils.confirmDialog({
                         title: 'Finca Existente',
                         message: `La finca "${fD.info.nombre}" ya existe en el sistema. ¿Desea SOBREESCRIBIRLA?`,
-                        icon: '⚠️',
+                        icon: '',
                         confirmText: 'Sobreescribir',
                         variant: 'danger'
                     });
@@ -245,7 +245,7 @@ export const FincasUI = {
                 }
                 await Export.saveImportedFincaData(fD);
             }
-            App.toast('✅ Importación completada'); setTimeout(() => location.reload(), 1000);
+            App.toast('Importación completada'); setTimeout(() => location.reload(), 1000);
         } catch (e) { App.toastError(e.message); }
     }
 };

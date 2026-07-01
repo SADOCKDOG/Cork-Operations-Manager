@@ -100,7 +100,7 @@ for (const finca of allFincas) {
                 a.href = url; a.download = fileName;
                 document.body.appendChild(a); a.click(); document.body.removeChild(a);
             }
-            Utils.toast('✅ Backup exportado');
+            Utils.toast('Backup exportado');
         } catch (error) { console.error(error); Utils.toastError('Fallo al exportar'); }
     },
 

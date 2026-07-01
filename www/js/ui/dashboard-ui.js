@@ -75,10 +75,10 @@ export const DashboardUI = {
             <div class="card" style="border-top: 5px solid var(--accent); padding: 25px; animation: fadeInUp 0.4s ease; animation-delay: 0.15s;">
                 <h3 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none; padding:0;">Acciones Rápidas</h3>
                 <div class="grid-2">
-                    <button class="btn btn-primary" style="height:100%; min-height:80px; font-size:1.1rem;" data-route="/nueva">➕ PESADA</button>
-                    <button class="btn btn-secondary" style="height:100%; min-height:80px; font-size:1.1rem;" data-route="/lista">📋 LISTA</button>
-                    <button class="btn btn-outline" style="height:100%; min-height:80px; font-size:1rem;" data-route="/informes">📊 INFORMES</button>
-                    <button class="btn btn-outline" style="height:100%; min-height:80px; font-size:1rem;" data-route="/fincas">⚙️ FINCAS</button>
+                    <button class="btn btn-primary" style="height:100%; min-height:80px; font-size:1.1rem;" data-route="/nueva">PESADA</button>
+                    <button class="btn btn-secondary" style="height:100%; min-height:80px; font-size:1.1rem;" data-route="/lista">LISTA</button>
+                    <button class="btn btn-outline" style="height:100%; min-height:80px; font-size:1rem;" data-route="/informes">INFORMES</button>
+                    <button class="btn btn-outline" style="height:100%; min-height:80px; font-size:1rem;" data-route="/fincas">FINCAS</button>
                 </div>
             </div>
             

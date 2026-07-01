@@ -70,7 +70,7 @@ export const PesadasUI = {
 
                     <!-- 3. Peso Neto Directo (campo estrella centrado) -->
                     <div class="form-group centered" style="text-align:center; margin-bottom: 5px;">
-                        <label style="font-size:1rem; margin-bottom: 5px;">⚖️ Peso Neto (kg)</label>
+                        <label style="font-size:1rem; margin-bottom: 5px;">Peso Neto (kg)</label>
                         <input type="number" id="p-bruto" value="${d.bruto || d.pesoBruto || ''}" placeholder="0.0" step="0.1" required class="input-huge">
                     </div>
                     
@@ -104,11 +104,11 @@ export const PesadasUI = {
 
                     <!-- BOTÓN GUARDAR (al final, natural) -->
                     <div style="margin-top: 15px; margin-bottom: 10px;">
-                        <button type="submit" class="btn btn-primary" style="width:100%; height:80px; font-size:1.5rem; font-weight: 900;">💾 GUARDAR PESADA</button>
+                        <button type="submit" class="btn btn-primary" style="width:100%; height:80px; font-size:1.5rem; font-weight: 900;">GUARDAR PESADA</button>
                     </div>
 
                     <div style="display: flex; flex-direction: column; gap: 8px;">
-                        ${isEdit ? `<button type="button" class="btn btn-danger" data-action="App._deletePesada" data-id="${id}" style="width:100%; height:55px; font-size: 1rem;">🗑️ Eliminar Pesada</button>` : ''}
+                        ${isEdit ? `<button type="button" class="btn btn-danger" data-action="App._deletePesada" data-id="${id}" style="width:100%; height:55px; font-size: 1rem;">Eliminar Pesada</button>` : ''}
                         <button type="button" class="btn btn-outline" data-action="back" style="width:100%; height:55px; font-size: 1rem;">Cancelar</button>
                     </div>
                 </form>
@@ -129,7 +129,7 @@ export const PesadasUI = {
             if (qEl) qEl.textContent = Math.max(0, n / factor).toFixed(2);
             if (b > 1500) {
                 if (qEl) qEl.style.color = "#eab308";
-                valMsg.textContent = "⚠️ Peso inusualmente alto (>1500kg)";
+                valMsg.textContent = "Peso inusualmente alto (>1500kg)";
                 valMsg.style.color = "#eab308";
             } else {
                 if (qEl) qEl.style.color = "#10b981";
@@ -165,7 +165,7 @@ export const PesadasUI = {
             };
 
             await Pesadas.save(dp);
-            Utils.toast('✅ Guardada correctamente');
+            Utils.toast('Guardada correctamente');
             window.location.hash = '#/lista';
         };
 
@@ -182,7 +182,7 @@ export const PesadasUI = {
         const ok = await Utils.confirmDialog({
             title: 'Eliminar Pesada',
             message: '¿Estás seguro de que deseas eliminar esta pesada? Esta acción no se puede deshacer.',
-            icon: '🗑️',
+            icon: '',
             confirmText: 'Eliminar',
             variant: 'danger'
         });
@@ -203,10 +203,10 @@ export const PesadasUI = {
         
         if (pesadas.length === 0) {
             main.innerHTML = Utils.renderEmptyState({
-                icon: '⚖️',
+                icon: '',
                 title: 'No hay pesadas',
                 message: 'Registra tu primera pesada de corcho para empezar a llevar el control.',
-                actionText: '➕ Nueva Pesada',
+                actionText: 'Nueva Pesada',
                 actionRoute: '/nueva'
             });
             return;
@@ -237,7 +237,7 @@ export const PesadasUI = {
             <div class="card" style="border-top: 5px solid var(--accent); text-align: center; padding: 25px; animation: fadeInUp 0.4s ease; animation-delay: 0.1s;">
                 <h3 style="font-size: 1.5rem; margin-bottom: 15px; color: #fff; border:none;">Listado de Pesadas</h3>
                 <div class="list-counter">${pesadas.length} pesada${pesadas.length !== 1 ? 's' : ''} registrada${pesadas.length !== 1 ? 's' : ''}</div>
-                <button class="btn btn-secondary mt-1" data-action="Export.exportarPDF" data-tipo="lista">📄 Exportar a PDF</button>
+                <button class="btn btn-secondary mt-1" data-action="Export.exportarPDF" data-tipo="lista"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>Exportar a PDF</button>
             </div>
             <div class="lista-detallada" id="lista-pesadas-container">
                 ${this._renderPesadasHTML(pesadas.slice(0, this._perPage), zonas)}
@@ -411,7 +411,7 @@ export const PesadasUI = {
             if (remaining > 0) {
                 btnContainer.innerHTML = `<button class="btn btn-outline" data-action="App.loadMorePesadas">Cargar más (${remaining} restantes)</button>`;
             } else {
-                btnContainer.innerHTML = '<div class="list-counter">Has llegado al final 🏁</div>';
+                btnContainer.innerHTML = '<div class="list-counter">Has llegado al final</div>';
                 setTimeout(() => btnContainer.remove(), 3000);
             }
         }

@@ -62,10 +62,10 @@ export const App = {
         const finca = await Fincas.getActive();
         const headerEl = document.getElementById('nombre-finca-header');
         if (finca) headerEl.innerHTML = `<span data-route="/fincas" style="cursor:pointer">${Utils.escapeHtml(finca.nombre)}</span>`;
-        else headerEl.innerHTML = `<span data-route="/fincas" style="cursor:pointer">➕ Crear Finca</span>`;
+        else headerEl.innerHTML = `<span data-route="/fincas" style="cursor:pointer">Crear Finca</span>`;
         
         const iconEl = document.getElementById('finca-icon');
-        if (iconEl) iconEl.innerHTML = '🌿';
+        if (iconEl) iconEl.innerHTML = `<svg class="fin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>`;
     },
 
     async init() {
@@ -88,7 +88,7 @@ export const App = {
                         Utils.confirmDialog({
                             title: 'Salir',
                             message: '¿Deseas salir de la aplicación?',
-                            icon: '👋',
+                            icon: '',
                             confirmText: 'Salir',
                             variant: 'danger'
                         }).then(ok => {
@@ -200,3 +200,4 @@ export const App = {
 
 window.App = App;
 App.init();
+
