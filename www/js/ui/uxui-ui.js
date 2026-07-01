@@ -131,6 +131,7 @@ export const UxUiUI = {
                     ${historialHTML}
                 </div>
             </div>
+        `;
         main.innerHTML = html;
     }
 };
