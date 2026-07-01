@@ -14,8 +14,7 @@ export const Router = {
         '/fincas': 'renderFincasManager',
         '/gastos': 'renderGastosManager',
         '/importar-pdf': 'renderImportarPdf',
-        '/usuarios': 'renderUsuarios',
-        '/uxui': 'renderUxUi'
+        '/usuarios': 'renderUsuarios'
     },
 
     async route() {

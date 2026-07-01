@@ -14,7 +14,6 @@ import { ZonasUI } from './ui/zonas-ui.js';
 import { FincasUI } from './ui/fincas-ui.js';
 import { GastosUI } from './ui/gastos-ui.js';
 import { ReportesUI } from './ui/reportes-ui.js';
-import { UxUiUI } from './ui/uxui-ui.js';
 
 export const App = {
     ...Utils,
@@ -26,7 +25,6 @@ export const App = {
     ...FincasUI,
     ...GastosUI,
     ...ReportesUI,
-    ...UxUiUI,
 
     _activeObjectUrls: [],
     
