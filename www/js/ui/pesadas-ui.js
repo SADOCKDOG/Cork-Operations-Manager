@@ -69,12 +69,12 @@ export const PesadasUI = {
                     <hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
 
                     <!-- 3. Peso Neto Directo (campo estrella centrado) -->
-                    <div class="form-group centered" style="text-align:center; margin-bottom: 5px;">
-                        <label style="font-size:1rem; margin-bottom: 5px;">Peso Neto (kg)</label>
-                        <input type="number" id="p-bruto" value="${d.bruto || d.pesoBruto || ''}" placeholder="0.0" step="0.1" required class="input-huge">
+                    <div class="form-group" style="text-align:center; margin: 20px 0;">
+                        <label style="font-size:1.1rem; margin-bottom: 10px; display:block; font-weight:600;">Peso Neto (kg)</label>
+                        <input type="number" id="p-bruto" value="${d.bruto || d.pesoBruto || ''}" placeholder="0.0" step="0.1" required class="input-hero" style="text-align:center; font-size:2.5rem; height:90px; width:100%; font-weight:700;">
                     </div>
                     
-                    <div id="p-validation-msg" style="text-align:center; font-weight:bold; font-size: 0.8rem; margin-bottom: 10px;">&nbsp;</div>
+                    <div id="p-validation-msg" style="text-align:center; font-weight:bold; font-size: 0.9rem; margin-bottom: 15px; min-height:1.2em;">&nbsp;</div>
 
                     <!-- 4. Datos calculados: Quintales (antes de calidad) -->
                     <div class="card stat-grid" style="display:flex; justify-content:center; background: rgba(255,255,255,0.03); margin: 8px 0; padding: 10px !important;">
