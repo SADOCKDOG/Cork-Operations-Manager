@@ -1,14 +1,30 @@
 import { Export } from '../export.js';
 import { App } from '../app.js';
-import { Billing } from './billing.js';
 
 export const Events = {
     initEvents() {
         document.body.addEventListener('click', (e) => {
-            const btn = e.target.closest('[data-action], [data-route], [data-trigger]');
+            const dropdown = document.getElementById('header-dropdown');
+            const menuBtn = e.target.closest('#header-menu-btn');
+            
+            if (menuBtn) {
+                if (dropdown) dropdown.style.display = dropdown.style.display === 'none' ? 'flex' : 'none';
+                return;
+            } else if (dropdown && dropdown.style.display !== 'none' && !e.target.closest('#header-dropdown')) {
+                dropdown.style.display = 'none';
+            }
+
+            const btn = e.target.closest('[data-action], [data-route], [data-trigger], .dropdown-item');
             if (!btn) return;
+            
+            if (btn.classList.contains('dropdown-item') && dropdown) {
+                dropdown.style.display = 'none';
+            }
+
             if (btn.classList.contains('stop-prop')) e.stopPropagation();
             
+            try { App.vibrate(15); } catch(e) { /* ignore */ }
+
             if (btn.dataset.route) {
                 location.hash = btn.dataset.route;
             } else if (btn.dataset.trigger) {
@@ -50,8 +66,5 @@ export const Events = {
         else if (action === 'Export.exportBackup') Export.exportBackup(btn.dataset.id ? [parseInt(btn.dataset.id)] : undefined);
         else if (action === 'Export.exportGlobalToExcel') Export.exportGlobalToExcel();
         else if (action === 'Export.exportEconomicoToExcel') Export.exportEconomicoToExcel();
-        else if (action === 'Billing.purchasePremium') Billing.purchasePremium();
-        else if (action === 'Billing.restorePurchases') Billing.restorePurchases();
-        else if (action === 'Billing.unlockLocally') Billing.unlockLocally();
     }
 };

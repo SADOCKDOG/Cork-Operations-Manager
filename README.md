@@ -237,3 +237,28 @@ Requisitos básicos: Node.js, npm, Capacitor. Pasos resumidos:
 * **Exportación Excel Nativa**: Se han reprogramado las exportaciones a Excel (Balance y Liquidación). En Android nativo, ahora se genera el archivo de forma interna en caché y se invoca directamente el menú de "Compartir" (Share API) garantizando su accesibilidad en todos los dispositivos móviles.
 
 <p align="center"><em>Documento actualizado con estructura funcional y listado de novedades técnicas.</em></p>
+
+## 💚 Support the project
+
+If this project helps you save time, reduce errors, or improve operations, consider sponsoring it.
+
+[![Sponsor](https://img.shields.io/badge/Sponsor-GitHub-ff69b4?style=for-the-badge&logo=github)](https://github.com/sponsors/SADOCKDOG)
+
+Your support helps me:
+- keep the project running
+- improve features and stability
+- expand documentation and support
+- develop new tools and integrations
+
+Thank you for supporting the project.
+# Cork Operations Manager
+
+[Project README content retained from repository description and technical documentation]
+
+---
+
+<p align="center">
+  <a href="https://github.com/sponsors/SADOCKDOG">
+    <img src="https://img.shields.io/badge/Sponsor-SADOCKDOG-EC4A7A?style=for-the-badge&logo=github-sponsors" alt="Sponsor SADOCKDOG" />
+  </a>
+</p>

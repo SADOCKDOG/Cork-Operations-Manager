@@ -107,7 +107,7 @@ export const Charts = {
         this._instances[containerId] = new Chart(canvasEl, {
             type: 'doughnut',
             data: {
-                labels: ['⭐ 1ª Calidad', '🟡 Bornizo', '🔴 Refugo'],
+                labels: ['1ª Calidad', 'Bornizo', 'Refugo'],
                 datasets: [{
                     data: [totales.primera, totales.bornizo, totales.refugo],
                     backgroundColor: ['#7fb069', '#d4a373', '#ff4d4d'],
@@ -190,7 +190,7 @@ export const Charts = {
         this._instances[containerId] = new Chart(canvasEl, {
             type: 'bar',
             data: {
-                labels: ['⭐ 1ª Calidad', '🟡 Bornizo', '🔴 Refugo'],
+                labels: ['1ª Calidad', 'Bornizo', 'Refugo'],
                 datasets: [{
                     label: 'Valor Económico (€)',
                     data: datos,
@@ -240,7 +240,7 @@ export const Charts = {
         this._instances[containerId] = new Chart(canvasEl, {
             type: 'bar',
             data: {
-                labels: ['⭐ 1ª', '🟡 Bornizo', '🔴 Refugo'],
+                labels: ['1ª Calidad', 'Bornizo', 'Refugo'],
                 datasets: [
                     {
                         label: 'Bruto (Q)',

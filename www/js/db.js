@@ -130,7 +130,7 @@ async function maybeLoadInitialData(database) {
                     await database.put('zonas', z);
                 }
             }
-            console.log("[DB] ✅ Datos iniciales cargados.");
+            console.log("[DB] Datos iniciales cargados.");
             window.dispatchEvent(new CustomEvent('fincaChanged'));
         } catch (e) { console.warn("[DB] Error datos iniciales", e); }
     }

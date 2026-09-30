@@ -166,7 +166,7 @@ export const Precios = {
 
                 if (response.ok) {
                     const data = await response.json();
-                    console.log(`[Precios] ✅ Datos obtenidos de ${source}`);
+                    console.log(`[Precios] Datos obtenidos de ${source}`);
                     return this._normalizePricesFromAPI(data, source);
                 }
             } catch (error) {

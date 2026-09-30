@@ -17,8 +17,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.min.js"></script>
-  <script type="module" crossorigin src="/assets/index-CPuFFk5t.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-CBI_0aYF.css">
+  <script type="module" crossorigin src="/assets/index-BhNgjipr.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DRLCyWwX.css">
 <script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
 <body>
     <header>
@@ -27,7 +27,7 @@
                 <img src="/assets/logo-header-BsgxBo3X.png" id="app-logo" alt="Cork Manager">
             </div>
             <div id="finca-header-info">
-                <span id="finca-icon">🌿</span>
+                <svg class="fin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
                 <span id="nombre-finca-header">Cargando...</span>
             </div>
         </div>
@@ -37,14 +37,10 @@
         <div class="loader">Iniciando aplicación...</div>
     </main>
 
-    <nav class="bottom-nav">
+    <nav class="bottom-nav compact">
         <a href="#/" class="nav-item" id="nav-home" aria-label="Ir al inicio">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
             <span class="label">Inicio</span>
-        </a>
-        <a href="#/nueva" class="nav-item" id="nav-nueva" aria-label="Nueva pesada">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            <span class="label">Nueva</span>
         </a>
         <a href="#/lista" class="nav-item" id="nav-lista">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
@@ -64,11 +60,15 @@
         </a>
     </nav>
 
+    <button class="fab fab-pulse" id="fab-nueva" aria-label="Nueva pesada" data-route="/nueva">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="28" height="28"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+    </button>
+
     <div id="toast-container"></div>
 
 
     <script>
-        window.isNative = window.hasOwnProperty('Capacitor');
+        window.isNative = (typeof window.Capacitor !== 'undefined');
         window.onerror = function(msg, url, line) {
             alert("Error: " + msg + "\nLínea: " + line);
             return false;
@@ -76,3 +76,4 @@
     </script>
 </body>
 </html>
+

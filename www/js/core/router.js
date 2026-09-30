@@ -30,12 +30,45 @@ export const Router = {
         const isFullScreenForm = path === '/nueva' || (path === '/pesada' && action === 'editar');
         document.body.classList.toggle('full-screen-mode', isFullScreenForm);
 
-        document.querySelectorAll('.nav-item').forEach(el => { const base = (path === '/zona' || path === '/importar-pdf') ? '/zonas' : path; el.classList.toggle('active', el.getAttribute('href') === `#${base}`); });
+        // FAB visibility
+        const fab = document.getElementById('fab-nueva');
+        if (fab) {
+            const hideFab = isFullScreenForm || path === '/fincas' || path === '/ajustes' || path === '/gastos';
+            fab.classList.toggle('hidden', hideFab);
+        }
+
+        document.querySelectorAll('.nav-item').forEach(el => { 
+            const base = (path === '/zona' || path === '/importar-pdf') ? '/zonas' : path; 
+            const isActive = el.getAttribute('href') === `#${base}`;
+            el.classList.toggle('active', isActive); 
+            if (isActive) {
+                const headerIcon = document.getElementById('header-current-icon');
+                if (headerIcon) {
+                    const clonedSvg = el.querySelector('svg').cloneNode(true);
+                    clonedSvg.setAttribute('id', 'header-current-icon');
+                    headerIcon.parentNode.replaceChild(clonedSvg, headerIcon);
+                }
+            }
+        });
+
         const main = document.getElementById('app-content');
+        if (!main) return;
+        
+        main.style.opacity = '0';
+        main.style.transform = 'translateY(8px)';
+
         const allFincas = await Fincas.list();
-        if (allFincas.length === 0) return await App.renderWelcomeWizard();
+        if (allFincas.length === 0) {
+            main.style.opacity = '1';
+            main.style.transform = 'translateY(0)';
+            return await App.renderWelcomeWizard();
+        }
         const fincaId = await Fincas.getActiveId();
-        if (!fincaId && path !== '/fincas') return await App.renderFincasManager();
+        if (!fincaId && path !== '/fincas') {
+            main.style.opacity = '1';
+            main.style.transform = 'translateY(0)';
+            return await App.renderFincasManager();
+        }
         
         main.innerHTML = '<div class="loader">Cargando...</div>';
         try {
@@ -47,5 +80,8 @@ export const Router = {
             console.error(error); 
             main.innerHTML = `<div class="card error-card"><h2>Error</h2><p>${Utils.escapeHtml(error.message)}</p></div>`; 
         }
+
+        main.style.opacity = '1';
+        main.style.transform = 'translateY(0)';
     }
 };
