@@ -8,7 +8,7 @@ export const FincasUI = {
         const main = document.getElementById('app-content'), allFincas = await Fincas.list(), activeId = await Fincas.getActiveId();
         main.innerHTML = `
             <div style="display:flex; align-items:center; gap:12px; margin-bottom:25px;">
-                <div style="width:5px; height:30px; background:var(--accent); border-radius:3px;"></div>
+                <div style="width:5px; height:30px; background:var(--p-cork); border-radius:3px;"></div>
                 <h2 style="margin:0; border:none; padding:0; font-weight:800;">Gestión de Fincas</h2>
             </div>
 
@@ -33,7 +33,7 @@ export const FincasUI = {
                     return `
                     <div class="card finca-card ${isActive ? 'active-finca' : ''}"
                          data-action="App._selectFincaForLoad" data-id="${f.id}" data-name="${App.escapeHtml(f.nombre)}"
-                         style="display:flex; align-items:center; padding:20px; border-left:8px solid ${isActive ? 'var(--accent)' : 'var(--border)'}; transition: transform 0.2s;">
+                         style="display:flex; align-items:center; padding:20px; border-left:8px solid ${isActive ? 'var(--p-cork)' : 'var(--border)'}; transition: transform 0.2s;">
 
                         <div style="flex:1;">
                             <strong style="font-size:1.2rem; color:white;">${App.escapeHtml(f.nombre)}</strong><br>
@@ -76,8 +76,8 @@ export const FincasUI = {
         main.innerHTML = `
             <div style="display:flex; align-items:center; gap:12px; margin-bottom:25px;"><div style="width:5px; height:30px; background:var(--p-cork); border-radius:3px;"></div><h2 style="margin:0; border:none; padding:0; color:var(--text-p); font-weight:800;">Ajustes de Finca</h2></div>
 
-            <div class="card" style="border: 1px solid var(--border); border-left: 5px solid var(--accent); margin-bottom:16px;">
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;"><div style="width:4px; height:20px; background:var(--accent); border-radius:2px;"></div><h4 class="text-lime" style="margin:0; font-size:0.95rem; text-transform:uppercase; font-weight:800; letter-spacing: 1px;">Datos del Propietario</h4></div>
+            <div class="card" style="border: 1px solid var(--border); border-left: 5px solid var(--p-cork); margin-bottom:16px;">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;"><div style="width:4px; height:20px; background:var(--p-cork); border-radius:2px;"></div><h4 class="text-lime" style="margin:0; font-size:0.95rem; text-transform:uppercase; font-weight:800; letter-spacing: 1px;">Datos del Propietario</h4></div>
                 <div class="form-group"><label class="text-grey" style="font-size:0.75rem; font-weight:800; letter-spacing:1px;">Nombre Explotación</label><input type="text" value="${App.escapeHtml(finca.nombre)}" readonly class="never-edit" style="opacity:0.6; font-weight:600;"></div>
                 <div class="form-group"><label class="text-grey" style="font-size:0.75rem; font-weight:800; letter-spacing:1px;">Nombre Propietario</label><input type="text" id="adj-prop" value="${finca.propietario||''}" readonly style="font-weight:600;"></div>
                 <div class="form-group"><label class="text-grey" style="font-size:0.75rem; font-weight:800; letter-spacing:1px;">Teléfono</label><input type="tel" id="adj-prop-tel" value="${finca.telefono||''}" readonly style="font-weight:600;"></div>
@@ -141,7 +141,7 @@ export const FincasUI = {
                 <p style="font-size: 0.85rem; color: var(--text-s); line-height: 1.5;">
                     © 2026 Cork Manager. Todos los derechos reservados.<br>
                      Licencia de uso profesional v7.0.0<br>
-                    <a href="https://github.com/SADOCKDOG/Cork-Operations-Manager" target="_blank" style="color:var(--accent); text-decoration:none; font-weight:bold; display:inline-block; margin-top:10px;">Repositorio en GitHub</a>
+                    <a href="https://github.com/SADOCKDOG/Cork-Operations-Manager" target="_blank" style="color:var(--p-cork); text-decoration:none; font-weight:bold; display:inline-block; margin-top:10px;">Repositorio en GitHub</a>
                 </p>
                 <p style="font-size: 0.85rem; color: var(--p-cork); margin-top: 15px; font-weight: 600;">
                     soporte.sdogfarm@gmail.com
@@ -188,7 +188,7 @@ export const FincasUI = {
         this._pendingFincaNombre = nombre;
         document.querySelectorAll('.finca-card').forEach(c => {
             if (c.dataset.id == id) {
-                c.style.borderLeft = '8px solid var(--accent)';
+                c.style.borderLeft = '8px solid var(--p-cork)';
             } else if (!c.classList.contains('active-finca')) {
                 c.style.borderLeft = '8px solid var(--border)';
             }
