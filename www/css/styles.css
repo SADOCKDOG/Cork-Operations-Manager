@@ -8,64 +8,70 @@
    DESIGN TOKENS
    ═══════════════════════════════════════════════════════════════ */
 :root {
-/* ═══════════ PALETA BASE - Industrial Dark Mode ═══════════ */
---p-cork: #CCFF00; /* Neon Lime - marca principal */
+/* ══════════════════════════════════════════════════════════════════════════════
+   DESIGN TOKENS — Fase 1: tokens canónicos
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* Marca (conservada, sin cambio) */
+--p-cork: #CCFF00;           /* Neon Lime - marca principal */
 --p-cork-dark: #AACC00;
---accent: #CCFF00;
 
---bg: #121212; /* Carbon Black */
---bg-deep: #000000; /* Negro puro (AGENTS.md §1) */
---surface: #1E1E1E; /* Deep Grey - tarjetas */
---surface-light: #2A2A2A; /* Sub-superficies */
---surface-glass: rgba(255,255,255,0.03); /* Fondo cristalino inputs (§3C) */
+/* Superficies */
+--bg: #121212;               /* Carbon Black */
+--surface: #1E1E1E;          /* Deep Grey - tarjetas */
+--surface-light: #2A2A2A;    /* Sub-superficies */
+--bg-surface: #242424;       /* NUEVO: opaco para inputs, hoy la referencia está rota */
+--surface-glass: rgba(255,255,255,0.03); /* reservado AGENTS.md §3C */
 
---text-p: #FFFFFF; /* Pure White */
---text-s: #94A3B8; /* Steel Grey */
---text-secondary: #94A3B8; /* Alias canónico */
---text-muted: var(--text-s);
---text-high: #FFFFFF; /* Alias para consistencia */
+/* Bordes */
+--border: #333333;           /* decorativo, sin cambio */
+--border-control: #777777;   /* NUEVO: 3.72:1 sobre superficie, WCAG 1.4.11 */
 
---border: #333333; /* Border Grey */
---border-default: #333333; /* Alias canónico */
---border-subtle: #27272a; /* Bordes sutiles (§1) */
+/* Tintes del acento (sustituyen los 15 restos marrones) */
+--accent-bg: rgba(204,255,0,0.10);
+--accent-line: rgba(204,255,0,0.20);
+--accent-border: rgba(204,255,0,0.30);
+--ring-accent: rgba(204,255,0,0.12);
+--glow-accent: rgba(204,255,0,0.35);
+--glow-accent-hi: rgba(204,255,0,0.55);
 
-/* ═══════════ COLORES SEMÁNTICOS NEÓN (§1) ═══════════ */
+/* Colores semánticos neón (AGENTS.md §1) */
+--text-p: #FFFFFF;
 --success: #10b981;
---c-success: #10b981; /* Alias para clases neón */
 --warning: #FFD600;
---c-warning: #FFD600; /* Alias para clases neón */
---danger: #FF4444; /* Rojo Neón */
---c-danger: #FF4444; /* Alias para clases neón */
---info: #3b82f6; /* Azul Neón */
---c-info: #3b82f6; /* Alias para clases neón */
+--danger: #FF4444;           /* Q1(a): se mantiene #FF4444, NO #FF6B6B */
+--info: #4FACFE;             /* Q2(a): alineado al valor real de la app */
+--danger-bg: rgba(255,68,68,.08);
+--success-bg: rgba(16,185,129,.08);
+--info-bg: rgba(79,172,254,.08); /* Q2(a): alineado con --info */
 
---danger-bg: rgba(255, 68, 68, 0.08);
---success-bg: rgba(16, 185, 129, 0.08);
---warning-bg: rgba(255, 214, 0, 0.08);
---info-bg: rgba(59, 130, 246, 0.08);
+/* Tipografía (suelo 12px, 7 pasos) */
+--fs-2xs: 0.75rem;   /* 12px — SUELO ABSOLUTO */
+--fs-xs: 0.8125rem;  /* 13px */
+--fs-sm: 0.875rem;   /* 14px */
+--fs-md: 1rem;       /* 16px */
+--fs-lg: 1.25rem;
+--fs-xl: 1.75rem;
+--fs-2xl: 2.5rem;
 
---color-metric-primary: var(--success);
---color-metric-warning: var(--warning);
---color-metric-danger: var(--danger);
---color-metric-info: var(--info);
-
-/* ═══════════ RADIOS DE BORDE ═══════════ */
---radius: 16px;
+/* Radios (--radius eliminado, duplicado de --radius-lg) */
 --radius-sm: 8px;
 --radius-md: 12px;
 --radius-lg: 16px;
 --radius-xl: 20px;
 --radius-full: 9999px;
 
-/* ═══════════ ESPACIADO Y ACCESIBILIDAD ═══════════ */
---touch-min: 50px;
---tap-gap: 8px;
---shadow-md: 0 4px 20px rgba(0,0,0,0.5);
+/* Texto */
+--text-s: #B4C0CE;           /* Q1(a): 9.03:1 sobre superficie (antes 6.50:1) */
+--text-muted: #94A3B8;       /* Q1(a): valor antiguo, ningún texto se oscurece */
+
+/* Interacción y safe areas */
+--touch-min: 48px;           /* antes 50px */
 --safe-top: env(safe-area-inset-top);
 --safe-bottom: env(safe-area-inset-bottom, 0px);
+--nav-h: calc(64px + var(--safe-bottom));
 
-/* ═══════════ COLOR DE TEMA NEÓN (hereda del módulo activo) ═══════════ */
---theme-color: var(--p-cork);
+color-scheme: dark;
 }
 
 /* --- SEMANTIC DATA COLORS --- */
