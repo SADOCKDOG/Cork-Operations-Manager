@@ -118,7 +118,7 @@ export const DashboardUI = {
         const starSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#CCFF00"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
         const circleSVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#FFD700"><circle cx="12" cy="12" r="10"/></svg>';
         const refSVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#FF4444"><polygon points="12 2 22 12 12 22 2 12"/></svg>';
-        let h = `<div class="card" style="border-top: 5px solid var(--accent); padding: 25px; animation: fadeInUp 0.4s ease; animation-delay: 0.2s;"><h3 style="text-align:center; color: #fff; font-size: 1.3rem; margin-bottom: 20px; border:none; padding:0;">Últimas Pesadas Registradas</h3><div class="lista-detallada">`;
+        let h = `<div class="card" style="border-top: 5px solid var(--p-cork); padding: 25px; animation: fadeInUp 0.4s ease; animation-delay: 0.2s;"><h3 style="text-align:center; color: #fff; font-size: 1.3rem; margin-bottom: 20px; border:none; padding:0;">Últimas Pesadas Registradas</h3><div class="lista-detallada">`;
         for (const p of recent) {
             let svg = starSVG, cal = '1ª Calidad', col = '#CCFF00', pillClass = 'bg-pill-lime text-lime';
             if (p.pesadasPorCalidad.bornizo.kg > 0) { svg = circleSVG; cal = 'Bornizo'; col = '#FFD700'; pillClass = 'bg-pill-gold text-gold'; }
