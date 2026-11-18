@@ -35,6 +35,7 @@ export const Router = {
         if (fab) {
             const hideFab = isFullScreenForm || path === '/fincas' || path === '/ajustes' || path === '/gastos';
             fab.classList.toggle('hidden', hideFab);
+            document.body.classList.toggle('fab-hidden', hideFab);
         }
 
         document.querySelectorAll('.nav-item').forEach(el => { 
