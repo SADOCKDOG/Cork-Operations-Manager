@@ -207,6 +207,12 @@ margin-left: auto;
 margin-right: auto;
 }
 
+/* H4: el FAB (bottom 84px + 60px de alto) flota sobre el final del contenido.
+   Cuando está visible se reserva su hueco para que no tape el último elemento. */
+body:not(.fab-hidden) main#app-content {
+padding-bottom: calc(72px + 16px);
+}
+
 /* ═══════════════════════════════════════════════════════════════
    CARDS - Sistema de variantes
    ═══════════════════════════════════════════════════════════════ */
