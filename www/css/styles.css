@@ -110,7 +110,7 @@ text-rendering: optimizeLegibility;
 /* Tipografía (§8.6) */
 h1, h2, h3 { text-wrap: balance; }
 p, li      { text-wrap: pretty; }
-body       { overflow-wrap: anywhere; }
+body       { overflow-wrap: break-word; }
 
 /* Accesibilidad: focus states */
 :focus-visible {
@@ -519,6 +519,7 @@ border-bottom: 1px solid var(--accent-line);
 
 input, select, textarea {
 min-height: 56px;
+max-width: 100%;
 background: var(--bg-surface);
 border: 1.5px solid var(--border-control);
 font-size: var(--fs-md);
@@ -1659,8 +1660,10 @@ animation: spin 0.8s linear infinite;
 }
 
 /* Grid genericos */
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.grid-2 > *, .grid-3 > * { min-width: 0; }
+.grid-2 input, .grid-2 select, .grid-3 input, .grid-3 select { width: 100%; }
 
 @media (max-width: 360px) {
 .metrics-triple { gap: 6px; }
