@@ -2012,3 +2012,191 @@ grid-template-columns: repeat(4, 1fr);
 body.kb-open nav.bottom-nav,
 body.kb-open .pesada-cta-wrap { display: none; }
 body.kb-open main#app-content { padding-bottom: 0; }
+
+/* ═══════════════════════════════════════════════════════════════
+   LISTADO DE PESADAS — Fase 3 (fichas .pesada)
+   Sustituye a las tablas .pesada-table-bordered del render anterior.
+   ═══════════════════════════════════════════════════════════════ */
+.pesada {
+    background: linear-gradient(160deg, #1a1a1a 0%, #131313 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-left: 5px solid var(--card-color, var(--p-cork));
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    min-width: 0;
+}
+
+article.pesada > * { min-width: 0; }
+
+.pesada header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.pesada__saca {
+    font-weight: 900;
+    color: var(--text-p);
+    font-size: var(--fs-md);
+    letter-spacing: -0.01em;
+}
+
+.pesada time {
+    font-size: var(--fs-2xs);
+    color: var(--text-muted);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.pesada__zona {
+    margin: 0 0 10px;
+    color: var(--text-s);
+    font-size: var(--fs-2xs);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.pesada__datos {
+    margin: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.pesada__datos > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.pesada__datos dt {
+    color: var(--text-muted);
+    font-size: var(--fs-2xs);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.pesada__datos dd {
+    margin: 0;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+}
+
+.pesada__datos dd .q-val {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--p-cork);
+}
+
+.pesada__datos dd .kg-val {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-s);
+}
+
+/* Píldoras de calidad (Fase 2) */
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-2xs);
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    border: 1px solid transparent;
+}
+
+.pill--primera { background: rgba(100, 221, 23, 0.12); border-color: rgba(100, 221, 23, 0.4); color: #64DD17; }
+.pill--bornizo { background: rgba(255, 214, 0, 0.12); border-color: rgba(255, 214, 0, 0.4); color: #FFD600; }
+.pill--refugo  { background: rgba(255, 68, 68, 0.12); border-color: rgba(255, 68, 68, 0.4); color: #FF5252; }
+
+/* Jerarquía visual: quintales (900) > kg (600) > fecha (suelo --fs-2xs).
+   El valor de quintales se muestra en .q-val con font-size 1.5rem / weight 900. */
+.pesada__datos dd .q-val { font-size: 1.5rem; font-weight: 900; }
+.pesada__datos dd .kg-val { font-size: 0.85rem; font-weight: 700; }
+
+/* Swipe: mantener los estilos actuales pero con min-width: 0 en el wrapper */
+.pesada-swipe-wrapper {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 14px;
+    border-radius: var(--radius-lg);
+}
+
+.pesada-swipe-actions {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    font-size: var(--fs-xs);
+    font-weight: 800;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+}
+
+.pesada-swipe-actions.swipe-edit {
+    right: 0;
+    background: var(--info);
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+}
+
+.pesada-swipe-content {
+    position: relative;
+    z-index: 1;
+    background: linear-gradient(160deg, #1a1a1a 0%, #131313 100%);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-left: 5px solid var(--card-color, var(--p-cork));
+    border-radius: var(--radius-lg);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.pesada-swipe-content.swiped-left { transform: translateX(-70px); border-radius: var(--radius-lg) 0 0 var(--radius-lg); }
+.pesada-swipe-content.swiped-right { transform: translateX(70px); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+
+/* Ficha dentro del swipe: contenido mínimo */
+.pesada-swipe-content .pesada-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Botón alternativo visible al swipe: editar dentro de la ficha (≥44px WCAG 2.5.8) */
+.pesada-edit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 44px;
+    height: 44px;
+    min-height: var(--touch-min);
+    padding: 0 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-control);
+    background: var(--surface-light);
+    color: var(--text-p);
+    font-family: inherit;
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.pesada-edit-btn:active { transform: scale(0.96); }
