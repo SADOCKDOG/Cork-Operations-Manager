@@ -927,67 +927,229 @@ opacity: 0.8;
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   TABLAS DE INFORMES (Responsive)
+   TABLAS DE INFORMES — Apiladas via @container (Fase 5 · S0)
    ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Wrapper contenedor ─── */
+.tabla-apilada {
+  container-type: inline-size;
+  container-name: tabla-apilada;
+  width: 100%;
+  margin-bottom: 16px;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+/* ─── Tabla base (modo ancho ≥ 480px) ─── */
+.tabla-apilada table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--text-p);
+  font-size: 0.9rem;
+  table-layout: auto;
+}
+
+.tabla-apilada thead th {
+  text-align: left;
+  padding: 14px 14px;
+  border-bottom: 2px solid var(--p-cork);
+  color: var(--p-cork);
+  background: rgba(204, 255, 0, 0.04);
+  text-transform: uppercase;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  font-weight: 800;
+  white-space: nowrap;
+  /* sticky header en modo ancho */
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.tabla-apilada tbody td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background 0.15s ease;
+}
+
+.tabla-apilada tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.tabla-apilada td.metric-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--p-cork);
+  font-variant-numeric: tabular-nums;
+}
+
+.tabla-apilada tfoot td {
+  background: rgba(204, 255, 0, 0.06);
+  font-weight: 800;
+  border-top: 1.5px solid var(--p-cork);
+  border-bottom: 1.5px solid var(--p-cork);
+  font-size: 0.9rem;
+  padding: 14px;
+  color: var(--p-cork);
+}
+
+/* ─── Caption visible y estilizado ─── */
+.tabla-apilada caption {
+  caption-side: top;
+  padding: 10px 14px;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--p-cork);
+  text-align: left;
+  background: rgba(204, 255, 0, 0.04);
+  border-bottom: 1px solid var(--accent-line);
+}
+
+/* ─── MODO APILADO (@container max-width: 480px) ─── */
+@container tabla-apilada (max-width: 480px) {
+  .tabla-apilada thead {
+    display: none;
+  }
+
+  .tabla-apilada tbody tr {
+    display: block;
+    margin-bottom: 12px;
+    padding: 12px 14px;
+    background: var(--surface-light);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+
+  .tabla-apilada tbody td,
+  .tabla-apilada tbody th {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 6px 0;
+    border: none;
+    white-space: normal;
+  }
+
+  .tabla-apilada tbody td::before {
+    content: attr(data-label);
+    font-size: var(--fs-2xs);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    min-width: 90px;
+    text-align: right;
+  }
+
+  .tabla-apilada tbody td:last-child {
+    border-bottom: none;
+  }
+
+  .tabla-apilada tbody tr:last-child {
+    margin-bottom: 0;
+  }
+
+  .tabla-apilada tfoot {
+    display: block;
+  }
+
+  .tabla-apilada tfoot tr {
+    display: block;
+    margin-top: 12px;
+    padding: 12px 14px;
+    background: rgba(204, 255, 0, 0.06);
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-md);
+  }
+
+  .tabla-apilada tfoot td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 6px 0;
+    border: none;
+    color: var(--p-cork);
+    font-weight: 800;
+  }
+
+  .tabla-apilada tfoot td::before {
+    content: attr(data-label);
+    font-size: var(--fs-2xs);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    min-width: 90px;
+    text-align: right;
+  }
+}
+
+/* ─── Compatibilidad: .table-responsive + .reporte-table (legado) ─── */
 .table-responsive {
-width: 100%;
-overflow-x: auto;
--webkit-overflow-scrolling: touch;
-margin-bottom: 16px;
-display: block;
-border-radius: var(--radius-md);
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 16px;
+  display: block;
+  border-radius: var(--radius-md);
 }
 
 .reporte-table {
-width: 100%;
-min-width: max-content;
-border-collapse: collapse;
-color: var(--text-p);
-font-size: 0.9rem;
-table-layout: auto;
-border-radius: var(--radius-md);
-overflow: hidden;
+  width: 100%;
+  min-width: max-content;
+  border-collapse: collapse;
+  color: var(--text-p);
+  font-size: 0.9rem;
+  table-layout: auto;
+  border-radius: var(--radius-md);
+  overflow: hidden;
 }
 
 .reporte-table th {
-text-align: left;
-padding: 14px 14px;
-border-bottom: 2px solid var(--p-cork);
-color: var(--p-cork);
-background: rgba(204, 255, 0, 0.04);
-text-transform: uppercase;
-font-size: var(--fs-xs);
-letter-spacing: 0.08em;
-font-weight: 800;
-white-space: nowrap;
+  text-align: left;
+  padding: 14px 14px;
+  border-bottom: 2px solid var(--p-cork);
+  color: var(--p-cork);
+  background: rgba(204, 255, 0, 0.04);
+  text-transform: uppercase;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  font-weight: 800;
+  white-space: nowrap;
 }
 
 .reporte-table td {
-padding: 12px 14px;
-border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-white-space: nowrap;
-transition: background 0.15s ease;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  white-space: nowrap;
+  transition: background 0.15s ease;
 }
 
 .reporte-table tbody tr:hover td {
-background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .reporte-table td.metric-value {
-font-size: 1.1rem;
-font-weight: 800;
-color: var(--p-cork);
-font-variant-numeric: tabular-nums;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--p-cork);
+  font-variant-numeric: tabular-nums;
 }
 
 .reporte-table tfoot td {
-background: rgba(204, 255, 0, 0.06);
-font-weight: 800;
-border-top: 1.5px solid var(--p-cork);
-border-bottom: 1.5px solid var(--p-cork);
-font-size: 0.9rem;
-padding: 14px;
-color: var(--p-cork);
+  background: rgba(204, 255, 0, 0.06);
+  font-weight: 800;
+  border-top: 1.5px solid var(--p-cork);
+  border-bottom: 1.5px solid var(--p-cork);
+  font-size: 0.9rem;
+  padding: 14px;
+  color: var(--p-cork);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -2200,3 +2362,68 @@ article.pesada > * { min-width: 0; }
 }
 
 .pesada-edit-btn:active { transform: scale(0.96); }
+
+/* ═══════════════════════════════════════════════════════════════
+   FICHA DE ZONA — Índice de secciones (Fase 5, paso S3)
+   ═══════════════════════════════════════════════════════════════ */
+.zona-indice {
+    margin-bottom: 16px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+
+.zona-indice__title {
+    margin: 0 0 10px;
+    color: var(--text-muted);
+    font-size: var(--fs-2xs);
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.zona-indice__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.zona-indice__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 14px;
+    background: var(--surface-light);
+    border: 1px solid var(--border-control);
+    border-radius: var(--radius-full);
+    color: var(--text-p);
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.zona-indice__link:active { transform: scale(0.96); }
+
+.zona-indice__link:hover {
+    border-color: var(--p-cork);
+    color: var(--p-cork);
+}
+
+/* Destinos del índice: el scroll-margin compensa la cabecera fija
+   (56px + safe-area + margen de main) al hacer scrollIntoView; tabindex="-1"
+   permite foco por teclado sin meter las secciones en la pila de tabulación. */
+.zona-seccion { scroll-margin-top: calc(76px + var(--safe-top)); }
+.zona-seccion:focus { outline: none; }
+.zona-seccion:focus-visible {
+    outline: 2px solid var(--p-cork);
+    outline-offset: 2px;
+    border-radius: var(--radius-lg);
+}
+
+@media (max-width: 360px) {
+    .zona-indice__link { padding: 0 10px; font-size: var(--fs-xs); }
+}

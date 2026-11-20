@@ -26,12 +26,17 @@ async renderFichaZona(id) {
 const main = document.getElementById('app-content'), z = await Zonas.get(parseInt(id)); if (!z) return location.hash = '/zonas';
 const pesadas = await db.getAllFromIndex('pesadas', 'zonaId', z.id), t = { primera: 0, bornizo: 0, refugo: 0 };
 pesadas.forEach(p => { t.primera += p.pesadasPorCalidad.primera.quintales || 0; t.bornizo += p.pesadasPorCalidad.bornizo.quintales || 0; t.refugo += p.pesadasPorCalidad.refugo.quintales || 0; });
-let croquisHtml = z.croquisBlob ? `<div style="text-align:center; margin-bottom:20px;"><img src="${URL.createObjectURL(z.croquisBlob)}" style="max-width:100%; border-radius:12px; border:1px solid var(--border);"></div>` : '';
+let croquisHtml = '';
+if (z.croquisBlob) {
+const croquisUrl = URL.createObjectURL(z.croquisBlob);
+if (App._activeObjectUrls) App._activeObjectUrls.push(croquisUrl);
+croquisHtml = `<div style="text-align:center; margin-bottom:20px;"><img src="${croquisUrl}" style="max-width:100%; border-radius:12px; border:1px solid var(--border);"></div>`;
+}
 
 let cultivosHtml = '';
 if (z.cultivos && z.cultivos.length > 0) {
 cultivosHtml = `
-<div class="card">
+<div class="card zona-seccion" id="seccion-cultivos" tabindex="-1">
 <h4>CULTIVO SIGPAC</h4>
 <table class="reporte-table" style="font-size:0.8rem;">
 <thead><tr><th>Sub</th><th>Aprovechamiento</th><th>Int</th><th>Sup. m²</th></tr></thead>
@@ -40,8 +45,27 @@ cultivosHtml = `
 </div>`;
 }
 
+// Fase 5 (S3): índice de secciones navegable al inicio de la ficha.
+// Los href="#seccion-…" son semánticos; el clic se intercepta más abajo porque
+// el router (hashchange) interpretaría como ruta cualquier hash que no empiece por "/".
+const secciones = [
+{ id: 'seccion-datos', label: 'Datos Descriptivos' },
+{ id: 'seccion-parcela', label: 'Parcela Catastral' },
+...(z.cultivos && z.cultivos.length > 0 ? [{ id: 'seccion-cultivos', label: 'Cultivo SIGPAC' }] : []),
+{ id: 'seccion-produccion', label: 'Producción Acumulada' }
+];
+
+const indiceHtml = `
+<nav class="zona-indice" aria-label="Índice de la ficha de zona">
+<h4 class="zona-indice__title">Índice de la ficha</h4>
+<div class="zona-indice__list">
+${secciones.map(s => `<a class="zona-indice__link" href="#${s.id}">${s.label}</a>`).join('')}
+</div>
+</nav>`;
+
 main.innerHTML = `
-<div class="card">
+${indiceHtml}
+<div class="card zona-seccion" id="seccion-datos" tabindex="-1">
 <h3>DATOS DESCRIPTIVOS INMUEBLE</h3>
 <div style="font-size:0.9rem; line-height:1.8;">
 <p><strong>Referencia catastral:</strong> ${App.escapeHtml(z.refCatastral || '-')}</p>
@@ -54,14 +78,14 @@ main.innerHTML = `
 <button class="btn btn-secondary mt-1" data-route="/zona/${z.id}/editar">Editar Zona</button>
 </div>
 
-<div class="card">
+<div class="card zona-seccion" id="seccion-parcela" tabindex="-1">
 <h3>PARCELA CATASTRAL</h3>
 ${croquisHtml}
 </div>
 
 ${cultivosHtml}
 
-<div class="card" style="border-top: 5px solid var(--p-cork); padding:25px;">
+<div class="card zona-seccion" id="seccion-produccion" tabindex="-1" style="border-top: 5px solid var(--p-cork); padding:25px;">
 <h4 style="text-align:center; color: #fff; font-size: 1.4rem; margin-bottom: 20px; border:none;">Producción Acumulada</h4>
 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding-top: 5px; text-align:center;">
 <div><div class="text-grey" style="font-size: var(--fs-xs); font-weight: 700; margin-bottom: 6px;">1ª CAL</div><div class="bg-pill-lime text-lime" style="font-weight: 800; padding: 4px 8px; border-radius: 6px; display: inline-block;">${t.primera.toFixed(2)}</div></div>
@@ -70,6 +94,18 @@ ${cultivosHtml}
 </div>
 </div>
 <button class="btn btn-outline" data-route="/zonas">Volver</button>`;
+
+// Navegación del índice: scroll suave + foco accesible sin alterar el hash de la ruta.
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+main.querySelectorAll('.zona-indice__link').forEach(link => {
+link.addEventListener('click', (e) => {
+const target = document.getElementById(link.getAttribute('href').slice(1));
+if (!target) return;
+e.preventDefault();
+target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+target.focus({ preventScroll: true });
+});
+});
 },
 
 async renderFormZona(id = null) {
