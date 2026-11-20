@@ -289,9 +289,7 @@ export const PesadasUI = {
         const t = App._calculateQualityTotals(pesadas);
         const totalQ = (t.primera.quintales + t.bornizo.quintales + t.refugo.quintales).toFixed(2);
 
-        main.innerHTML = `<div class="ptr-container" id="ptr-list">
-            <div class="ptr-indicator" id="ptr-indicator"><span></span></div>
-            <div class="card" style="border-top: 5px solid var(--p-cork); padding: 25px; animation: fadeInUp 0.4s ease;">
+        main.innerHTML = `<div class="card" style="border-top: 5px solid var(--p-cork); padding: 25px; animation: fadeInUp 0.4s ease;">
                 <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px; justify-content:center;"><div style="width:4px; height:20px; background:var(--p-cork); border-radius:2px;"></div><h4 class="text-lime" style="margin:0; font-size:1rem; text-transform:uppercase; font-weight:800; letter-spacing: 1px;">Resumen Global</h4></div>
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding-top: 5px;">
                     <div><div class="text-grey" style="font-size: var(--fs-xs); font-weight: 800; letter-spacing:1px; margin-bottom: 6px;">1ª CAL</div><div class="bg-pill-lime text-lime" style="font-weight: 800; padding: 4px 8px; border-radius: 6px; display: inline-block;">${t.primera.quintales.toFixed(2)}</div></div>
@@ -316,46 +314,68 @@ export const PesadasUI = {
 
         // Setup swipe on initial batch
         this._setupSwipeOnCards();
-        this._setupPullToRefresh();
     },
 
     _renderPesadasHTML(pesadas, zonas) {
-        const starSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#CCFF00"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
-        const circleSVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#FFD700"><circle cx="12" cy="12" r="10"/></svg>';
-        const refSVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#FF4444"><polygon points="12 2 22 12 12 22 2 12"/></svg>';
-        return pesadas.map(p => { 
-            const z = zonas.find(z => z.id == p.zonaId); 
-            let svg = starSVG, cal = '1ª Calidad', col = '#CCFF00', pillClass = 'bg-pill-lime text-lime'; 
-            if (p.pesadasPorCalidad.bornizo.kg > 0) { svg = circleSVG; cal = 'Bornizo'; col = '#FFD700'; pillClass = 'bg-pill-gold text-gold'; } 
-            else if (p.pesadasPorCalidad.refugo.kg > 0) { svg = refSVG; cal = 'Refugo'; col = '#FF4444'; pillClass = 'bg-pill-red text-red'; } 
-            const fH = new Date(p.fecha).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); 
+        return pesadas.map(p => {
+            const z = zonas.find(z => z.id == p.zonaId);
+            let cal = 'primera', pillClass = 'pill--primera';
+            if (p.pesadasPorCalidad.bornizo.kg > 0) { cal = 'bornizo'; pillClass = 'pill--bornizo'; }
+            else if (p.pesadasPorCalidad.refugo.kg > 0) { cal = 'refugo'; pillClass = 'pill--refugo'; }
+
+            const iso = p.fecha;
+            const fRel = this._fechaRelativa(iso);
+            const col = cal === 'primera' ? '#CCFF00' : (cal === 'bornizo' ? '#FFD600' : '#FF4444');
+
             return `<div class="pesada-swipe-wrapper" data-id="${p.id}">
                 <div class="pesada-swipe-actions swipe-edit" data-action-swipe="edit" data-id="${p.id}">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 </div>
                 <div class="pesada-swipe-content" style="--card-color: ${col};">
-                    <div class="pesada-card-content">
-                        <div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
-                            <div class="pesada-saca-badge bg-pill-blue text-blue" style="border:none;">SACA #${p.saca}</div>
-                            <strong class="${pillClass}" style="font-size: 1.1rem; display:flex; align-items:center; gap:6px; padding: 4px 8px; border-radius: 6px;">${svg} ${cal}</strong>
-                        </div>
-                        <div style="font-size: 1.1rem; margin-bottom: 12px; color: #fff;">
-                            <strong>${Utils.escapeHtml(z ? z.nombre : '?')}</strong>
-                        </div>
-                        <table class="pesada-table-bordered">
-                            <tr><th class="text-grey">FECHA Y HORA</th><td class="val-large text-grey">${fH}</td></tr>
-                            <tr><th class="text-grey">PESO BRUTO</th><td class="val-large highlight text-grey">${p.kg.toFixed(1)} kg</td></tr>
-                            <tr><th class="text-grey">PESO NETO</th><td class="val-large highlight" style="color: ${col};">${p.quintales.toFixed(2)} Q</td></tr>
-                        </table>
-                    </div>
+                    <article class="pesada" style="margin: 0;">
+                        <header>
+                            <span class="pesada__saca">#${p.saca}</span>
+                            <time datetime="${Utils.escapeHtml(iso)}">${fRel}</time>
+                            <span class="pill ${pillClass}">${cal === 'primera' ? '1ª' : (cal === 'bornizo' ? 'Bornizo' : 'Refugo')}</span>
+                        </header>
+                        <p class="pesada__zona">${Utils.escapeHtml(z ? z.nombre : '?')}</p>
+                        <dl class="pesada__datos">
+                            <div><dt>Neto</dt><dd><span class="q-val">${p.quintales.toFixed(2)}</span> <span class="unit">Q</span></dd></div>
+                            <div><dt>Bruto</dt><dd><span class="kg-val">${p.kg.toFixed(1)}</span> <span class="unit">kg</span></dd></div>
+                        </dl>
+                        <!-- Alternativa visible al swipe: botón editar ≥44px (WCAG 2.5.8) -->
+                        <button type="button" class="pesada-edit-btn" data-route="/pesada/${p.id}/editar" aria-label="Editar pesada #${p.saca}">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                    </article>
                 </div>
-            </div>`; 
+            </div>`;
         }).join('');
+    },
+
+    _fechaRelativa(iso) {
+        const d = new Date(iso);
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const dDay = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+        if (dDay.getTime() === today.getTime()) {
+            return 'hoy ' + d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+        }
+        if (dDay.getTime() === yesterday.getTime()) {
+            return 'ayer ' + d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+        }
+        return d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
     },
 
     _setupSwipeOnCards() {
         const wrappers = document.querySelectorAll('.pesada-swipe-wrapper');
         wrappers.forEach(w => {
+            if (w.dataset.swipeBound === '1') return;
+            w.dataset.swipeBound = '1';
+
             const id = w.dataset.id;
             const content = w.querySelector('.pesada-swipe-content');
             const editBtn = w.querySelector('.swipe-edit');
@@ -419,46 +439,6 @@ export const PesadasUI = {
 
             // Reset swipe on scroll
             document.addEventListener('scroll', () => { if (swiped) reset(); }, { passive: true });
-        });
-    },
-
-    _setupPullToRefresh() {
-        const container = document.getElementById('ptr-list');
-        const indicator = document.getElementById('ptr-indicator');
-        if (!container || !indicator) return;
-
-        let startY = 0, pulling = false, refreshing = false;
-
-        container.addEventListener('touchstart', (e) => {
-            if (container.scrollTop > 0) return;
-            startY = e.touches[0].clientY;
-            pulling = true;
-        }, { passive: true });
-
-        container.addEventListener('touchmove', (e) => {
-            if (!pulling || refreshing) return;
-            const dy = e.touches[0].clientY - startY;
-            if (dy > 30) {
-                indicator.classList.add('visible');
-                indicator.innerHTML = '<span>Suelta para actualizar</span>';
-            }
-        }, { passive: true });
-
-        container.addEventListener('touchend', async () => {
-            if (!pulling || refreshing) return;
-            const dy = indicator.classList.contains('visible');
-            pulling = false;
-
-            if (dy && container.scrollTop === 0) {
-                refreshing = true;
-                indicator.innerHTML = '<div class="ptr-spinner"></div><span>Actualizando...</span>';
-                App.vibrate(15);
-                await this.renderLista();
-                refreshing = false;
-                indicator.classList.remove('visible');
-            } else {
-                indicator.classList.remove('visible');
-            }
         });
     },
 
