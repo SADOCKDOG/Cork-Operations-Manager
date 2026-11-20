@@ -27,13 +27,17 @@ export const Router = {
         if (hash.startsWith('/zona/')) { const parts = hash.split('/'); path = '/zona'; id = parts[2]; if (parts[3] === 'editar') action = 'editar'; }
         else if (hash.startsWith('/pesada/')) { const parts = hash.split('/'); path = '/pesada'; id = parts[2]; if (parts[3] === 'editar') action = 'editar'; }
 
-        const isFullScreenForm = path === '/nueva' || (path === '/pesada' && action === 'editar');
-        document.body.classList.toggle('full-screen-mode', isFullScreenForm);
+        // El formulario de pesada ya no secuestra la pantalla completa: conserva
+        // la cabecera y la barra inferior, y usa su propia barra con Cancelar
+        // más una CTA fija (Fase 2 de la auditoría UI/UX).
+        const isFormRoute = path === '/nueva' || (path === '/pesada' && action === 'editar');
+        // El formulario de pesada marca kb-open mientras el teclado está visible.
+        document.body.classList.remove('kb-open');
 
         // FAB visibility
         const fab = document.getElementById('fab-nueva');
         if (fab) {
-            const hideFab = isFullScreenForm || path === '/fincas' || path === '/ajustes' || path === '/gastos';
+            const hideFab = isFormRoute || path === '/fincas' || path === '/ajustes' || path === '/gastos';
             fab.classList.toggle('hidden', hideFab);
             document.body.classList.toggle('fab-hidden', hideFab);
         }

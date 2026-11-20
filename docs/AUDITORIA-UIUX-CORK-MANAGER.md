@@ -491,7 +491,17 @@ runtimeCaching: [{ urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/.*/i, ... }]
 6. Validación bloqueante de 0 kg / >1500 kg.
 7. Renombrar semánticamente `p-bruto` → `p-peso` y `pesoBruto` → `pesoBascula` (con migración en `Pesadas.save`).
 
-**Criterio de salida:** flujo completo de 20 pesadas seguidas sin scroll; contraste ≥7:1 en el campo héroe; teclado decimal abierto al entrar; target mínimo 44px verificado.
+**Estado:** implementado y verificado (sesión de Fase 2). Se ejecutaron los 6 puntos aprobados, descartando explícitamente el punto 7 (renombramiento `p-bruto`/`pesoBrulo` → `p-peso`/`pesoBascula` y migración).
+
+Resultados de la verificación en el emulador Android 16 (411 dp, `emulator-5554`, CDP):
+- Punto 1: el campo héroe es `type="text" inputmode="decimal" enterkeyhint="done"`, abre el teclado numérico con coma y punto; contraste del héroe sobre su fondo: 13.21:1 (≥7:1 ✓).
+- Punto 2: cero atributos `style` en el formulario de Nueva Pesada (`inlineStyles: []`); los 11 estilos inline se movieron a clases CSS (`www/css/styles.css`, bloque «NUEVA PESADA — Fase 2»).
+- Punto 3: calidades como 3 botones con texto completo («1ª Calidad», «Bornizo», «Refugo») y `aria-pressed`; cada target mide 109×48 px (≥44px ✓).
+- Punto 4: barra superior con «Cancelar» que vuelve a la lista, CTA «Guardar pesada» fija sobre la barra inferior; `full-screen-mode` no se activa, cabecera y barra inferior se mantienen visibles.
+- Punto 5: tras guardar, pantalla de confirmación que muestra saca, quintales y calidad, con botón «Nueva pesada» para iniciar otra pesada sin volver a la lista.
+- Punto 6: 0 kg bloquea con «Introduce un peso mayor que 0.»; >1500 kg pide confirmación explícita antes de guardar.
+
+Evidencias: `docs/evidencias/fase-1/411-emulador-nueva-fase2.png` (pantalla completa, 411 dp) y `docs/evidencias/fase-1/411-emulador-nueva-teclado.png` (teclado decimal abierto, campo héroe centrado, barra inferior y CTA ocultas mientras el IME está visible).
 
 ### Fase 3 — Listado de pesadas (1 sesión)
 

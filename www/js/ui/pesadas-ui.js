@@ -43,143 +43,208 @@ export const PesadasUI = {
             return;
         }
 
+        let selQ = d.calidad || 'primera';
+        const pesoInicial = d.bruto ?? d.pesoBruto ?? '';
+
         main.innerHTML = `
-            <div class="card card-fullscreen animate-in" style="border-top: 5px solid ${isEdit ? '#eab308' : 'var(--p-cork)'}; padding: 15px 20px;">
-                <form id="form-pesada">
-                    <!-- 1. Fecha y Nº Saca (contexto temporal, compacto) -->
-                    <div class="grid-2" style="gap: 10px; margin-bottom: 10px;">
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label class="text-grey" style="font-size: 0.75rem; font-weight:800; letter-spacing:1px;">Fecha</label>
-                            <input type="date" id="p-fecha" value="${d.fecha}" style="height: 48px; font-size: 0.95rem; font-weight:600;">
+            <div class="pesada-view animate-in">
+                <div class="pesada-topbar">
+                    <button type="button" class="pesada-cancel" data-route="/lista">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        Cancelar
+                    </button>
+                    <h1 class="pesada-topbar__title">${isEdit ? 'Editar pesada' : 'Nueva pesada'}</h1>
+                </div>
+
+                <form id="form-pesada" class="pesada-form${isEdit ? ' pesada-form--edit' : ''}" novalidate>
+                    <!-- 1. Fecha y Nº Saca -->
+                    <div class="grid-2 pesada-meta">
+                        <div class="form-group">
+                            <label class="pesada-label" for="p-fecha">Fecha</label>
+                            <input type="date" id="p-fecha" value="${d.fecha}" class="pesada-input">
                         </div>
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label class="text-grey" style="font-size: 0.75rem; font-weight:800; letter-spacing:1px;">Nº Saca</label>
-                            <input type="number" id="p-saca" value="${d.saca}" style="height: 48px; font-size: 1.1rem; font-weight:800; color:#4FACFE; border-left:3px solid #4FACFE;">
+                        <div class="form-group">
+                            <label class="pesada-label" for="p-saca">Nº Saca</label>
+                            <input type="number" id="p-saca" value="${d.saca}" inputmode="numeric" class="pesada-input pesada-input--saca">
                         </div>
                     </div>
 
                     <!-- 2. Zona / Parcela -->
-                    <div class="form-group centered" style="margin-bottom: 12px;">
-                        <label class="text-grey" style="font-size: 0.8rem; margin-bottom: 6px; font-weight:800; letter-spacing:1px;">Zona / Parcela</label>
-                        <select id="p-zona" style="height:56px; font-size:1.1rem; font-weight:700; text-align-last:center; border-left:3px solid #F97316;">
+                    <div class="form-group">
+                        <label class="pesada-label" for="p-zona">Zona / Parcela</label>
+                        <select id="p-zona" class="pesada-select">
                             ${zonas.map(z => `<option value="${z.id}" ${curZona == z.id ? 'selected' : ''}>${Utils.escapeHtml(z.nombre)}</option>`).join('')}
                         </select>
                     </div>
 
-                    <hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
-
-                    <!-- 3. Peso Neto Directo (campo estrella centrado) -->
-                    <div class="form-group" style="text-align:center; margin: 20px 0;">
-                        <label class="text-lime" style="font-size:1rem; margin-bottom: 10px; display:block; font-weight:800; letter-spacing:1px;">PESO NETO (KG)</label>
-                        <input type="number" id="p-bruto" value="${d.bruto || d.pesoBruto || ''}" placeholder="0.0" step="0.1" required class="input-hero" style="text-align:center; font-size:3rem; height:100px; width:100%; font-weight:900; color:#CCFF00; background:rgba(204,255,0,0.05); border:2px solid rgba(204,255,0,0.2); box-shadow:inset 0 4px 10px rgba(0,0,0,0.5); border-radius:12px;">
+                    <!-- 3. Peso neto (campo héroe) -->
+                    <div class="pesada-hero">
+                        <label class="pesada-hero__label" for="p-peso">Peso neto (kg)</label>
+                        <input type="text" id="p-peso" class="input-hero pesada-hero__input"
+                               inputmode="decimal" enterkeyhint="done" autocomplete="off"
+                               pattern="[0-9]*[.,]?[0-9]*" placeholder="0.0"
+                               value="${pesoInicial}" aria-describedby="p-validation-msg">
+                        <p id="p-validation-msg" class="pesada-msg" role="alert" aria-live="polite"></p>
                     </div>
-                    
-                    <div id="p-validation-msg" style="text-align:center; font-weight:bold; font-size: 0.9rem; margin-bottom: 15px; min-height:1.2em;">&nbsp;</div>
 
-                    <!-- 4. Datos calculados: Quintales (antes de calidad) -->
-                    <div class="card stat-grid" style="display:flex; justify-content:center; background: rgba(255,255,255,0.03); margin: 8px 0; padding: 10px !important;">
-                        <div style="text-align:center;">
-                            <div id="calc-q" class="stat-value" style="font-size: 2.2rem; color: #CCFF00; font-weight:900; text-shadow: 0 0 10px rgba(204,255,0,0.3);">0.00</div>
-                            <div class="stat-label text-grey" style="font-size: 0.8rem; font-weight:800; letter-spacing:1px;">QUINTALES</div>
+                    <!-- 4. Quintales calculados -->
+                    <div class="pesada-calc">
+                        <span id="calc-q" class="pesada-calc__value">0.00</span>
+                        <span class="pesada-calc__label">quintales</span>
+                    </div>
+
+                    <!-- 5. Calidad -->
+                    <fieldset class="pesada-quality">
+                        <legend class="pesada-label">Calidad del corcho</legend>
+                        <div class="quality-selector quality-selector--wide" role="group" aria-label="Calidad del corcho">
+                            <button type="button" class="quality-btn quality-btn--wide" data-quality="primera" aria-pressed="${selQ === 'primera'}">1ª Calidad</button>
+                            <button type="button" class="quality-btn quality-btn--wide" data-quality="bornizo" aria-pressed="${selQ === 'bornizo'}">Bornizo</button>
+                            <button type="button" class="quality-btn quality-btn--wide" data-quality="refugo" aria-pressed="${selQ === 'refugo'}">Refugo</button>
                         </div>
-                    </div>
+                    </fieldset>
 
-                    <hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
+                    ${isEdit ? `<button type="button" class="btn btn-danger pesada-delete" data-action="App._deletePesada" data-id="${id}">Eliminar pesada</button>` : ''}
 
-                    <!-- 5. Selector de Calidad -->
-                    <div class="form-group centered" style="margin-bottom: 10px;">
-                        <label class="text-grey" style="font-size: 0.85rem; margin-bottom: 8px; font-weight:800; letter-spacing:1px;">Calidad del Corcho</label>
-                        <div class="quality-selector-centered" style="display:flex; justify-content: center; gap: 20px;">
-                            <button type="button" class="quality-btn ${d.calidad === 'primera' ? 'selected' : ''}" data-quality="primera">
-                                1ª
-                            </button>
-                            <button type="button" class="quality-btn ${d.calidad === 'bornizo' ? 'selected' : ''}" data-quality="bornizo">
-                                Bo
-                            </button>
-                            <button type="button" class="quality-btn ${d.calidad === 'refugo' ? 'selected' : ''}" data-quality="refugo">
-                                Re
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- BOTÓN GUARDAR (al final, natural) -->
-                    <div style="margin-top: 15px; margin-bottom: 10px;">
-                        <button type="submit" class="btn btn-primary" style="width:100%; height:80px; font-size:1.5rem; font-weight: 900;">GUARDAR PESADA</button>
-                    </div>
-
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        ${isEdit ? `<button type="button" class="btn btn-danger" data-action="App._deletePesada" data-id="${id}" style="width:100%; height:55px; font-size: 1rem;">Eliminar Pesada</button>` : ''}
-                        <button type="button" class="btn btn-outline" data-action="back" style="width:100%; height:55px; font-size: 1rem;">Cancelar</button>
+                    <!-- 6. CTA fija sobre la barra inferior -->
+                    <div class="pesada-cta-wrap">
+                        <button type="submit" class="btn btn-primary pesada-cta">Guardar pesada</button>
                     </div>
                 </form>
             </div>
         `;
 
-        const inB = document.getElementById('p-bruto');
+        const inP = document.getElementById('p-peso');
         const valMsg = document.getElementById('p-validation-msg');
-        
+        const qEl = document.getElementById('calc-q');
+
+        // Acepta coma o punto decimal (teclados en español envían coma).
+        const leerPeso = () => {
+            const n = parseFloat(String(inP.value).replace(',', '.'));
+            return Number.isFinite(n) ? n : 0;
+        };
+
+        let factorQuintal = 46;
         const up = async () => {
-            const b = parseFloat(inB.value) || 0;
-            const t = 0; // Tara removed
-            const config = Fincas._activeCache || await Fincas.getActive();
-            const factor = config ? config.factorQuintal : 46;
-            const n = b - t;
-            const qEl = document.getElementById('calc-q');
-            
-            if (qEl) qEl.textContent = Math.max(0, n / factor).toFixed(2);
+            const b = leerPeso();
+            let config;
+            try { config = Fincas._activeCache || await Fincas.getActive(); } catch (e) { config = null; }
+            factorQuintal = config ? config.factorQuintal : 46;
+            qEl.textContent = Math.max(0, b / factorQuintal).toFixed(2);
+
             if (b > 1500) {
-                if (qEl) { qEl.style.color = "#FFD700"; qEl.style.textShadow = "0 0 10px rgba(255,215,0,0.3)"; }
-                valMsg.textContent = "Peso inusualmente alto (>1500kg)";
-                valMsg.style.color = "#FFD700";
+                qEl.classList.add('is-warn');
+                valMsg.textContent = 'Peso inusualmente alto (más de 1500 kg). Revisa la báscula.';
+                valMsg.className = 'pesada-msg is-warn';
             } else {
-                if (qEl) { qEl.style.color = "#CCFF00"; qEl.style.textShadow = "0 0 10px rgba(204,255,0,0.3)"; }
-                valMsg.innerHTML = "&nbsp;";
+                qEl.classList.remove('is-warn');
+                valMsg.textContent = '';
+                valMsg.className = 'pesada-msg';
             }
         };
-        inB.addEventListener('input', up);
+        inP.addEventListener('input', up);
         up();
 
-        let selQ = d.calidad || 'primera';
-        const upQ = () => document.querySelectorAll('.quality-btn').forEach(b => {
-            if(b.dataset.quality === selQ) b.classList.add('selected');
-            else b.classList.remove('selected');
+        const upQ = () => document.querySelectorAll('.quality-btn--wide').forEach(b => {
+            const on = b.dataset.quality === selQ;
+            b.classList.toggle('selected', on);
+            b.setAttribute('aria-pressed', String(on));
         });
-        document.querySelectorAll('.quality-btn').forEach(b => b.onclick = () => { 
-            try { App.vibrate(15); } catch(e) {}
-            selQ = b.dataset.quality; 
-            upQ(); 
+        document.querySelectorAll('.quality-btn--wide').forEach(b => b.onclick = () => {
+            Utils.vibrate(15);
+            selQ = b.dataset.quality;
+            upQ();
         });
         upQ();
 
         document.getElementById('form-pesada').onsubmit = async (e) => {
             e.preventDefault();
-            const dt = document.getElementById('p-fecha').value;
-            
-            const b = parseFloat(inB.value) || 0;
-            const t = 0;
+            const b = leerPeso();
 
+            // Punto 6: validación bloqueante. No se guarda nada inválido.
+            if (!(b > 0)) {
+                valMsg.textContent = 'Introduce un peso mayor que 0.';
+                valMsg.className = 'pesada-msg is-error';
+                inP.focus();
+                Utils.vibrate([40, 60, 40]);
+                return;
+            }
+            if (b > 1500) {
+                const ok = await Utils.confirmDialog({
+                    title: 'Peso muy alto',
+                    message: `${b.toLocaleString('es-ES')} kg supera los 1500 kg. ¿Seguro que es correcto?`,
+                    confirmText: 'Guardar igualmente',
+                    variant: 'danger'
+                });
+                if (!ok) { inP.focus(); return; }
+            }
+
+            const dt = document.getElementById('p-fecha').value;
+            const saca = parseInt(document.getElementById('p-saca').value);
             const dp = {
                 id: isEdit ? parseInt(id) : undefined,
                 zonaId: parseInt(document.getElementById('p-zona').value),
                 fecha: dt || new Date().toISOString().split('T')[0],
-                saca: parseInt(document.getElementById('p-saca').value),
+                saca: saca,
                 pesoBruto: b,
-                tara: t,
+                tara: 0,
                 calidad: selQ
             };
 
             await Pesadas.save(dp);
             Utils.toast('Guardada correctamente');
-            window.location.hash = '#/lista';
+            this._renderOk({ saca, quintales: (b / factorQuintal).toFixed(2), calidad: selQ, isEdit });
         };
 
-        // Autofocus y apertura de teclado numérico
+        // Con el teclado abierto la barra inferior y la CTA fija taparían el campo.
+        // El WebView se redimensiona, así que se detecta por la altura del viewport.
+        if (this._kbHandler && window.visualViewport) {
+            window.visualViewport.removeEventListener('resize', this._kbHandler);
+        }
+        const vv = window.visualViewport;
+        if (vv) {
+            const base = vv.height;
+            this._kbHandler = () => {
+                const abierto = vv.height < base - 120;
+                document.body.classList.toggle('kb-open', abierto);
+                if (abierto && document.activeElement === inP) {
+                    inP.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                }
+            };
+            vv.addEventListener('resize', this._kbHandler);
+        }
+
+        // Autofocus: deja el cursor y el campo listo. El WebView no abre el IME
+        // sin un gesto del usuario, pero al tocarlo aparece en modo decimal.
         setTimeout(() => {
-            if (inB) {
-                inB.focus();
-                inB.click(); // Algunos navegadores Android requieren click para el teclado
-            }
+            if (inP) { inP.focus(); }
         }, 300);
+    },
+
+    // Punto 5: confirmación tras guardar, con los datos que el operario necesita
+    // para cotejar con la báscula, y acceso directo a la siguiente pesada.
+    _renderOk({ saca, quintales, calidad, isEdit }) {
+        const nombres = { primera: '1ª calidad', bornizo: 'Bornizo', refugo: 'Refugo' };
+        const main = document.getElementById('app-content');
+        main.innerHTML = `
+            <div class="card pesada-ok animate-in" role="status" aria-live="polite">
+                <div class="pesada-ok__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="34" height="34"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <h2 class="pesada-ok__title">${isEdit ? 'Pesada actualizada' : 'Pesada guardada'}</h2>
+                <dl class="pesada-ok__data">
+                    <div><dt>Nº saca</dt><dd>${saca}</dd></div>
+                    <div><dt>Quintales</dt><dd>${quintales} q</dd></div>
+                    <div><dt>Calidad</dt><dd>${nombres[calidad] || calidad}</dd></div>
+                </dl>
+                <button class="btn btn-primary" id="ok-nueva">Nueva pesada</button>
+                <button class="btn btn-outline mt-1" data-route="/lista">Ver lista</button>
+            </div>
+        `;
+
+        // El hash ya vale #/nueva: un data-route no dispararía hashchange,
+        // así que se renderiza el formulario directamente.
+        const btnNueva = main.querySelector('#ok-nueva');
+        if (btnNueva) btnNueva.onclick = () => { this.renderFormPesada(); };
     },
 
     async _deletePesada(id) {

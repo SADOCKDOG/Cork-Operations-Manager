@@ -1771,3 +1771,244 @@ grid-template-columns: repeat(4, 1fr);
     --border: #777777; --border-control: #A0A0A0;
   }
 }
+/* ═══════════════════════════════════════════════════════════════
+   NUEVA PESADA — Fase 2 de la auditoría UI/UX
+   Todo el estilo del formulario vive aquí: el markup ya no lleva
+   atributos style (punto 2 del plan).
+   ═══════════════════════════════════════════════════════════════ */
+.pesada-view { padding-bottom: 8px; }
+
+/* Barra superior con Cancelar (punto 4) */
+.pesada-topbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.pesada-cancel {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    min-height: var(--touch-min);
+    padding: 0 12px 0 6px;
+    border: 1px solid var(--border-control);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--text-s);
+    font-family: inherit;
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    cursor: pointer;
+}
+.pesada-cancel:active { transform: scale(0.97); }
+.pesada-topbar__title {
+    margin: 0;
+    color: var(--text-p);
+    font-size: var(--fs-lg);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+}
+
+/* Formulario */
+.pesada-form {
+    padding: 16px 16px 92px;
+    background: var(--surface);
+    border-top: 5px solid var(--p-cork);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+.pesada-form--edit { border-top-color: var(--warning); }
+.pesada-form .form-group { margin-bottom: 12px; }
+.pesada-meta { gap: 10px; margin-bottom: 12px; }
+
+.pesada-label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--text-s);
+    font-size: var(--fs-2xs);
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.pesada-input,
+.pesada-select {
+    width: 100%;
+    height: 52px;
+    padding: 0 12px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-control);
+    border-radius: var(--radius-md);
+    color: var(--text-p);
+    font-family: inherit;
+    font-size: var(--fs-md);
+    font-weight: 700;
+}
+.pesada-input--saca {
+    color: var(--info);
+    border-left: 3px solid var(--info);
+}
+.pesada-select {
+    border-left: 3px solid #F97316;
+}
+
+/* Campo héroe (punto 1: teclado decimal; punto 2: sin estilos inline) */
+.pesada-hero {
+    margin: 18px 0 10px;
+    text-align: center;
+}
+.pesada-hero__label {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--p-cork);
+    font-size: var(--fs-md);
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+.pesada-hero__input {
+    width: 100%;
+    height: 96px;
+    padding: 0 12px;
+    font-size: 3rem;
+    font-weight: 900;
+    line-height: 1;
+}
+.pesada-msg {
+    min-height: 1.3em;
+    margin: 8px 0 0;
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    text-align: center;
+}
+.pesada-msg.is-warn { color: var(--warning); }
+.pesada-msg.is-error { color: var(--danger); }
+
+/* Quintales */
+.pesada-calc {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 8px;
+    margin: 4px 0 14px;
+    padding: 10px;
+    background: var(--surface-glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+.pesada-calc__value {
+    color: var(--p-cork);
+    font-size: var(--fs-xl);
+    font-weight: 900;
+}
+.pesada-calc__value.is-warn { color: var(--warning); }
+.pesada-calc__label {
+    color: var(--text-muted);
+    font-size: var(--fs-2xs);
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Calidades con texto completo (punto 3) */
+.pesada-quality {
+    min-width: 0;
+    margin: 0 0 14px;
+    padding: 0;
+    border: 0;
+}
+.pesada-quality legend { padding: 0; }
+.quality-selector--wide { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.quality-btn--wide {
+    width: 100%;
+    min-height: var(--touch-min);
+    margin: 0;
+    padding: 0 4px;
+    border-radius: var(--radius-md);
+    font-size: var(--fs-2xs);
+    line-height: 1.15;
+}
+
+.pesada-delete {
+    width: 100%;
+    min-height: var(--touch-min);
+    margin-bottom: 8px;
+}
+
+/* CTA fija sobre la barra inferior (punto 4) */
+.pesada-cta-wrap {
+    position: fixed;
+    right: 0;
+    bottom: calc(64px + var(--safe-bottom));
+    left: 0;
+    z-index: 850;
+    padding: 10px 16px;
+    background: linear-gradient(to bottom, rgba(18,18,18,0), rgba(18,18,18,0.94) 30%);
+    pointer-events: none; /* el degradado no debe tragarse los toques */
+}
+.pesada-cta {
+    width: 100%;
+    height: 60px;
+    font-size: var(--fs-md);
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    pointer-events: auto;
+}
+
+/* Confirmación tras guardar (punto 5) */
+.pesada-ok {
+    padding: 28px 20px;
+    text-align: center;
+}
+.pesada-ok__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 14px;
+    color: #64DD17;
+    background: rgba(100,221,23,0.12);
+    border: 2px solid #64DD17;
+    border-radius: 50%;
+}
+.pesada-ok__title {
+    margin: 0 0 18px;
+    color: var(--text-p);
+    font-size: var(--fs-lg);
+    font-weight: 800;
+}
+.pesada-ok__data {
+    display: grid;
+    gap: 8px;
+    margin: 0 0 22px;
+}
+.pesada-ok__data > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--surface-glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+.pesada-ok__data dt {
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.pesada-ok__data dd {
+    margin: 0;
+    color: var(--p-cork);
+    font-size: var(--fs-md);
+    font-weight: 900;
+}
+
+/* Teclado abierto en Nueva Pesada: la barra inferior y la CTA fija taparían
+   el campo héroe, así que se retiran mientras el IME está visible. */
+body.kb-open nav.bottom-nav,
+body.kb-open .pesada-cta-wrap { display: none; }
+body.kb-open main#app-content { padding-bottom: 0; }
