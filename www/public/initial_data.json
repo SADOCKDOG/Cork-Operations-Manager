@@ -1,0 +1,82 @@
+{
+  "data": {
+    "config": {
+      "nombreFinca": "El Chamorro",
+      "factorQuintal": 46,
+      "ultimaSaca": 3
+    },
+    "precios": {
+      "calidades": {
+        "primera": { "precioQuintal": 80 },
+        "bornizo": { "precioQuintal": 45 },
+        "refugo": { "precioQuintal": 25 }
+      }
+    },
+    "zonas": [
+      {
+        "nombre": "CONTRAYOSA",
+        "poligono": "123",
+        "parcela": "45",
+        "municipio": "Arroyomolinos de León",
+        "fincaId": 1,
+        "refCatastral": "12345678901234"
+      },
+      {
+        "nombre": "Cercado de la Virgen",
+        "poligono": "124",
+        "parcela": "46",
+        "municipio": "Arroyomolinos de León",
+        "fincaId": 1,
+        "refCatastral": "12345678901235"
+      },
+      {
+        "nombre": "Solana Olivos",
+        "poligono": "125",
+        "parcela": "47",
+        "municipio": "Arroyomolinos de León",
+        "fincaId": 1,
+        "refCatastral": "12345678901236"
+      },
+      {
+        "nombre": "Barranco de la Herrumbre (Alta)",
+        "poligono": "126",
+        "parcela": "48",
+        "municipio": "Arroyomolinos de León",
+        "fincaId": 1,
+        "refCatastral": "12345678901237"
+      },
+      {
+        "nombre": "Barranco de la Herrumbre (Baja)",
+        "poligono": "127",
+        "parcela": "49",
+        "municipio": "Arroyomolinos de León",
+        "fincaId": 1,
+        "refCatastral": "12345678901238"
+      },
+      {
+        "nombre": "Lateral derecho, Cortijo Miracielos",
+        "poligono": "128",
+        "parcela": "50",
+        "municipio": "Arroyomolinos de León",
+        "fincaId": 1,
+        "refCatastral": "12345678901239"
+      },
+      {
+        "nombre": "El Cerro, El Chamorro",
+        "poligono": "129",
+        "parcela": "51",
+        "municipio": "Arroyomolinos de León",
+        "fincaId": 1,
+        "refCatastral": "12345678901240"
+      },
+      {
+        "nombre": "Cerro Alto Derecho, El Chamorro",
+        "poligono": "130",
+        "parcela": "52",
+        "municipio": "Arroyomolinos de León",
+        "fincaId": 1,
+        "refCatastral": "12345678901241"
+      }
+    ]
+  }
+}

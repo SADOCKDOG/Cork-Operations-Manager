@@ -1,0 +1,170 @@
+#document
+  html
+  HTML
+    HEAD
+      META
+      META
+      META
+      META
+      META
+      TITLE
+        #text #text="Cork Manager"
+      LINK
+      LINK
+      LINK
+      #comment
+      LINK
+      LINK
+      LINK
+      #comment
+      #comment
+      SCRIPT
+      SCRIPT
+      SCRIPT
+      SCRIPT
+    BODY
+      HEADER
+        DIV
+          #comment
+          DIV
+            IMG
+          #comment
+          DIV
+            BUTTON
+              svg
+                path
+                path
+              svg
+                polyline
+            DIV
+              A
+                svg
+                #text #text="Inicio"
+              A
+                svg
+                #text #text="Lista"
+              A
+                svg
+                #text #text="Zonas"
+              A
+                svg
+                #text #text="Informes"
+              A
+                svg
+                #text #text="Ajustes"
+          #comment
+          DIV
+            DIV
+            SPAN
+              SPAN
+                #text #text="El Chamorro"
+      MAIN
+        DIV
+          DIV
+          H2
+            #text #text="Central de Informes"
+        DIV
+          DIV
+            svg
+              circle
+              line
+              path
+            SPAN
+              #text #text="GLOBAL"
+          DIV
+            svg
+              circle
+              line
+              line
+            SPAN
+              #text #text="ECONÓMICA"
+          DIV
+            svg
+              path
+              polyline
+            SPAN
+              #text #text="PROD. ZONA"
+          DIV
+            svg
+              polygon
+            SPAN
+              #text #text="LIQ. CALIDAD"
+          DIV
+            svg
+              line
+              line
+              line
+            SPAN
+              #text #text="PANEL GRÁFICOS"
+        HR
+        DIV
+          DIV
+            DIV
+              H2
+                #text #text="Balance de Campaña"
+              DIV
+                BUTTON
+                BUTTON
+            DIV
+              DIV
+                DIV
+                DIV
+                DIV
+              DIV
+                DIV
+                DIV
+                DIV
+            DIV
+              H4
+                #text #text="Resumen por Calidad"
+              DIV
+                TABLE
+            DIV
+              H4
+                #text #text="Desglose por Zona (kg)"
+              DIV
+                TABLE
+      NAV
+        A
+          svg
+            path
+            polyline
+          SPAN
+            #text #text="Inicio"
+        A
+          svg
+            line
+            line
+            line
+            line
+            line
+            line
+          SPAN
+            #text #text="Lista"
+        A
+          svg
+            polygon
+            line
+            line
+          SPAN
+            #text #text="Zonas"
+        A
+          svg
+            path
+            path
+          SPAN
+            #text #text="Informes"
+        A
+          svg
+            circle
+            path
+          SPAN
+            #text #text="Ajustes"
+      BUTTON
+        svg
+          line
+          line
+      DIV
+      SCRIPT
+      SCRIPT
+        #text #text="window.isNative = (typeof window.Capacitor !== 'undefined');"

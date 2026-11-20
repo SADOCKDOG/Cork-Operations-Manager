@@ -1,0 +1,52 @@
+{
+  "fecha": "2026-11-20T23:20:39.112Z",
+  "dispositivo": "emulator-5554 (411dp, dpr 2.625)",
+  "pantallas": {
+    "inicial": {
+      "clientWidth": 411,
+      "scrollWidth": 411,
+      "innerWidth": 411,
+      "hasOverflow": false,
+      "url": "https://localhost/#/"
+    },
+    "informes": {
+      "clientWidth": 411,
+      "scrollWidth": 411,
+      "innerWidth": 411,
+      "hasOverflow": false,
+      "url": "https://localhost/#/informes"
+    },
+    "zonas": {
+      "clientWidth": 411,
+      "scrollWidth": 411,
+      "innerWidth": 411,
+      "hasOverflow": false,
+      "url": "https://localhost/#/zonas"
+    }
+  },
+  "tablas": [],
+  "indiceZona": {
+    "encontrado": false
+  },
+  "fichaZona": [
+    {
+      "id": "seccion-datos",
+      "found": false
+    },
+    {
+      "id": "seccion-parcela",
+      "found": false
+    },
+    {
+      "id": "seccion-cultivos",
+      "found": false
+    },
+    {
+      "id": "seccion-produccion",
+      "found": false
+    }
+  ],
+  "serviceWorker": {
+    "supported": true
+  }
+}
