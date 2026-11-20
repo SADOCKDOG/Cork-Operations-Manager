@@ -503,6 +503,8 @@ Resultados de la verificación en el emulador Android 16 (411 dp, `emulator-5554
 
 Evidencias: `docs/evidencias/fase-1/411-emulador-nueva-fase2.png` (pantalla completa, 411 dp) y `docs/evidencias/fase-1/411-emulador-nueva-teclado.png` (teclado decimal abierto, campo héroe centrado, barra inferior y CTA ocultas mientras el IME está visible).
 
+Matices del criterio de salida: (a) el teclado no se abre solo al entrar porque el WebView ignora `focus()` sin gesto del usuario; el campo queda enfocado y el teclado aparece en modo decimal al primer toque (verificado por captura y `dumpsys input_method`); (b) conservar cabecera y barra inferior implica que las calidades requieren un desplazamiento mínimo de ~190 px a 411 dp — es el coste asumido del punto 4 frente al antiguo secuestro de `full-screen-mode`; (c) el flujo de 20 pesadas no se ejecutó completo, sí el ciclo guardar → confirmación → nueva pesada.
+
 ### Fase 3 — Listado de pesadas (1 sesión)
 
 1. Implementar las fichas `.pesada` descritas en §4.1 (o resucitar el sistema `.pesada-card` ya escrito).
