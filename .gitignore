@@ -16,6 +16,10 @@ android/.gradle/
 # Local configuration
 android/local.properties
 
+# Signing keystore (no commitear credenciales de firma)
+android/keystore/
+android/keystore.properties
+
 # Log files
 npm-debug.log*
 yarn-debug.log*
