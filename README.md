@@ -236,4 +236,14 @@ Requisitos básicos: Node.js, npm, Capacitor. Pasos resumidos:
 * **Exportación PDF**: Corrección de estilos CSS en los reportes (eliminación de fondos oscuros degradados en las listas) y restauración de la cabecera verde de "Propietario / Comprador".
 * **Exportación Excel Nativa**: Se han reprogramado las exportaciones a Excel (Balance y Liquidación). En Android nativo, ahora se genera el archivo de forma interna en caché y se invoca directamente el menú de "Compartir" (Share API) garantizando su accesibilidad en todos los dispositivos móviles.
 
+## 🆕 Novedades en la versión 7.1.0 (Fase 5: Informes y SIGPAC)
+
+* **Tablas apiladas accesibles en informes**: Todas las tablas de los informes (Balance de Campaña, Desglose por Zona, Ingresos por Calidad, Gastos, Historial de Sacas y Detalle por Zonas) usan ahora estructura semántica accesible: `<caption>`, `th[scope="col"]` / `th[scope="row"]`, celdas con `data-label` para reflow en móviles, y wrapper `.tabla-apilada` con `role="region"` y `aria-label`. Cumple WCAG 2.1 para tablas de datos.
+* **Índice de zona en ficha de zona**: Nueva navegación `.zona-indice` en la ficha de zona que permite saltar entre secciones (datos, parcela, cultivos, producción) mediante `scrollIntoView`, mejorando la usabilidad en pantallas pequeñas.
+* **Revocación de blobs en el router**: `Router.route()` ahora revoca las URLs de blob almacenadas en `App._activeObjectUrls` antes de cada navegación (S4), evitando fugas de memoria al cambiar entre pantallas con croquis de zonas.
+* **Service Worker con cobertura para cdnjs**: `vite.config.js` incluye ahora `cdnjs.cloudflare.com` junto a `cdn.jsdelivr.net` en el runtime caching (`CacheFirst`, cache `cdn-cache`), garantizando que `html2pdf.js` esté disponible offline para exportación de PDF en modo avión (R6).
+* **Configuración Capacitor corregida**: `capacitor.config.json` apunta a `webDir: "dist"` para que `cap sync` empaquete el build de Vite (no los archivos fuente sin construir). `initial_data.json` se movió a `www/public/` para que Vite lo copie al `dist/` durante el build.
+
+---
+
 <p align="center"><em>Documento actualizado con estructura funcional y listado de novedades técnicas.</em></p>
